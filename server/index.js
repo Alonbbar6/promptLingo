@@ -37,8 +37,35 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // CORS configuration - must be before routes
+// Allow both local development and production Netlify domains
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:5173', // Vite dev server
+  'https://promptlingo.netlify.app', // Your Netlify production domain
+  /https:\/\/.*\.netlify\.app$/, // All Netlify preview deployments
+];
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is in allowed list or matches regex pattern
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (allowed instanceof RegExp) {
+        return allowed.test(origin);
+      }
+      return allowed === origin;
+    });
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.warn(`⚠️  CORS blocked request from origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -96,6 +123,23 @@ const upload = multer({
       cb(new Error('Invalid file type. Only audio files are allowed.'), false);
     }
   }
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'PromptLingo API is running',
+    status: 'ok',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      apiHealth: '/api/health',
+      transcribe: '/api/transcribe',
+      translate: '/api/translate',
+      synthesize: '/api/synthesize',
+      voices: '/api/voices'
+    }
+  });
 });
 
 // Health check endpoint
