@@ -1,0 +1,72 @@
+services:
+  # Frontend React App
+  - type: static
+    name: promptlingo-frontend
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: ./client/build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: Permissions-Policy
+        value: microphone=(self), camera=(self)
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Content-Security-Policy
+        value: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.onrender.com; media-src 'self' blob: data:;
+      - path: "*.wasm"
+        name: Cross-Origin-Opener-Policy
+        value: same-origin
+      - path: "*.wasm"
+        name: Cross-Origin-Embedder-Policy
+        value: require-corp
+      - path: "*.wasm"
+        name: Content-Type
+        value: application/wasm
+      - path: "*.wasm"
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: "*.js"
+        name: Content-Type
+        value: application/javascript
+      - path: "*.js"
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: "/wasm/*"
+        name: Cross-Origin-Resource-Policy
+        value: cross-origin
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://promptlingo-backend.onrender.com/api
+      - key: NODE_VERSION
+        value: 20
+
+  # Backend API Server (if not already deployed)
+  - type: web
+    name: promptlingo-backend
+    env: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
