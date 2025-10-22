@@ -73,7 +73,7 @@ const EnhancedAudioRecording: React.FC<EnhancedAudioRecordingProps> = ({
             const stream = recorderRef.current.getStream();
             if (stream) {
                 monitorRef.current = new AudioLevelMonitor();
-                const monitorSuccess = monitorRef.current.initialize(stream, (level) => {
+                const monitorSuccess = await monitorRef.current.initialize(stream, (level) => {
                     setAudioLevel(level);
                     
                     // Update diagnostics with current audio level

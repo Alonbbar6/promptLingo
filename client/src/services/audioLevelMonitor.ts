@@ -8,15 +8,38 @@ export class AudioLevelMonitor {
     private onLevelChange?: (level: number) => void;
     private isMonitoring: boolean = false;
 
-    initialize(stream: MediaStream, onLevelChange: (level: number) => void): boolean {
+    async initialize(stream: MediaStream, onLevelChange: (level: number) => void): Promise<boolean> {
         try {
             console.log('🎚️ Initializing audio level monitor...');
+            
+            // Verify stream is active before proceeding
+            const audioTracks = stream.getAudioTracks();
+            if (audioTracks.length === 0) {
+                console.error('❌ No audio tracks in stream');
+                return false;
+            }
+            
+            const audioTrack = audioTracks[0];
+            console.log('🎤 Audio track state:', audioTrack.readyState);
+            console.log('🎤 Audio track enabled:', audioTrack.enabled);
+            
+            if (audioTrack.readyState !== 'live') {
+                console.error('❌ Audio track is not live');
+                return false;
+            }
             
             this.onLevelChange = onLevelChange;
             
             // Create audio context
             this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
             console.log('🔊 AudioContext created, state:', this.audioContext.state);
+            
+            // CRITICAL: Resume AudioContext if suspended (required in many browsers)
+            if (this.audioContext.state === 'suspended') {
+                console.log('⚠️ AudioContext is suspended, resuming...');
+                await this.audioContext.resume();
+                console.log('✅ AudioContext resumed, new state:', this.audioContext.state);
+            }
             
             // Create analyser node
             this.analyser = this.audioContext.createAnalyser();
@@ -27,6 +50,8 @@ export class AudioLevelMonitor {
             const source = this.audioContext.createMediaStreamSource(stream);
             source.connect(this.analyser);
             
+            console.log('🔗 Audio source connected to analyser');
+            
             // Create data array for frequency data
             this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
             
@@ -34,6 +59,7 @@ export class AudioLevelMonitor {
             this.startMonitoring();
             
             console.log('✅ Audio level monitor initialized successfully');
+            console.log('  - AudioContext state:', this.audioContext.state);
             console.log('  - FFT Size:', this.analyser.fftSize);
             console.log('  - Frequency bin count:', this.analyser.frequencyBinCount);
             console.log('  - Smoothing:', this.analyser.smoothingTimeConstant);

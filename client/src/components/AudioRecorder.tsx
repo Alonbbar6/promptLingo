@@ -97,7 +97,7 @@ const AudioRecorder: React.FC = () => {
       const stream = enhancedRecorderRef.current.getStream();
       if (stream) {
         audioLevelMonitorRef.current = new AudioLevelMonitor();
-        const monitorSuccess = audioLevelMonitorRef.current.initialize(stream, (level) => {
+        const monitorSuccess = await audioLevelMonitorRef.current.initialize(stream, (level) => {
           setAudioLevel(level);
           setRecordingState(prev => ({ ...prev, volume: level }));
           
