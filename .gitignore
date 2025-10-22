@@ -7,11 +7,18 @@ build/
 dist/
 
 # Environment variables
+# IMPORTANT: Never commit .env files with real API keys!
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+server/.env
+client/.env
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
 
 # Logs
 npm-debug.log*
@@ -107,3 +114,6 @@ server/uploads/
 
 # Python development files are in python-dev/ directory
 # Do not ignore python-dev/ - it contains development-only Python files
+
+# Local Netlify folder
+.netlify

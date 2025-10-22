@@ -26,12 +26,19 @@
 #   status = 200
 #   force = true
 
-# Headers for WASM support
+# Headers for WASM support and microphone permissions
 [[headers]]
   for = "/*"
   [headers.values]
     Cross-Origin-Opener-Policy = "same-origin"
     Cross-Origin-Embedder-Policy = "require-corp"
+    # Microphone permissions for audio recording
+    Permissions-Policy = "microphone=(self), camera=(self)"
+    # Security headers
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
 
 [[headers]]
   for = "*.wasm"

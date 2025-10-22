@@ -26,9 +26,10 @@ const getErrorInfo = (error: string): ErrorInfo => {
 
   // Connection errors
   if (error.includes('Cannot connect to server') || error.includes('ECONNREFUSED')) {
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
     return {
       title: 'Connection Error',
-      message: 'Cannot reach the server. Make sure the backend is running on http://localhost:3001',
+      message: `Cannot reach the server at ${apiUrl}. Please check your backend configuration.`,
       type: 'error',
       icon: <XCircle className="h-5 w-5" />,
     };

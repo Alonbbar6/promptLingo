@@ -51,8 +51,9 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
         setError(null);
         
         // Try to fetch ElevenLabs voices first
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
         try {
-          const response = await fetch(`http://localhost:3001/api/voices/${language}`);
+          const response = await fetch(`${API_BASE_URL}/voices/${language}`);
           
           if (response.ok) {
             const data = await response.json();

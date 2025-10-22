@@ -40,7 +40,7 @@ api.interceptors.response.use(
       if (error.code === 'ECONNABORTED') {
         throw new Error('Request timeout. If this is your first request, the model is loading (30-60 seconds). Please try again.');
       }
-      throw new Error('Cannot connect to server. Make sure backend is running on http://localhost:3001');
+      throw new Error(`Cannot connect to server at ${API_BASE_URL}. Make sure backend is running and accessible.`);
     } else {
       // Something else happened
       throw new Error(error.message || 'An unexpected error occurred');
