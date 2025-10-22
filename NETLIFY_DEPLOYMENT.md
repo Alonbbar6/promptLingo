@@ -101,7 +101,9 @@ If your app uses environment variables, add them in Netlify:
 
 ### Python Files
 
-The `requirements.txt` and `streamlit_app.py` files are for local development/testing only. They are now ignored during Netlify deployment and won't cause version conflicts.
+The Python files (`requirements.txt` and `streamlit_app.py`) have been moved to the `python-dev/` directory. This prevents Netlify from detecting them and attempting to install Python dependencies, which was causing the `pkgutil` AttributeError.
+
+**Important:** These files are for local development/testing only and are completely ignored during Netlify deployment.
 
 ## 🐛 Troubleshooting
 

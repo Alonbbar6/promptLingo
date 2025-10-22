@@ -1,9 +1,13 @@
 # Ignore Python files - this is a JavaScript/React project
-requirements.txt
-streamlit_app.py
+python-dev/
 *.py
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
 
 # Ignore server directory if deploying only the frontend
 server/

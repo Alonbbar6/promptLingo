@@ -12,8 +12,12 @@
   # Specify Node.js version to avoid compatibility issues
   NODE_VERSION = "18.17.0"
   
-  # Disable Python builds
+  # Disable Python builds completely
   PYTHON_VERSION = ""
+  # Skip Python dependency installation
+  SKIP_PYTHON_INSTALL = "true"
+  # Disable automatic dependency detection
+  NPM_FLAGS = "--legacy-peer-deps"
 
 # Redirect API calls to your backend (if you deploy it separately)
 # [[redirects]]

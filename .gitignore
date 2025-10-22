@@ -104,3 +104,6 @@ server/uploads/
 *.webm
 *.m4a
 *.ogg
+
+# Python development files are in python-dev/ directory
+# Do not ignore python-dev/ - it contains development-only Python files
