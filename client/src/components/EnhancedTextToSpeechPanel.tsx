@@ -68,7 +68,7 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
       setToneEnhancementResult(null);
       setShowPreview(false);
     }
-  }, [initialText]);
+  }, [initialText, text]);
 
   // Update language when prop changes
   useEffect(() => {
@@ -76,7 +76,7 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
       setSelectedLanguage(initialLanguage);
       setSelectedVoice('');
     }
-  }, [initialLanguage]);
+  }, [initialLanguage, selectedLanguage]);
 
   // Apply tone enhancement
   const applyToneEnhancement = useCallback(async () => {

@@ -127,9 +127,11 @@ export const waitForVoices = (): Promise<SpeechSynthesisVoice[]> => {
   });
 };
 
-export default {
+const browserTTS = {
   synthesizeSpeechBrowser,
   getBrowserVoices,
   isBrowserTTSAvailable,
   waitForVoices,
 };
+
+export default browserTTS;

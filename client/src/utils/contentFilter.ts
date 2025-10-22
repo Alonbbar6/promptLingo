@@ -505,7 +505,7 @@ export const getIssueDescription = (detectedIssues: string[]): string => {
   return descriptions.join(', ');
 };
 
-export default {
+const contentFilter = {
   sanitizeInput,
   filterProfanity,
   normalizeSlang,
@@ -514,3 +514,5 @@ export default {
   containsSlang,
   getIssueDescription
 };
+
+export default contentFilter;

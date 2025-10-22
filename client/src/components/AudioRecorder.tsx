@@ -1,12 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useTranslation } from '../contexts/TranslationContext';
-import { Mic, Square, Play, Pause, Eye, EyeOff } from 'lucide-react';
-import { formatDuration, getAudioLevel } from '../services/audioUtils';
+import { Mic, Square, Eye, EyeOff } from 'lucide-react';
+// Audio utils imported but not directly used in this component
 import { 
-  ChunkedAudioRecorder, 
   RecordingTimer, 
-  RecordingState,
-  getOptimizedAudioStream 
+  RecordingState
 } from '../services/chunkedAudioRecorder';
 import { AudioRecorderFixed, DiagnosticInfo, RecordingResult } from '../services/audioRecorderFixed';
 import { AudioLevelMonitor } from '../services/audioLevelMonitor';
@@ -78,7 +76,7 @@ const AudioRecorder: React.FC = () => {
   };
 
   // Start recording with enhanced system
-  const startRecording = async () => {
+  const startRecording = useCallback(async () => {
     if (!enhancedRecorderRef.current) return;
 
     try {
@@ -159,10 +157,10 @@ const AudioRecorder: React.FC = () => {
       setIsProcessing(false);
       cleanup();
     }
-  };
+  }, [dispatch]);
 
   // Stop recording with enhanced error handling
-  const stopRecording = async () => {
+  const stopRecording = useCallback(async () => {
     if (!enhancedRecorderRef.current || !recordingState.isRecording) return;
 
     setIsProcessing(true);
@@ -227,26 +225,10 @@ const AudioRecorder: React.FC = () => {
       setIsProcessing(false);
       cleanup();
     }
-  };
+  }, [recordingState.isRecording, dispatch]);
 
   // Note: Pause/Resume functionality is not supported with chunked recording
   // The chunked system processes audio in real-time segments
-  const pauseRecording = () => {
-    console.log('⚠️ Pause not supported with chunked recording system');
-    // For now, we'll just stop the recording instead
-    stopRecording();
-  };
-
-  const resumeRecording = () => {
-    console.log('⚠️ Resume not supported with chunked recording system');
-    // User would need to start a new recording
-    startRecording();
-  };
-
-  // Extract state variables
-  const isRecording = state.audioRecorder.isRecording;
-  const isPaused = state.audioRecorder.isPaused;
-  const duration = state.audioRecorder.duration;
 
   // The duration is now handled by the chunked recorder system
   // No need for the old duration update effect
@@ -279,7 +261,7 @@ const AudioRecorder: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [recordingState.isRecording]);
+  }, [recordingState.isRecording, startRecording, stopRecording]);
 
   // Cleanup on unmount
   useEffect(() => {

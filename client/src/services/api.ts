@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { TranscriptionResponse, TranslationResponse, SynthesisResponse, Voice } from '../types';
-import { sanitizeInput, ContentFilterResult } from '../utils/contentFilter';
+import { sanitizeInput } from '../utils/contentFilter';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 

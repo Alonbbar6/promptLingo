@@ -1,9 +1,9 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useTranslation } from '../contexts/TranslationContext';
-import { transcribeAudio, translateText } from '../services/api';
+import { transcribeAudio } from '../services/api';
 import { processChunkedAudio } from '../services/audioProcessing';
 import { translateWithFormality } from '../services/enhancedTranslation';
-import { Copy, Clock, Hash, Volume2, AlertTriangle } from 'lucide-react';
+import { Copy, Hash } from 'lucide-react';
 import { copyToClipboard } from '../services/audioUtils';
 import { enhancedLanguageDetection, getLanguageName } from '../services/languageDetection';
 import LoadingSpinner from './LoadingSpinner';
@@ -17,7 +17,7 @@ const TranslationPanel: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStage, setProcessingStage] = useState<string>('');
   const [progress, setProgress] = useState(0);
-  const [languageValidationError, setLanguageValidationError] = useState<string>('');
+  const [, setLanguageValidationError] = useState<string>('');
   const [performanceMetrics, setPerformanceMetrics] = React.useState({
     transcriptionTime: 0,
     translationTime: 0,
@@ -240,7 +240,7 @@ const TranslationPanel: React.FC = () => {
       isProcessingRef.current = false;
       setIsProcessing(false);
     }
-  }, [state.audioRecorder.audioBlob, state.audioRecorder.audioUrl, state.sourceLanguage, state.targetLanguage, state.selectedTone, state.isTranslating, dispatch]);
+  }, [state.audioRecorder.audioBlob, state.audioRecorder.audioUrl, state.sourceLanguage, state.targetLanguage, state.selectedTone, state.isTranslating, userTier, dispatch]);
 
   // Trigger translation when audio is recorded
   useEffect(() => {
@@ -274,9 +274,10 @@ const TranslationPanel: React.FC = () => {
     }
   };
 
-  const formatTimestamp = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
+  // Timestamp formatting utility
+  // const formatTimestamp = (date: Date) => {
+  //   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  // };
 
   // Handle language switch suggestion
   const handleLanguageSwitch = (newLanguage: string) => {

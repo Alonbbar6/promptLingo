@@ -248,16 +248,8 @@ Please check your microphone settings and try speaking louder.`;
         // Validate minimum size (should be at least a few KB for any meaningful audio)
         const minSize = 1024; // 1KB minimum
         if (audioBlob.size < minSize) {
-            const error = `Audio recording is too small (${audioBlob.size} bytes).
-
-This suggests:
-• Very short recording (less than 1 second)
-• Very quiet audio input
-• Microphone sensitivity issues
-
-Please try recording for at least 2-3 seconds and speak clearly.`;
-            
             console.warn('⚠️ Audio blob is very small:', audioBlob.size, 'bytes');
+            console.warn('This may indicate: very short recording, quiet audio, or microphone issues');
             // Don't fail for small files, but warn the user
         }
 

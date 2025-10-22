@@ -108,7 +108,7 @@ export function detectLanguage(
     .sort(([, a], [, b]) => b - a);
 
   const [topLanguage, topScore] = sortedLanguages[0];
-  const [secondLanguage, secondScore] = sortedLanguages[1] || ['', 0];
+  const [, secondScore] = sortedLanguages[1] || ['', 0];
 
   // Calculate confidence based on score difference
   const confidence = topScore > 0 ? Math.min(1, topScore / 0.5) : 0;

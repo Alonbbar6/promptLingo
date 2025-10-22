@@ -1,5 +1,5 @@
 // Audio processing service with chunking and retry logic
-import { transcribeAudio, translateText, synthesizeSpeech } from './api';
+import { transcribeAudio, translateText } from './api';
 import { combineTranscriptions } from './chunkedAudioRecorder';
 
 export interface ProcessingResult {

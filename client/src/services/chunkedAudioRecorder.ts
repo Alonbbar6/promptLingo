@@ -1,5 +1,4 @@
 // Enhanced audio recording with chunking for long recordings and fast speech
-import { validateAudioFile } from './audioUtils';
 
 export interface ChunkConfig {
     maxDurationMs: number;

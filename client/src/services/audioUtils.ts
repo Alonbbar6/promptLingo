@@ -58,7 +58,7 @@ export const compressAudio = async (audioBlob: Blob, maxSizeMB: number = 10): Pr
       }
 
       // Create a simple compression by reducing quality
-      const compressionRatio = Math.sqrt(maxSizeBytes / audioBlob.size);
+      // const compressionRatio = Math.sqrt(maxSizeBytes / audioBlob.size);
       
       // For now, just return the original blob
       // In a real implementation, you'd use Web Audio API to compress
