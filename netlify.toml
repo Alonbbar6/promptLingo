@@ -10,7 +10,7 @@
 
 [build.environment]
   # Specify Node.js version to avoid compatibility issues
-  NODE_VERSION = "18.17.0"
+  NODE_VERSION = "20"
   
   # Disable Python builds completely
   PYTHON_VERSION = ""
