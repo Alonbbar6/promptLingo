@@ -6,6 +6,7 @@ const initialState: AppState = {
   sourceLanguage: 'ht', // Default to Haitian Creole as source
   targetLanguage: 'en', // Default to English as target
   selectedTone: 'casual',
+  translationDirection: 'to-english', // New: translation direction
   audioRecorder: {
     isRecording: false,
     isPaused: false,
@@ -30,6 +31,7 @@ type Action =
   | { type: 'SET_TARGET_LANGUAGE'; payload: string }
   | { type: 'SWAP_LANGUAGES' }
   | { type: 'SET_TONE'; payload: string }
+  | { type: 'SET_TRANSLATION_DIRECTION'; payload: 'to-english' | 'from-english' }
   | { type: 'START_RECORDING' }
   | { type: 'STOP_RECORDING'; payload: { audioBlob: Blob; audioUrl: string } }
   | { type: 'PAUSE_RECORDING' }
@@ -80,6 +82,15 @@ const translationReducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         selectedTone: action.payload,
+      };
+
+    case 'SET_TRANSLATION_DIRECTION':
+      return {
+        ...state,
+        translationDirection: action.payload,
+        // When direction changes, swap languages appropriately
+        sourceLanguage: action.payload === 'to-english' ? 'ht' : 'en',
+        targetLanguage: action.payload === 'to-english' ? 'en' : 'ht',
       };
 
     case 'START_RECORDING':

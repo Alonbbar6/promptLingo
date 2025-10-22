@@ -121,6 +121,9 @@ export interface AppState {
   sourceLanguage: string;
   targetLanguage: string;
   
+  // Translation direction
+  translationDirection: 'to-english' | 'from-english';
+  
   // Tone selection
   selectedTone: string;
   

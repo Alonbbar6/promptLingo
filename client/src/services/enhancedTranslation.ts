@@ -32,7 +32,61 @@ export class EnhancedTranslationService {
     const sourceLanguageName = this.getLanguageName(sourceLang);
     const targetLanguageName = this.getLanguageName(targetLang);
     
-    return `You are a professional translator and language enhancement specialist.
+    // Check if this is reverse translation (English to other languages)
+    const isReverseTranslation = sourceLang === 'en' && (targetLang === 'ht' || targetLang === 'es');
+    
+    if (isReverseTranslation) {
+      return `You are a professional translator and language enhancement specialist.
+
+CRITICAL TRANSLATION & ENHANCEMENT INSTRUCTIONS:
+
+PRIMARY TASK:
+1. Translate the following English text to natural, fluent ${targetLanguageName}
+2. Apply ADVANCED formality and grammar enhancement to create professional output
+
+TRANSLATION REQUIREMENTS:
+- Use natural ${targetLanguageName} expressions and idioms
+- Maintain proper grammar in ${targetLanguageName}
+- Make it sound like a native speaker wrote it
+- Do NOT translate proper names
+- Use appropriate cultural context for ${targetLanguageName}
+
+FORMALITY ENHANCEMENT RULES:
+- Transform casual/informal English into professional, formal ${targetLanguageName}
+- Convert slang, colloquialisms, and casual expressions to appropriate formal equivalents in ${targetLanguageName}
+- Apply proper grammar, punctuation, and sentence structure in ${targetLanguageName}
+- Break run-on sentences into clear, well-structured sentences
+- Add appropriate conjunctions and transitions for flow
+- Use complete sentences with proper capitalization
+- Replace casual greetings with professional alternatives in ${targetLanguageName}
+- Maintain natural, readable flow while elevating language quality
+
+TONE APPLICATION (${tone}):
+${this.getToneInstructions(tone)}
+
+GRAMMAR ENHANCEMENT:
+- Correct all grammatical errors
+- Ensure proper subject-verb agreement in ${targetLanguageName}
+- Use appropriate tenses consistently
+- Add missing articles where needed in ${targetLanguageName}
+- Fix punctuation and capitalization
+- Ensure parallel structure in lists or series
+
+FORMATTING REQUIREMENTS:
+- Each sentence should be complete and properly punctuated in ${targetLanguageName}
+- Use appropriate paragraph breaks for longer text
+- Maintain logical flow and coherence
+- Preserve the original meaning and intent completely
+
+QUALITY STANDARDS:
+- Output must be business/professional appropriate in ${targetLanguageName}
+- Language should be clear, concise, and polished
+- Maintain warmth and human connection while being formal
+- Avoid overly complex or pretentious language
+
+Input English text to translate and enhance:`;
+    } else {
+      return `You are a professional translator and language enhancement specialist.
 
 CRITICAL TRANSLATION & ENHANCEMENT INSTRUCTIONS:
 
@@ -74,6 +128,7 @@ QUALITY STANDARDS:
 - Avoid overly complex or pretentious language
 
 Input text to translate and enhance:`;
+    }
   }
 
   /**

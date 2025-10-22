@@ -17,11 +17,47 @@ const LanguageSelector: React.FC = () => {
     dispatch({ type: 'SWAP_LANGUAGES' });
   };
 
+  const handleDirectionChange = (direction: 'to-english' | 'from-english') => {
+    dispatch({ type: 'SET_TRANSLATION_DIRECTION', payload: direction });
+  };
+
   const sourceLanguage = LANGUAGES.find(lang => lang.code === state.sourceLanguage);
   const targetLanguage = LANGUAGES.find(lang => lang.code === state.targetLanguage);
 
   return (
     <div className="space-y-4">
+      {/* Translation Direction Selector */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          Translation Direction
+        </label>
+        <div className="flex space-x-4">
+          <button
+            onClick={() => handleDirectionChange('to-english')}
+            className={`flex-1 py-3 px-4 rounded-lg border-2 transition ${
+              state.translationDirection === 'to-english'
+                ? 'border-blue-600 bg-blue-50 text-blue-700'
+                : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+            }`}
+          >
+            <div className="font-semibold">To English</div>
+            <div className="text-xs mt-1">Haitian Creole/Spanish → English</div>
+          </button>
+          
+          <button
+            onClick={() => handleDirectionChange('from-english')}
+            className={`flex-1 py-3 px-4 rounded-lg border-2 transition ${
+              state.translationDirection === 'from-english'
+                ? 'border-blue-600 bg-blue-50 text-blue-700'
+                : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+            }`}
+          >
+            <div className="font-semibold">From English</div>
+            <div className="text-xs mt-1">English → Haitian Creole/Spanish</div>
+          </button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Source Language */}
         <div>
@@ -41,23 +77,42 @@ const LanguageSelector: React.FC = () => {
           </select>
         </div>
 
-        {/* Target Language */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Target Language
-          </label>
-          <select
-            value={state.targetLanguage}
-            onChange={(e) => handleTargetLanguageChange(e.target.value)}
-            className="input-field"
-          >
-            {LANGUAGES.map((language) => (
-              <option key={language.code} value={language.code}>
-                {language.nativeName} ({language.name})
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Target Language - Only show if translating FROM English */}
+        {state.translationDirection === 'from-english' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Target Language
+            </label>
+            <select
+              value={state.targetLanguage}
+              onChange={(e) => handleTargetLanguageChange(e.target.value)}
+              className="input-field"
+            >
+              <option value="ht">Kreyòl Ayisyen (Haitian Creole)</option>
+              <option value="es">Español (Spanish)</option>
+            </select>
+          </div>
+        )}
+
+        {/* Target Language - Show for TO English direction */}
+        {state.translationDirection === 'to-english' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Target Language
+            </label>
+            <select
+              value={state.targetLanguage}
+              onChange={(e) => handleTargetLanguageChange(e.target.value)}
+              className="input-field"
+            >
+              {LANGUAGES.map((language) => (
+                <option key={language.code} value={language.code}>
+                  {language.nativeName} ({language.name})
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       {/* Swap Button */}
