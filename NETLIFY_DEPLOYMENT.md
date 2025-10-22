@@ -113,7 +113,7 @@ The Python files (`requirements.txt` and `streamlit_app.py`) have been moved to 
 - Verify `.netlify-ignore` exists
 
 ### Build Fails with Node Errors
-- Check Node version matches `.nvmrc` (18.17.0)
+- Check Node version matches `.nvmrc` (20 LTS)
 - Clear build cache in Netlify: Site settings → Build & deploy → Clear cache and deploy
 
 ### WASM Files Not Loading
@@ -130,7 +130,7 @@ The Python files (`requirements.txt` and `streamlit_app.py`) have been moved to 
 ```toml
 Build command: cd client && npm install && npm run build
 Publish directory: client/build
-Node version: 18.17.0
+Node version: 20 (LTS)
 Python: Disabled
 ```
 
