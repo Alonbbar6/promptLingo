@@ -1,0 +1,9 @@
+# Ignore Python files - this is a JavaScript/React project
+requirements.txt
+streamlit_app.py
+*.py
+__pycache__/
+*.pyc
+
+# Ignore server directory if deploying only the frontend
+server/

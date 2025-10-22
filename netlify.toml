@@ -1,0 +1,53 @@
+[build]
+  # Specify the build directory
+  publish = "client/build"
+  
+  # Build command - only build the client React app
+  command = "cd client && npm install && npm run build"
+  
+  # Ignore Python files - they are not needed for this deployment
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ':(exclude)requirements.txt' ':(exclude)streamlit_app.py' ':(exclude)server/'"
+
+[build.environment]
+  # Specify Node.js version to avoid compatibility issues
+  NODE_VERSION = "18.17.0"
+  
+  # Disable Python builds
+  PYTHON_VERSION = ""
+
+# Redirect API calls to your backend (if you deploy it separately)
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://your-backend-url.com/api/:splat"
+#   status = 200
+#   force = true
+
+# Headers for WASM support
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
+
+[[headers]]
+  for = "*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/wasm/*"
+  [headers.values]
+    Cross-Origin-Resource-Policy = "cross-origin"
+
+# SPA fallback - redirect all routes to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
