@@ -37,13 +37,15 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // CORS configuration - must be before routes
-// Allow both local development and production Netlify domains
+// Allow both local development and production domains
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:5173', // Vite dev server
   'https://promptlingo.netlify.app', // Your Netlify production domain
   /https:\/\/.*\.netlify\.app$/, // All Netlify preview deployments
+  'https://promptlingo-frontend.onrender.com', // Your Render frontend domain
+  /https:\/\/.*\.onrender\.com$/, // All Render preview deployments
 ];
 
 app.use(cors({

@@ -62,11 +62,12 @@ const TextToSpeechPanel: React.FC<TextToSpeechPanelProps> = ({
     return () => clearTimeout(timer);
   }, [selectedLanguage, selectedVoice, ttsService]);
 
-  // Update text when prop changes
+  // Update text when prop changes (only if text is empty or initialText is different)
   useEffect(() => {
-    if (initialText !== text) {
+    if (initialText && initialText !== text && (!text || text === '')) {
       setText(initialText);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialText]);
 
   // Update language when prop changes

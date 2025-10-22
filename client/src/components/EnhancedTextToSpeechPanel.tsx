@@ -60,15 +60,16 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
     return () => clearTimeout(timer);
   }, [selectedLanguage, selectedVoice, ttsService]);
 
-  // Update text when prop changes
+  // Update text when prop changes (only if text is empty or initialText is different)
   useEffect(() => {
-    if (initialText !== text) {
+    if (initialText && initialText !== text && (!text || text === '')) {
       setText(initialText);
       setEnhancedText('');
       setToneEnhancementResult(null);
       setShowPreview(false);
     }
-  }, [initialText, text]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialText]);
 
   // Update language when prop changes
   useEffect(() => {
@@ -76,7 +77,8 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
       setSelectedLanguage(initialLanguage);
       setSelectedVoice('');
     }
-  }, [initialLanguage, selectedLanguage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialLanguage]);
 
   // Apply tone enhancement
   const applyToneEnhancement = useCallback(async () => {

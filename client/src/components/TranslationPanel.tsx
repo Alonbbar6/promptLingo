@@ -412,8 +412,38 @@ const TranslationPanel: React.FC = () => {
         </div>
       )}
 
+      {/* Manual Translate Button */}
+      {state.audioRecorder.audioBlob && !state.currentTranslation && !state.isTranslating && !state.translationError && (
+        <div className="text-center py-8">
+          <div className="text-4xl mb-4">🎤</div>
+          <p className="text-lg font-medium mb-4">Audio recorded successfully!</p>
+          <p className="text-sm text-gray-600 mb-6">Click to translate your speech</p>
+          <button
+            onClick={handleTranslate}
+            disabled={isProcessing}
+            className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold transition-all mx-auto ${
+              isProcessing
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'btn-primary hover:shadow-lg'
+            }`}
+          >
+            {isProcessing ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-500"></div>
+                <span>Processing...</span>
+              </>
+            ) : (
+              <>
+                <span>🔄</span>
+                <span>Translate Audio</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+
       {/* No Translation State */}
-      {!state.currentTranslation && !state.isTranslating && !state.translationError && (
+      {!state.audioRecorder.audioBlob && !state.currentTranslation && !state.isTranslating && !state.translationError && (
         <div className="text-center py-8 text-gray-500">
           <div className="text-4xl mb-4">🎤</div>
           <p className="text-lg font-medium">Record audio to get started</p>

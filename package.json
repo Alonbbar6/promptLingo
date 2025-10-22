@@ -9,8 +9,10 @@
     "client": "cd client && npm start",
     "build": "cd client && npm run build",
     "build:netlify": "cd client && npm install && npm run build",
+    "build:render": "cd client && npm install && npm run build",
     "start": "cd server && npm start",
-    "install-all": "npm install && cd server && npm install && cd ../client && npm install"
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "migrate:render": "./migrate-to-render.sh"
   },
   "keywords": [
     "translation",
