@@ -14,7 +14,7 @@ import AudioLevelIndicator from './AudioLevelIndicator';
 import DiagnosticPanel from './DiagnosticPanel';
 
 const AudioRecorder: React.FC = () => {
-  const { state, dispatch } = useTranslation();
+  const { dispatch } = useTranslation();
   const [audioLevel, setAudioLevel] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [recordingState, setRecordingState] = useState<RecordingState>({
@@ -157,6 +157,7 @@ const AudioRecorder: React.FC = () => {
       setIsProcessing(false);
       cleanup();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   // Stop recording with enhanced error handling
