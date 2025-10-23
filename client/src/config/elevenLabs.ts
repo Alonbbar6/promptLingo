@@ -1,8 +1,15 @@
 // ElevenLabs API Configuration
 export const ELEVENLABS_CONFIG = {
-  apiKey: process.env.REACT_APP_ELEVENLABS_API_KEY || 'YOUR_ELEVENLABS_API_KEY_HERE', // Replace with your actual API key
+  apiKey: process.env.REACT_APP_ELEVENLABS_API_KEY || '', // This should be set in your environment variables
   apiUrl: 'https://api.elevenlabs.io/v1',
 };
+
+// Validate API key on import
+if (!ELEVENLABS_CONFIG.apiKey || ELEVENLABS_CONFIG.apiKey === 'YOUR_ELEVENLABS_API_KEY_HERE') {
+  const errorMessage = 'ElevenLabs API key not configured — cannot proceed with TTS.';
+  console.error('❌ ' + errorMessage);
+  throw new Error(errorMessage);
+}
 
 // Available voices (you can customize these)
 export const ELEVENLABS_VOICES = {

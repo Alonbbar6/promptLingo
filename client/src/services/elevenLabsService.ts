@@ -89,8 +89,15 @@ export const playAudioBlob = (audioBlob: Blob): void => {
 
 // Check if ElevenLabs API key is configured
 export const isElevenLabsConfigured = (): boolean => {
-  return ELEVENLABS_CONFIG.apiKey !== 'YOUR_ELEVENLABS_API_KEY_HERE' && 
-         ELEVENLABS_CONFIG.apiKey.length > 0;
+  const hasValidKey = Boolean(ELEVENLABS_CONFIG.apiKey && 
+                           ELEVENLABS_CONFIG.apiKey.length > 0 &&
+                           ELEVENLABS_CONFIG.apiKey !== 'YOUR_ELEVENLABS_API_KEY_HERE');
+  
+  if (!hasValidKey) {
+    console.error('❌ ElevenLabs API key is not properly configured');
+  }
+  
+  return hasValidKey;
 };
 
 // Get available voices for a language
@@ -114,16 +121,28 @@ export const getElevenLabsLanguage = (languageCode: string): 'english' | 'spanis
 
 // Generate and play speech in one function
 export const generateAndPlaySpeech = async (options: ElevenLabsOptions): Promise<{ success: boolean; error?: string }> => {
+  if (!isElevenLabsConfigured()) {
+    const errorMsg = 'ElevenLabs API key not configured — cannot proceed with TTS.';
+    console.error('❌ ' + errorMsg);
+    return { success: false, error: errorMsg };
+  }
+
   try {
     console.log('🎵 [ELEVENLABS] Generating and playing speech...');
     const audioBlob = await generateSpeech(options);
+    
+    if (!audioBlob || audioBlob.size === 0) {
+      throw new Error('Received empty audio response from ElevenLabs');
+    }
+    
     playAudioBlob(audioBlob);
     return { success: true };
   } catch (error: any) {
-    console.error('❌ [ELEVENLABS] Failed to generate and play speech:', error);
+    const errorMsg = `ElevenLabs TTS failed: ${error.message || 'Unknown error'}`;
+    console.error('❌ [ELEVENLABS]', errorMsg);
     return { 
       success: false, 
-      error: error.message || 'Failed to generate speech' 
+      error: errorMsg
     };
   }
 };

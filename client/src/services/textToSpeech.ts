@@ -26,29 +26,24 @@ export interface TTSState {
 }
 
 export class TextToSpeechService {
-  private synthesis: SpeechSynthesis;
-  private currentUtterance: SpeechSynthesisUtterance | null = null;
   private onStateChange?: (state: TTSState) => void;
-  private voicesLoaded = false;
-  private voiceLoadPromise: Promise<void> | null = null;
   private state: TTSState = {
     isPlaying: false,
     isPaused: false,
-    isSupported: false,
+    isSupported: false, // Will be set based on ElevenLabs availability
     progress: 0
   };
 
   constructor(onStateChange?: (state: TTSState) => void) {
-    this.synthesis = window.speechSynthesis;
     this.onStateChange = onStateChange;
-    this.state.isSupported = 'speechSynthesis' in window;
     
-    if (this.state.isSupported) {
-      // Handle browser events
-      this.synthesis.addEventListener('voiceschanged', this.handleVoicesChanged);
-      
-      // Initialize voice loading
-      this.initializeVoices();
+    // Check if ElevenLabs is properly configured
+    try {
+      // This will throw if not configured
+      this.state.isSupported = isElevenLabsConfigured();
+    } catch (error) {
+      console.error('❌ Text-to-speech initialization failed:', error);
+      this.state.isSupported = false;
     }
     
     this.updateState();
@@ -166,190 +161,39 @@ export class TextToSpeechService {
    */
   async speak(text: string, options: TTSOptions = {}): Promise<void> {
     if (!this.state.isSupported) {
-      throw new Error('Text-to-speech is not supported in this browser');
+      throw new Error('ElevenLabs API key not configured — cannot proceed with TTS.');
     }
 
-    if (!text || text.trim().length === 0) {
+    if (!text || typeof text !== 'string') {
       throw new Error('No text provided for speech synthesis');
+    }
+    
+    // Ensure ElevenLabs is still configured (in case the key was removed after initialization)
+    if (!isElevenLabsConfigured()) {
+      throw new Error('ElevenLabs API key not configured — cannot proceed with TTS.');
     }
 
     // Ensure voices are loaded
     console.log('🔊 Ensuring voices are loaded before speaking...');
     await this.initializeVoices();
 
-    // Stop any current speech
-    this.stop();
-
-    return new Promise((resolve, reject) => {
-      const utterance = new SpeechSynthesisUtterance(text.trim());
-      
-      // Set voice with better selection logic
-      const voices = this.synthesis.getVoices();
-      console.log('🔊 Available voices for selection:', voices.length);
-      
-      if (options.voice) {
-        const selectedVoice = voices.find(v => v.voiceURI === options.voice || v.name === options.voice);
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-          console.log('🔊 Using specified voice:', selectedVoice.name);
-        } else {
-          console.warn('⚠️ Specified voice not found:', options.voice);
-        }
-      } else if (options.language) {
-        const bestVoice = this.getBestVoiceForLanguage(options.language);
-        if (bestVoice) {
-          const voice = voices.find(v => v.voiceURI === bestVoice.id || v.name === bestVoice.name);
-          if (voice) {
-            utterance.voice = voice;
-            console.log('🔊 Using best voice for language:', voice.name, 'for', options.language);
-          }
-        } else {
-          console.warn('⚠️ No suitable voice found for language:', options.language);
-        }
-      }
-      
-      // Fallback to default voice if none selected
-      if (!utterance.voice && voices.length > 0) {
-        utterance.voice = voices[0];
-        console.log('🔊 Using fallback voice:', voices[0].name);
-      }
-
-      // Set speech parameters
-      utterance.rate = options.rate ?? 1;
-      utterance.pitch = options.pitch ?? 1;
-      utterance.volume = options.volume ?? 1;
-      utterance.lang = options.language || 'en-US';
-
-      // Set up event handlers
-      utterance.onstart = () => {
-        console.log('TTS started');
-        this.updateState({
-          isPlaying: true,
-          isPaused: false,
-          currentText: text,
-          progress: 0
-        });
-      };
-
-      utterance.onend = () => {
-        console.log('TTS ended');
-        this.updateState({
-          isPlaying: false,
-          isPaused: false,
-          currentText: undefined,
-          progress: 1
-        });
-        this.currentUtterance = null;
-        resolve();
-      };
-
-      utterance.onerror = (event) => {
-        console.error('❌ TTS error:', event.error);
-        console.error('❌ TTS error details:', {
-          error: event.error,
-          voice: utterance.voice?.name,
-          language: utterance.lang,
-          textLength: text.length
-        });
-        
-        clearInterval(progressInterval);
-        this.updateState({
-          isPlaying: false,
-          isPaused: false,
-          currentText: undefined,
-          progress: 0
-        });
-        this.currentUtterance = null;
-        
-        // Provide more specific error messages
-        let errorMessage = 'Speech synthesis failed';
-        switch (event.error) {
-          case 'network':
-            errorMessage = 'Network error during speech synthesis';
-            break;
-          case 'synthesis-failed':
-            errorMessage = 'Speech synthesis engine failed';
-            break;
-          case 'synthesis-unavailable':
-            errorMessage = 'Speech synthesis not available';
-            break;
-          case 'voice-unavailable':
-            errorMessage = 'Selected voice not available';
-            break;
-          case 'text-too-long':
-            errorMessage = 'Text too long for speech synthesis';
-            break;
-          case 'invalid-argument':
-            errorMessage = 'Invalid speech synthesis parameters';
-            break;
-          default:
-            errorMessage = `Speech synthesis failed: ${event.error}`;
-        }
-        
-        reject(new Error(errorMessage));
-      };
-
-      utterance.onpause = () => {
-        console.log('TTS paused');
-        this.updateState({ isPaused: true });
-      };
-
-      utterance.onresume = () => {
-        console.log('TTS resumed');
-        this.updateState({ isPaused: false });
-      };
-
-      // Track progress (approximate)
-      const words = text.split(/\s+/).length;
-      const estimatedDuration = (words / 150) * 60 * 1000; // Assume 150 WPM
-      let progressInterval: NodeJS.Timeout;
-
-      utterance.onstart = () => {
-        console.log('🔊 TTS started speaking');
-        this.updateState({
-          isPlaying: true,
-          isPaused: false,
-          currentText: text,
-          progress: 0
-        });
-
-        // Update progress approximately
-        const startTime = Date.now();
-        progressInterval = setInterval(() => {
-          if (!this.state.isPlaying || this.state.isPaused) return;
-          
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(0.95, elapsed / estimatedDuration); // Cap at 95% until actual end
-          this.updateState({ progress });
-        }, 100);
-      };
-
-      utterance.onend = () => {
-        clearInterval(progressInterval);
-        this.updateState({
-          isPlaying: false,
-          isPaused: false,
-          currentText: undefined,
-          progress: 1
-        });
-        this.currentUtterance = null;
-        resolve();
-      };
-
-      // Store current utterance and start speaking
-      this.currentUtterance = utterance;
-      
-      console.log('🔊 Starting speech synthesis with settings:', {
-        voice: utterance.voice?.name || 'default',
-        language: utterance.lang,
-        rate: utterance.rate,
-        pitch: utterance.pitch,
-        volume: utterance.volume,
-        textLength: text.length
-      });
-      
-      this.synthesis.speak(utterance);
-    });
+    // Convert language to ElevenLabs format if needed
+    const elevenLabsLanguage = options.language ? getElevenLabsLanguage(options.language) : 'english';
+    
+    // Rate is not directly supported by ElevenLabs, but we can adjust the speed if needed
+    const elevenLabsOptions: ElevenLabsOptions = {
+      text,
+      language: elevenLabsLanguage,
+      voiceGender: 'male', // Default to male voice
+      stability: 0.5, // Default stability
+      similarityBoost: 0.75 // Default similarity boost
+    };
+    
+    const result = await generateAndPlaySpeech(elevenLabsOptions);
+    
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to generate speech');
+    }
   }
 
   /**
@@ -462,12 +306,34 @@ export function getTTSService(onStateChange?: (state: TTSState) => void): TextTo
  */
 export async function quickSpeak(text: string, language?: string, rate?: number): Promise<void> {
   const tts = getTTSService();
-  return tts.speak(text, { language, rate });
+  
+  // Convert language to ElevenLabs format if needed
+  const elevenLabsLanguage = language ? getElevenLabsLanguage(language) : 'english';
+  
+  // Rate is not directly supported by ElevenLabs, but we can adjust the speed if needed
+  const options: ElevenLabsOptions = {
+    text,
+    language: elevenLabsLanguage,
+    voiceGender: 'male', // Default to male voice
+    stability: 0.5, // Default stability
+    similarityBoost: 0.75 // Default similarity boost
+  };
+  
+  const result = await generateAndPlaySpeech(options);
+  
+  if (!result.success) {
+    throw new Error(result.error || 'Failed to generate speech');
+  }
 }
 
 /**
  * Check if TTS is supported in the current browser
+ * Now this only returns true if ElevenLabs is properly configured
  */
 export function isTTSSupported(): boolean {
-  return 'speechSynthesis' in window;
+  try {
+    return isElevenLabsConfigured();
+  } catch (error) {
+    return false;
+  }
 }
