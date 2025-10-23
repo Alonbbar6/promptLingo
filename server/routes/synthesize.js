@@ -68,13 +68,18 @@ const VOICES = {
   }
 };
 
-// ElevenLabs voice mapping (you'll need to replace these with actual voice IDs)
+// ElevenLabs voice mapping
+// Run 'node server/utils/listVoices.js' to get actual voice IDs from your account
+// These are example IDs - REPLACE with real IDs from the listVoices script
 const ELEVENLABS_VOICE_IDS = {
-  'male-1': 'pNInz6obpgDQGcFmaJgB', // Replace with actual voice ID
-  'female-1': 'EXAVITQu4vr4xnSDxMaL', // Replace with actual voice ID
-  'male-en': 'pNInz6obpgDQGcFmaJgB', // Replace with actual voice ID
-  'female-en': 'EXAVITQu4vr4xnSDxMaL' // Replace with actual voice ID
+  'male-1': '21m00Tcm4TlvDq8ikWAM',   // Example: Rachel (replace with actual)
+  'female-1': 'EXAVITQu4vr4xnSDxMaL', // Example: Bella (replace with actual)
+  'male-en': '21m00Tcm4TlvDq8ikWAM',  // Example: Rachel (replace with actual)
+  'female-en': 'EXAVITQu4vr4xnSDxMaL' // Example: Bella (replace with actual)
 };
+
+// Default fallback voice if mapping fails
+const DEFAULT_VOICE_ID = '21m00Tcm4TlvDq8ikWAM'; // Rachel - a common ElevenLabs voice
 
 router.post('/', async (req, res) => {
   const startTime = Date.now();
@@ -113,8 +118,24 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Use the voiceId directly - it's already an ElevenLabs voice ID
-    const elevenLabsVoiceId = voiceId;
+    // Map the voiceId to actual ElevenLabs voice ID
+    // If voiceId is already a valid ElevenLabs ID (21+ chars), use it directly
+    // Otherwise, look it up in our mapping
+    let elevenLabsVoiceId;
+    
+    if (voiceId && voiceId.length > 20) {
+      // Looks like a real ElevenLabs voice ID (they're typically 20+ characters)
+      elevenLabsVoiceId = voiceId;
+      console.log(`   - Using provided ElevenLabs voice ID: ${voiceId}`);
+    } else if (ELEVENLABS_VOICE_IDS[voiceId]) {
+      // Map from our friendly name to ElevenLabs ID
+      elevenLabsVoiceId = ELEVENLABS_VOICE_IDS[voiceId];
+      console.log(`   - Mapped voice '${voiceId}' → '${elevenLabsVoiceId}'`);
+    } else {
+      // Fallback to default voice
+      elevenLabsVoiceId = DEFAULT_VOICE_ID;
+      console.warn(`   ⚠️ Unknown voice '${voiceId}', using default: ${DEFAULT_VOICE_ID}`);
+    }
 
     console.log('  → Calling ElevenLabs API...');
     const elevenLabsStart = Date.now();
@@ -181,17 +202,30 @@ router.post('/', async (req, res) => {
       const { status, data } = error.response;
       console.error(`   - API Error ${status}:`, data);
       
-      // Provide specific error message for language issues
+      // Provide specific error messages based on error type
       let errorMessage = data.detail || 'Failed to synthesize speech';
+      let helpText = '';
+      
       if (typeof data === 'string' && data.includes('not supported')) {
         errorMessage = `Language issue: ${errorMessage}. Note: Haitian Creole uses French voice models.`;
+      } else if (data === 'invalid_uid' || (typeof data === 'object' && data.detail?.includes('invalid_uid'))) {
+        errorMessage = 'Invalid voice ID provided';
+        helpText = 'Run "node server/utils/listVoices.js" to get valid voice IDs';
+      } else if (status === 401) {
+        errorMessage = 'Invalid API key';
+        helpText = 'Check your ELEVENLABS_API_KEY environment variable';
+      } else if (status === 429) {
+        errorMessage = 'Rate limit exceeded';
+        helpText = 'Too many requests. Please wait a moment and try again.';
       }
       
       return res.status(status).json({
         error: 'Synthesis failed',
         message: errorMessage,
+        help: helpText,
         originalLanguage: language,
         mappedLanguage: getElevenLabsLanguageCode(language),
+        voiceId: voiceId,
         details: data
       });
     }
