@@ -34,11 +34,31 @@ export class AudioLevelMonitor {
             this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
             console.log('🔊 AudioContext created, state:', this.audioContext.state);
             
-            // CRITICAL: Resume AudioContext if suspended (required in many browsers)
+            // CRITICAL: Resume AudioContext if suspended (required in many browsers, especially iOS)
             if (this.audioContext.state === 'suspended') {
                 console.log('⚠️ AudioContext is suspended, resuming...');
-                await this.audioContext.resume();
-                console.log('✅ AudioContext resumed, new state:', this.audioContext.state);
+                try {
+                    await this.audioContext.resume();
+                    console.log('✅ AudioContext resumed, new state:', this.audioContext.state);
+                    
+                    // Double-check it actually resumed (iOS sometimes needs a moment)
+                    if (this.audioContext.state === 'suspended') {
+                        console.warn('⚠️ AudioContext still suspended after resume attempt, trying again...');
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        await this.audioContext.resume();
+                        console.log('✅ Second resume attempt, state:', this.audioContext.state);
+                    }
+                } catch (error) {
+                    console.error('❌ Failed to resume AudioContext:', error);
+                    throw new Error('Could not activate audio system. Please try again or check your browser settings.');
+                }
+            }
+            
+            // iOS Safari requires user interaction before AudioContext can run
+            // If still suspended, it means we need user interaction
+            if (this.audioContext.state === 'suspended') {
+                console.error('❌ AudioContext remains suspended - user interaction required');
+                throw new Error('Audio system requires user interaction. Please tap the record button again.');
             }
             
             // Create analyser node
