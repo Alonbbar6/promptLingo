@@ -1,6 +1,10 @@
 /**
- * WebAssembly Text Processor Service
- * Handles loading and interaction with the WASM text processing module
+ * WASM Service - Currently Disabled
+ * 
+ * WebAssembly functionality is disabled and will be implemented in a future version.
+ * All methods return immediately with no-op or fallback values.
+ * 
+ * This stub prevents 404 errors and MIME type issues while maintaining API compatibility.
  */
 
 export interface TextAnalysis {
@@ -28,309 +32,123 @@ export interface BenchmarkResult {
   operations_per_second: number;
 }
 
-export interface WasmModule {
-  TextProcessor: new () => TextProcessor;
-  word_count: (text: string) => number;
-  char_count: (text: string) => number;
-  is_wasm_supported: () => boolean;
-  get_memory_usage: () => any;
-}
-
-export interface TextProcessor {
-  analyze_text(text: string): TextAnalysis;
-  process_text(text: string, filter_profanity: boolean, normalize_whitespace: boolean): ProcessingResult;
-  batch_process(texts: string[]): ProcessingResult[];
-  benchmark(text: string, iterations: number): BenchmarkResult;
-  free(): void;
-}
-
 class WasmTextService {
-  private wasmModule: WasmModule | null = null;
-  private textProcessor: TextProcessor | null = null;
-  private isInitialized = false;
-  private isLoading = false;
-  private initPromise: Promise<void> | null = null;
+  private readonly WASM_DISABLED = true;
 
   /**
-   * Initialize the WASM module
+   * Initialize - Always returns immediately (WASM disabled)
    */
   async initialize(): Promise<void> {
-    if (this.isInitialized) return;
-    if (this.isLoading && this.initPromise) return this.initPromise;
-
-    this.isLoading = true;
-    this.initPromise = this._doInitialize();
-    
-    try {
-      await this.initPromise;
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  private async _doInitialize(): Promise<void> {
-    try {
-      console.log('🔄 Loading WASM Text Processor...');
-      
-      // Check if WASM is supported
-      if (!this.isWasmSupported()) {
-        throw new Error('WebAssembly is not supported in this browser');
-      }
-
-      // Dynamic import of the WASM module
-      const wasmModule = await this.loadWasmModule();
-      
-      if (!wasmModule) {
-        throw new Error('Failed to load WASM module');
-      }
-
-      this.wasmModule = wasmModule;
-      this.textProcessor = new wasmModule.TextProcessor();
-      this.isInitialized = true;
-
-      console.log('✅ WASM Text Processor initialized successfully');
-      console.log('📊 Memory usage:', this.getMemoryUsage());
-      
-    } catch (error) {
-      console.error('❌ Failed to initialize WASM:', error);
-      throw error;
+    if (this.WASM_DISABLED) {
+      console.log('ℹ️ WASM is disabled. Will be implemented in future version.');
+      return;
     }
   }
 
   /**
-   * Load the WASM module with fallback strategies
-   */
-  private async loadWasmModule(): Promise<WasmModule | null> {
-    const loadStrategies = [
-      // Strategy 1: Load from public/wasm directory
-      () => this.loadFromPublic(),
-      // Strategy 2: Load from CDN (if configured)
-      () => this.loadFromCDN(),
-      // Strategy 3: Load inline (if bundled)
-      () => this.loadInline()
-    ];
-
-    for (const strategy of loadStrategies) {
-      try {
-        const module = await strategy();
-        if (module) return module;
-      } catch (error) {
-        console.warn('WASM load strategy failed:', error);
-      }
-    }
-
-    return null;
-  }
-
-  /**
-   * Load WASM from public directory
-   */
-  private async loadFromPublic(): Promise<WasmModule | null> {
-    try {
-      // First, load the JS glue code
-      const script = document.createElement('script');
-      script.src = '/wasm/wasm_text_processor.js';
-      
-      return new Promise((resolve, reject) => {
-        script.onload = async () => {
-          try {
-            // @ts-ignore - Dynamic import of WASM module
-            const init = window.wasm_bindgen || window.init;
-            if (!init) {
-              throw new Error('WASM init function not found');
-            }
-
-            // Initialize with WASM file
-            await init('/wasm/wasm_text_processor_bg.wasm');
-            
-            // @ts-ignore - Access the WASM exports
-            const wasmModule = window.wasm_bindgen as WasmModule;
-            resolve(wasmModule);
-          } catch (error) {
-            reject(error);
-          }
-        };
-        
-        script.onerror = () => reject(new Error('Failed to load WASM JS file'));
-        document.head.appendChild(script);
-      });
-    } catch (error) {
-      console.error('Failed to load from public:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Load WASM from CDN (placeholder for future implementation)
-   */
-  private async loadFromCDN(): Promise<WasmModule | null> {
-    // TODO: Implement CDN loading if needed
-    return null;
-  }
-
-  /**
-   * Load inline WASM (placeholder for bundled version)
-   */
-  private async loadInline(): Promise<WasmModule | null> {
-    // TODO: Implement inline loading if WASM is bundled
-    return null;
-  }
-
-  /**
-   * Check if WebAssembly is supported
+   * Check if WebAssembly is supported - Always returns false (disabled)
    */
   isWasmSupported(): boolean {
-    return typeof WebAssembly === 'object' && 
-           typeof WebAssembly.instantiate === 'function';
+    return false;
   }
 
   /**
-   * Analyze text using WASM
+   * Analyze text - Returns fallback JavaScript analysis
    */
   async analyzeText(text: string): Promise<TextAnalysis> {
-    await this.initialize();
+    // Simple JavaScript fallback
+    const words = text.split(/\s+/).filter(w => w.length > 0);
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
     
-    if (!this.textProcessor) {
-      throw new Error('WASM module not initialized');
-    }
-
-    try {
-      return this.textProcessor.analyze_text(text);
-    } catch (error) {
-      console.error('WASM text analysis failed:', error);
-      throw new Error(`Text analysis failed: ${error}`);
-    }
+    return {
+      word_count: words.length,
+      char_count: text.length,
+      sentence_count: sentences.length,
+      language_confidence: 0,
+      detected_language: 'unknown',
+      profanity_score: 0,
+      sentiment_score: 0,
+      reading_time_minutes: Math.ceil(words.length / 200)
+    };
   }
 
   /**
-   * Process text with filtering options
+   * Process text - Returns text unchanged
    */
   async processText(
-    text: string, 
+    text: string,
     options: {
       filterProfanity?: boolean;
       normalizeWhitespace?: boolean;
     } = {}
   ): Promise<ProcessingResult> {
-    await this.initialize();
+    const analysis = await this.analyzeText(text);
     
-    if (!this.textProcessor) {
-      throw new Error('WASM module not initialized');
-    }
-
-    const { filterProfanity = false, normalizeWhitespace = true } = options;
-
-    try {
-      return this.textProcessor.process_text(text, filterProfanity, normalizeWhitespace);
-    } catch (error) {
-      console.error('WASM text processing failed:', error);
-      throw new Error(`Text processing failed: ${error}`);
-    }
+    return {
+      original_text: text,
+      processed_text: text,
+      analysis,
+      processing_time_ms: 0
+    };
   }
 
   /**
-   * Batch process multiple texts
+   * Batch process - Returns texts unchanged
    */
   async batchProcess(texts: string[]): Promise<ProcessingResult[]> {
-    await this.initialize();
-    
-    if (!this.textProcessor) {
-      throw new Error('WASM module not initialized');
-    }
-
-    try {
-      return this.textProcessor.batch_process(texts);
-    } catch (error) {
-      console.error('WASM batch processing failed:', error);
-      throw new Error(`Batch processing failed: ${error}`);
-    }
+    return Promise.all(texts.map(text => this.processText(text)));
   }
 
   /**
-   * Run performance benchmark
+   * Benchmark - Returns dummy results
    */
   async benchmark(text: string, iterations: number = 1000): Promise<BenchmarkResult> {
-    await this.initialize();
-    
-    if (!this.textProcessor) {
-      throw new Error('WASM module not initialized');
-    }
-
-    try {
-      return this.textProcessor.benchmark(text, iterations);
-    } catch (error) {
-      console.error('WASM benchmark failed:', error);
-      throw new Error(`Benchmark failed: ${error}`);
-    }
+    return {
+      iterations,
+      total_time_ms: 0,
+      average_time_ms: 0,
+      operations_per_second: 0
+    };
   }
 
   /**
-   * Get memory usage statistics
+   * Get memory usage - Returns null (not available)
    */
   getMemoryUsage(): any {
-    if (!this.wasmModule) return null;
-    
-    try {
-      return this.wasmModule.get_memory_usage();
-    } catch (error) {
-      console.error('Failed to get memory usage:', error);
-      return null;
-    }
+    return null;
   }
 
   /**
-   * Utility functions that don't require TextProcessor instance
+   * Get word count - JavaScript fallback
    */
   async getWordCount(text: string): Promise<number> {
-    await this.initialize();
-    
-    if (!this.wasmModule) {
-      // Fallback to JavaScript implementation
-      return text.split(/\s+/).filter(word => word.length > 0).length;
-    }
-
-    return this.wasmModule.word_count(text);
-  }
-
-  async getCharCount(text: string): Promise<number> {
-    await this.initialize();
-    
-    if (!this.wasmModule) {
-      // Fallback to JavaScript implementation
-      return text.length;
-    }
-
-    return this.wasmModule.char_count(text);
+    return text.split(/\s+/).filter(word => word.length > 0).length;
   }
 
   /**
-   * Clean up resources
+   * Get character count - JavaScript fallback
+   */
+  async getCharCount(text: string): Promise<number> {
+    return text.length;
+  }
+
+  /**
+   * Cleanup - No-op (nothing to clean up)
    */
   cleanup(): void {
-    if (this.textProcessor) {
-      try {
-        this.textProcessor.free();
-      } catch (error) {
-        console.warn('Error freeing WASM resources:', error);
-      }
-      this.textProcessor = null;
-    }
-    
-    this.wasmModule = null;
-    this.isInitialized = false;
-    this.initPromise = null;
+    // No-op
   }
 
   /**
-   * Get initialization status
+   * Get status - Always returns disabled state
    */
   getStatus() {
     return {
-      isInitialized: this.isInitialized,
-      isLoading: this.isLoading,
-      isSupported: this.isWasmSupported(),
-      hasModule: !!this.wasmModule,
-      hasProcessor: !!this.textProcessor
+      isInitialized: false,
+      isLoading: false,
+      isSupported: false,
+      hasModule: false,
+      hasProcessor: false
     };
   }
 }

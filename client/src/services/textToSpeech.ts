@@ -46,7 +46,7 @@ export class TextToSpeechService {
   }
 
   private getApiUrl(): string {
-    return process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+    return process.env.REACT_APP_API_URL || 'http://localhost:10000/api';
   }
 
   private updateState(updates?: Partial<TTSState>) {

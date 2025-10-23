@@ -5,7 +5,7 @@
 
 import { translateText } from './api';
 import { sanitizeInput } from '../utils/contentFilter';
-import { wasmTextService } from './wasmService';
+// WASM disabled - using JavaScript-only language detection
 
 export interface ToneOption {
   id: string;
@@ -70,81 +70,71 @@ export const TONE_OPTIONS: ToneOption[] = [
 export class EnhancedToneService {
   
   /**
-   * Detect language using WASM service with fallback
+   * Detect language using JavaScript pattern matching
+   * (WASM disabled - using JavaScript-only implementation)
    */
   private async detectLanguage(text: string): Promise<{ language: string; confidence: number }> {
-    try {
-      // Try WASM language detection first
-      const analysis = await wasmTextService.analyzeText(text);
-      return {
-        language: analysis.detected_language,
-        confidence: analysis.language_confidence
-      };
-    } catch (error) {
-      console.warn('WASM language detection failed, using fallback:', error);
-      
-      // Fallback: Simple pattern-based detection
-      const textLower = text.toLowerCase();
-      
-      // Spanish patterns
-      const spanishPatterns = [
-        /\b(hola|como|estan|que|tal|buenos|dias|noches|gracias|por|favor|si|no|muy|bien)\b/g,
-        /\b(el|la|los|las|un|una|y|o|pero|en|de|a|para|con|por)\b/g,
-        /\b(yo|tú|él|ella|nosotros|vosotros|ellos|soy|eres|es|somos|son)\b/g
-      ];
-      
-      // Haitian Creole patterns
-      const creolePatterns = [
-        /\b(kijan|ou|ye|mwen|nou|yo|li|ak|nan|pou|ki|sa|gen|pa|te|ap|va)\b/g,
-        /\b(bonjou|bonswa|mesi|tanpri|wi|non|byen|mal|gwo|ti|bel)\b/g
-      ];
-      
-      // English patterns
-      const englishPatterns = [
-        /\b(hello|hi|how|are|you|what|the|and|or|but|in|on|at|to|for|of|with|by)\b/g,
-        /\b(I|you|he|she|it|we|they|am|is|are|was|were|have|has|had)\b/g
-      ];
-      
-      let spanishMatches = 0;
-      let creoleMatches = 0;
-      let englishMatches = 0;
-      
-      spanishPatterns.forEach(pattern => {
-        spanishMatches += (textLower.match(pattern) || []).length;
-      });
-      
-      creolePatterns.forEach(pattern => {
-        creoleMatches += (textLower.match(pattern) || []).length;
-      });
-      
-      englishPatterns.forEach(pattern => {
-        englishMatches += (textLower.match(pattern) || []).length;
-      });
-      
-      const totalWords = text.split(/\s+/).length;
-      const totalMatches = spanishMatches + creoleMatches + englishMatches;
-      
-      if (totalMatches === 0) {
-        return { language: 'unknown', confidence: 0 };
-      }
-      
-      let detectedLanguage = 'english';
-      let maxMatches = englishMatches;
-      
-      if (spanishMatches > maxMatches) {
-        detectedLanguage = 'spanish';
-        maxMatches = spanishMatches;
-      }
-      
-      if (creoleMatches > maxMatches) {
-        detectedLanguage = 'creole';
-        maxMatches = creoleMatches;
-      }
-      
-      const confidence = Math.min(maxMatches / totalWords, 1.0);
-      
-      return { language: detectedLanguage, confidence };
+    // JavaScript-only pattern-based detection
+    const textLower = text.toLowerCase();
+    
+    // Spanish patterns
+    const spanishPatterns = [
+      /\b(hola|como|estan|que|tal|buenos|dias|noches|gracias|por|favor|si|no|muy|bien)\b/g,
+      /\b(el|la|los|las|un|una|y|o|pero|en|de|a|para|con|por)\b/g,
+      /\b(yo|tú|él|ella|nosotros|vosotros|ellos|soy|eres|es|somos|son)\b/g
+    ];
+    
+    // Haitian Creole patterns
+    const creolePatterns = [
+      /\b(kijan|ou|ye|mwen|nou|yo|li|ak|nan|pou|ki|sa|gen|pa|te|ap|va)\b/g,
+      /\b(bonjou|bonswa|mesi|tanpri|wi|non|byen|mal|gwo|ti|bel)\b/g
+    ];
+    
+    // English patterns
+    const englishPatterns = [
+      /\b(hello|hi|how|are|you|what|the|and|or|but|in|on|at|to|for|of|with|by)\b/g,
+      /\b(I|you|he|she|it|we|they|am|is|are|was|were|have|has|had)\b/g
+    ];
+    
+    let spanishMatches = 0;
+    let creoleMatches = 0;
+    let englishMatches = 0;
+    
+    spanishPatterns.forEach(pattern => {
+      spanishMatches += (textLower.match(pattern) || []).length;
+    });
+    
+    creolePatterns.forEach(pattern => {
+      creoleMatches += (textLower.match(pattern) || []).length;
+    });
+    
+    englishPatterns.forEach(pattern => {
+      englishMatches += (textLower.match(pattern) || []).length;
+    });
+    
+    const totalWords = text.split(/\s+/).length;
+    const totalMatches = spanishMatches + creoleMatches + englishMatches;
+    
+    if (totalMatches === 0) {
+      return { language: 'unknown', confidence: 0 };
     }
+    
+    let detectedLanguage = 'english';
+    let maxMatches = englishMatches;
+    
+    if (spanishMatches > maxMatches) {
+      detectedLanguage = 'spanish';
+      maxMatches = spanishMatches;
+    }
+    
+    if (creoleMatches > maxMatches) {
+      detectedLanguage = 'creole';
+      maxMatches = creoleMatches;
+    }
+      
+    const confidence = Math.min(maxMatches / totalWords, 1.0);
+    
+    return { language: detectedLanguage, confidence };
   }
 
   /**
