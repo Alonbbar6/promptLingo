@@ -169,14 +169,10 @@ export interface TTSVoice {
   language: string;
   gender?: 'male' | 'female';
   isDefault?: boolean;
-  isLocal?: boolean;
 }
 
 export interface TTSOptions {
-  voice?: string;
-  rate?: number;    // 0.1 to 10 (default: 1)
-  pitch?: number;   // 0 to 2 (default: 1)
-  volume?: number;  // 0 to 1 (default: 1)
+  voiceId?: string;
   language?: string;
 }
 
