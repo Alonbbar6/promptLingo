@@ -7,7 +7,6 @@ const initialState: AppState = {
   targetLanguage: 'en', // Default to English as target
   translationDirection: 'to-english', // Default to translating TO English
   selectedTone: 'casual',
-  translationDirection: 'to-english', // New: translation direction
   audioRecorder: {
     isRecording: false,
     isPaused: false,

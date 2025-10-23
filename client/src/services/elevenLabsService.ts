@@ -97,3 +97,33 @@ export const isElevenLabsConfigured = (): boolean => {
 export const getElevenLabsVoices = (language: 'english' | 'spanish' | 'haitian') => {
   return ELEVENLABS_VOICES[language] || ELEVENLABS_VOICES.english;
 };
+
+// Convert language code to ElevenLabs language format
+export const getElevenLabsLanguage = (languageCode: string): 'english' | 'spanish' | 'haitian' => {
+  const languageMap: { [key: string]: 'english' | 'spanish' | 'haitian' } = {
+    'en': 'english',
+    'es': 'spanish',
+    'ht': 'haitian',
+    'english': 'english',
+    'spanish': 'spanish',
+    'haitian': 'haitian',
+  };
+  
+  return languageMap[languageCode.toLowerCase()] || 'english';
+};
+
+// Generate and play speech in one function
+export const generateAndPlaySpeech = async (options: ElevenLabsOptions): Promise<{ success: boolean; error?: string }> => {
+  try {
+    console.log('🎵 [ELEVENLABS] Generating and playing speech...');
+    const audioBlob = await generateSpeech(options);
+    playAudioBlob(audioBlob);
+    return { success: true };
+  } catch (error: any) {
+    console.error('❌ [ELEVENLABS] Failed to generate and play speech:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Failed to generate speech' 
+    };
+  }
+};

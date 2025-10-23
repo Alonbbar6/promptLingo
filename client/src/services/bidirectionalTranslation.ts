@@ -16,6 +16,15 @@ export interface BidirectionalTranslationResult extends TranslationResponse {
 }
 
 /**
+ * Language name mapping
+ */
+const languageNames = {
+  'ht': 'Haitian Creole',
+  'es': 'Spanish',
+  'en': 'English'
+};
+
+/**
  * Get the appropriate translation prompt based on direction
  */
 function getTranslationPrompt(
@@ -23,12 +32,6 @@ function getTranslationPrompt(
   language: string,
   tone: string
 ): string {
-  const languageNames = {
-    'ht': 'Haitian Creole',
-    'es': 'Spanish',
-    'en': 'English'
-  };
-
   const sourceLanguageName = direction === 'to-english' ? languageNames[language as keyof typeof languageNames] : 'English';
   const targetLanguageName = direction === 'to-english' ? 'English' : languageNames[language as keyof typeof languageNames];
 

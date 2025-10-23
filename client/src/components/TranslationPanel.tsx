@@ -188,8 +188,8 @@ const TranslationPanel: React.FC = () => {
         id: Date.now().toString(),
         originalText: result.transcription,
         translatedText: result.translation,
-        sourceLanguage: translationResult.sourceLanguage,
-        targetLanguage: translationResult.targetLanguage,
+        sourceLanguage: state.translationDirection === 'to-english' ? state.sourceLanguage : 'en',
+        targetLanguage: state.translationDirection === 'to-english' ? 'en' : state.targetLanguage,
         tone: state.selectedTone,
         timestamp: new Date(),
       };
