@@ -80,8 +80,10 @@ router.post('/', async (req, res) => {
   const startTime = Date.now();
   console.log('🔊 [SYNTHESIZE] Request received');
   
+  // Extract variables outside try block so they're accessible in catch
+  const { text, voiceId, language } = req.body;
+  
   try {
-    const { text, voiceId, language } = req.body;
     
     // Map Haitian Creole to French for ElevenLabs compatibility
     const elevenLabsLanguage = getElevenLabsLanguageCode(language);
