@@ -46,12 +46,20 @@ const allowedOrigins = [
   /https:\/\/.*\.netlify\.app$/, // All Netlify preview deployments
   'https://promptlingo-frontend.onrender.com', // Your Render frontend domain
   /https:\/\/.*\.onrender\.com$/, // All Render preview deployments
-];
+  process.env.FRONTEND_URL, // Dynamic frontend URL from environment
+].filter(Boolean); // Remove undefined values
 
-app.use(cors({
+console.log('🌐 CORS Configuration:');
+console.log('   - Allowed Origins:', allowedOrigins.filter(o => typeof o === 'string').join(', '));
+console.log('   - Regex Patterns: Netlify and Render subdomains');
+
+const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps, curl, Postman)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('✅ CORS: Request with no origin allowed');
+      return callback(null, true);
+    }
     
     // Check if origin is in allowed list or matches regex pattern
     const isAllowed = allowedOrigins.some(allowed => {
@@ -62,24 +70,33 @@ app.use(cors({
     });
     
     if (isAllowed) {
+      console.log(`✅ CORS: Allowed origin: ${origin}`);
       callback(null, true);
     } else {
-      console.warn(`⚠️  CORS blocked request from origin: ${origin}`);
+      console.warn(`❌ CORS: Blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  exposedHeaders: ['Content-Length', 'Content-Type'],
+  maxAge: 86400, // 24 hours - cache preflight requests
   optionsSuccessStatus: 200
-}));
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options('*', cors(corsOptions));
 
 // Logging
 app.use(morgan('combined'));
 
-// Request logging middleware
+// Request logging middleware with origin tracking
 app.use((req, res, next) => {
-  console.log(`📨 ${req.method} ${req.path}`);
+  const origin = req.headers.origin || 'no-origin';
+  console.log(`📨 ${req.method} ${req.path} from ${origin}`);
   next();
 });
 
@@ -136,6 +153,7 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/health',
       apiHealth: '/api/health',
+      corsTest: '/api/cors-test',
       transcribe: '/api/transcribe',
       translate: '/api/translate',
       synthesize: '/api/synthesize',
@@ -150,6 +168,26 @@ app.get('/health', (req, res) => {
     status: 'OK', 
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
+  });
+});
+
+// CORS test endpoint for debugging
+app.get('/api/cors-test', (req, res) => {
+  console.log('🧪 CORS Test Request');
+  console.log('   Origin:', req.headers.origin);
+  console.log('   Method:', req.method);
+  console.log('   User-Agent:', req.headers['user-agent']);
+
+  res.json({
+    message: '✅ CORS is working!',
+    requestOrigin: req.headers.origin,
+    allowedOrigins: allowedOrigins.filter(o => typeof o === 'string'),
+    regexPatterns: ['Netlify subdomains', 'Render subdomains'],
+    timestamp: new Date().toISOString(),
+    headers: {
+      'access-control-allow-origin': res.getHeader('access-control-allow-origin'),
+      'access-control-allow-credentials': res.getHeader('access-control-allow-credentials'),
+    }
   });
 });
 
@@ -205,7 +243,17 @@ app.use('/api/wasm', wasmRoute);
 
 // Error handling middleware
 app.use((error, req, res, next) => {
-  console.error('Error:', error);
+  console.error('❌ Error:', error.message);
+  
+  // Handle CORS errors specifically
+  if (error.message === 'Not allowed by CORS') {
+    return res.status(403).json({
+      error: 'CORS Error',
+      message: 'Origin not allowed',
+      origin: req.headers.origin,
+      help: 'This origin is not in the allowed origins list. Contact the administrator.'
+    });
+  }
   
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
