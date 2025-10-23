@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Play, Pause, Square, Volume2, Settings, AlertCircle, Wand2, Eye } from 'lucide-react';
 import { getTTSService, TTSState, TTSVoice, isTTSSupported } from '../services/textToSpeech';
 import { getEnhancedToneService, getAvailableTones, EnhancedToneResult } from '../services/enhancedToneService';
-import { generateSpeech, playAudioBlob, isElevenLabsConfigured } from '../services/elevenLabsService';
+import { generateAndPlaySpeech, getElevenLabsLanguage, isElevenLabsConfigured } from '../services/elevenLabsService';
 import { LANGUAGES } from '../contexts/TranslationContext';
 
 interface EnhancedTextToSpeechPanelProps {
@@ -28,8 +28,6 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
   const [toneEnhancementResult, setToneEnhancementResult] = useState<EnhancedToneResult | null>(null);
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [isEnhancing, setIsEnhancing] = useState<boolean>(false);
-  const [useElevenLabs, setUseElevenLabs] = useState<boolean>(isElevenLabsConfigured());
-  const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   
   const [ttsState, setTTSState] = useState<TTSState>({
     isPlaying: false,
@@ -39,6 +37,9 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
   });
   const [availableVoices, setAvailableVoices] = useState<TTSVoice[]>([]);
   const [error, setError] = useState<string>('');
+  const [useElevenLabs, setUseElevenLabs] = useState(true);
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+  const [elevenLabsStatus, setElevenLabsStatus] = useState<string>('');
 
   const ttsService = getTTSService(setTTSState);
   const toneService = getEnhancedToneService();
@@ -118,44 +119,59 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
     }
 
     setError('');
+    setElevenLabsStatus('');
     
-    try {
-      if (useElevenLabs && isElevenLabsConfigured()) {
-        // Use ElevenLabs for premium voice quality
-        setIsGeneratingAudio(true);
-        
-        // Determine language for ElevenLabs
-        let elevenLabsLanguage: 'english' | 'spanish' | 'haitian' = 'english';
-        if (selectedLanguage === 'ht') {
-          elevenLabsLanguage = 'haitian';
-        } else if (selectedLanguage === 'es') {
-          elevenLabsLanguage = 'spanish';
-        }
-        
-        console.log('🎤 Using ElevenLabs for speech synthesis...');
-        const audioBlob = await generateSpeech({
+    // Try ElevenLabs first if enabled and configured
+    if (useElevenLabs && isElevenLabsConfigured()) {
+      setIsGeneratingAudio(true);
+      
+      try {
+        const elevenLabsLanguage = getElevenLabsLanguage(selectedLanguage);
+        const result = await generateAndPlaySpeech({
           text: textToSpeak,
           language: elevenLabsLanguage,
-          voiceGender: 'male', // Can make this selectable
+          voiceGender: 'male', // Could make this selectable
         });
         
-        playAudioBlob(audioBlob);
-        console.log('✅ Audio played using ElevenLabs AI');
-      } else {
+        if (result.success) {
+          setElevenLabsStatus('Audio played using ElevenLabs AI');
+          console.log('✅ Audio played using ElevenLabs AI');
+        } else {
+          throw new Error(result.error || 'ElevenLabs failed');
+        }
+      } catch (elevenLabsError) {
+        console.warn('⚠️ ElevenLabs failed, falling back to browser TTS:', elevenLabsError);
+        setElevenLabsStatus('ElevenLabs failed, using browser TTS');
+        
         // Fallback to browser TTS
-        console.log('🔊 Using browser TTS (ElevenLabs not configured)');
+        try {
+          await ttsService.speak(textToSpeak, {
+            language: selectedLanguage,
+            voice: selectedVoice,
+            rate: rate
+          });
+        } catch (browserError) {
+          const errorMessage = browserError instanceof Error ? browserError.message : 'Speech synthesis failed';
+          setError(errorMessage);
+          console.error('Browser TTS Error:', browserError);
+        }
+      } finally {
+        setIsGeneratingAudio(false);
+      }
+    } else {
+      // Use browser TTS directly
+      try {
         await ttsService.speak(textToSpeak, {
           language: selectedLanguage,
           voice: selectedVoice,
           rate: rate
         });
+        setElevenLabsStatus('Audio played using free browser text-to-speech');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Speech synthesis failed';
+        setError(errorMessage);
+        console.error('TTS Error:', err);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Speech synthesis failed';
-      setError(errorMessage);
-      console.error('TTS Error:', err);
-    } finally {
-      setIsGeneratingAudio(false);
     }
   }, [text, enhancedText, selectedLanguage, selectedVoice, rate, ttsService, useElevenLabs]);
 
@@ -203,23 +219,28 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
   if (compact) {
     return (
       <div className={`flex items-center space-x-2 ${className}`}>
-        {!ttsState.isPlaying ? (
-            <button
-              onClick={handleSpeak}
-              disabled={!text.trim() || isGeneratingAudio}
-              className="flex items-center space-x-1 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white text-sm rounded-md transition-colors"
-              title="Play audio"
-            >
-              {isGeneratingAudio ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              ) : (
-                <Play className="h-4 w-4" />
-              )}
-              <span>{isGeneratingAudio ? 'Generating...' : 'Play'}</span>
-            </button>
+        {!ttsState.isPlaying && !isGeneratingAudio ? (
+          <button
+            onClick={handleSpeak}
+            disabled={!text.trim()}
+            className="flex items-center space-x-1 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white text-sm rounded-md transition-colors"
+            title="Play audio"
+          >
+            <Play className="h-4 w-4" />
+            <span>Play</span>
+          </button>
         ) : (
           <div className="flex items-center space-x-1">
-            {ttsState.isPaused ? (
+            {isGeneratingAudio ? (
+              <button
+                disabled
+                className="flex items-center space-x-1 px-3 py-1.5 bg-yellow-500 text-white text-sm rounded-md transition-colors"
+                title="Generating audio..."
+              >
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Generating...</span>
+              </button>
+            ) : ttsState.isPaused ? (
               <button
                 onClick={handleResume}
                 className="flex items-center space-x-1 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-sm rounded-md transition-colors"
@@ -260,6 +281,13 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
             <span className="text-xs text-gray-500">
               {Math.round(ttsState.progress * 100)}%
             </span>
+          </div>
+        )}
+        
+        {/* ElevenLabs Status */}
+        {elevenLabsStatus && (
+          <div className="text-xs text-gray-600">
+            {elevenLabsStatus}
           </div>
         )}
       </div>
@@ -400,23 +428,44 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
         </div>
       )}
 
+      {/* ElevenLabs Toggle */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-medium text-blue-900 mb-1">🔊 Audio Quality</h3>
+            <p className="text-sm text-blue-700">
+              {isElevenLabsConfigured() 
+                ? 'ElevenLabs AI voices provide premium quality speech synthesis'
+                : 'ElevenLabs API key not configured. Using browser TTS.'
+              }
+            </p>
+          </div>
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={useElevenLabs && isElevenLabsConfigured()}
+              onChange={(e) => setUseElevenLabs(e.target.checked)}
+              disabled={!isElevenLabsConfigured()}
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm font-medium text-blue-900">
+              Use ElevenLabs AI
+            </span>
+          </label>
+        </div>
+      </div>
+
       {/* Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          {!ttsState.isPlaying ? (
+          {!ttsState.isPlaying && !isGeneratingAudio ? (
             <button
               onClick={handleSpeak}
-              disabled={!text.trim() || isGeneratingAudio}
+              disabled={!text.trim()}
               className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white rounded-lg transition-colors"
             >
-              {isGeneratingAudio ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              ) : (
-                <Play className="h-5 w-5" />
-              )}
-              <span>
-                {isGeneratingAudio ? 'Generating Audio...' : `Speak ${enhancedText ? '(Enhanced)' : ''}`}
-              </span>
+              <Play className="h-5 w-5" />
+              <span>Speak {enhancedText ? '(Enhanced)' : ''}</span>
             </button>
           ) : (
             <div className="flex items-center space-x-2">
@@ -473,52 +522,50 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
         </div>
       )}
 
+      {/* ElevenLabs Status */}
+      {elevenLabsStatus && (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+          <div className="flex items-center space-x-2 text-sm text-gray-700">
+            <Volume2 className="h-4 w-4" />
+            <span>{elevenLabsStatus}</span>
+          </div>
+        </div>
+      )}
+
+      {/* ElevenLabs Generation Status */}
+      {isGeneratingAudio && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+          <div className="flex items-center space-x-2 text-sm text-yellow-700">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600"></div>
+            <span>Generating high-quality audio with ElevenLabs AI...</span>
+          </div>
+        </div>
+      )}
+
       {/* Settings Panel */}
       {showSettings && (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-4">
           <h4 className="font-medium text-gray-900">Speech Settings</h4>
           
-          {/* ElevenLabs Toggle */}
-          {isElevenLabsConfigured() && (
-            <div>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={useElevenLabs}
-                  onChange={(e) => setUseElevenLabs(e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-sm font-medium text-gray-700">
-                  Use ElevenLabs AI Voices (Premium Quality)
-                </span>
-              </label>
-              <p className="text-xs text-gray-500 mt-1">
-                {useElevenLabs ? 'Using high-quality AI voices' : 'Using browser text-to-speech'}
-              </p>
-            </div>
-          )}
-          
-          {/* Voice Selection - Only show for browser TTS */}
-          {!useElevenLabs && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Voice
-              </label>
-              <select
-                value={selectedVoice}
-                onChange={(e) => setSelectedVoice(e.target.value)}
-                className="input-field"
-              >
-                <option value="">Default Voice</option>
-                {getLanguageVoices().map((voice) => (
-                  <option key={voice.id} value={voice.id}>
-                    {voice.name} {voice.gender && `(${voice.gender})`}
-                    {voice.isLocal && ' - Local'}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+          {/* Voice Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Voice
+            </label>
+            <select
+              value={selectedVoice}
+              onChange={(e) => setSelectedVoice(e.target.value)}
+              className="input-field"
+            >
+              <option value="">Default Voice</option>
+              {getLanguageVoices().map((voice) => (
+                <option key={voice.id} value={voice.id}>
+                  {voice.name} {voice.gender && `(${voice.gender})`}
+                  {voice.isLocal && ' - Local'}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Speech Rate */}
           <div>

@@ -3,6 +3,7 @@ import { useTranslation } from '../contexts/TranslationContext';
 import { transcribeAudio } from '../services/api';
 import { processChunkedAudio } from '../services/audioProcessing';
 import { translateWithFormality } from '../services/enhancedTranslation';
+import { translateBidirectional } from '../services/bidirectionalTranslation';
 import { Copy, Hash } from 'lucide-react';
 import { copyToClipboard } from '../services/audioUtils';
 import { enhancedLanguageDetection, getLanguageName } from '../services/languageDetection';
@@ -11,6 +12,8 @@ import ErrorDisplay from './ErrorDisplay';
 import FilterStatusNotification from './FilterStatusNotification';
 import LanguageDetectionIndicator from './LanguageDetectionIndicator';
 import EnhancedTextToSpeechPanel from './EnhancedTextToSpeechPanel';
+import TranslationDirectionToggle from './TranslationDirectionToggle';
+import TargetLanguageSelector from './TargetLanguageSelector';
 
 const TranslationPanel: React.FC = () => {
   const { state, dispatch } = useTranslation();
@@ -152,29 +155,23 @@ const TranslationPanel: React.FC = () => {
         setProcessingStage('Translating text...');
         setProgress(66);
         
-        // Use enhanced translation with formality improvements
-        const enhancedTranslationResult = await translateWithFormality(
-          transcriptionResult.transcription,
-          state.sourceLanguage,
-          state.targetLanguage,
-          state.selectedTone,
+        // Use bidirectional translation
+        const translationResult = await translateBidirectional({
+          text: transcriptionResult.transcription,
+          direction: state.translationDirection,
+          language: state.translationDirection === 'to-english' ? state.sourceLanguage : state.targetLanguage,
+          tone: state.selectedTone,
           userTier
-        );
+        });
         
         // Update filter status if available
-        if (enhancedTranslationResult.wasFiltered !== undefined) {
+        if (translationResult.wasFiltered !== undefined) {
           setFilterStatus({
-            wasFiltered: enhancedTranslationResult.wasFiltered || false,
-            detectedIssues: enhancedTranslationResult.detectedIssues || [],
-            severityLevel: enhancedTranslationResult.severityLevel || 'none'
+            wasFiltered: translationResult.wasFiltered || false,
+            detectedIssues: translationResult.detectedIssues || [],
+            severityLevel: translationResult.severityLevel || 'none'
           });
         }
-        
-        const translationResult = {
-          translation: enhancedTranslationResult.enhancedTranslation,
-          model: enhancedTranslationResult.model,
-          tokensUsed: enhancedTranslationResult.tokensUsed
-        };
         
         result = {
           transcription: transcriptionResult.transcription,
@@ -191,8 +188,8 @@ const TranslationPanel: React.FC = () => {
         id: Date.now().toString(),
         originalText: result.transcription,
         translatedText: result.translation,
-        sourceLanguage: state.sourceLanguage,
-        targetLanguage: state.targetLanguage,
+        sourceLanguage: translationResult.sourceLanguage,
+        targetLanguage: translationResult.targetLanguage,
         tone: state.selectedTone,
         timestamp: new Date(),
       };
@@ -288,6 +285,12 @@ const TranslationPanel: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Translation Direction Toggle */}
+      <TranslationDirectionToggle />
+      
+      {/* Target Language Selector (only when translating from English) */}
+      <TargetLanguageSelector />
+      
       {/* Loading State with Progress */}
       {isProcessing && (
         <div className="loading-indicator py-8">

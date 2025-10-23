@@ -5,6 +5,7 @@ import { AppState, TranslationHistoryItem, Language, Tone } from '../types';
 const initialState: AppState = {
   sourceLanguage: 'ht', // Default to Haitian Creole as source
   targetLanguage: 'en', // Default to English as target
+  translationDirection: 'to-english', // Default to translating TO English
   selectedTone: 'casual',
   translationDirection: 'to-english', // New: translation direction
   audioRecorder: {
@@ -29,6 +30,7 @@ const initialState: AppState = {
 type Action =
   | { type: 'SET_SOURCE_LANGUAGE'; payload: string }
   | { type: 'SET_TARGET_LANGUAGE'; payload: string }
+  | { type: 'SET_TRANSLATION_DIRECTION'; payload: 'to-english' | 'from-english' }
   | { type: 'SWAP_LANGUAGES' }
   | { type: 'SET_TONE'; payload: string }
   | { type: 'SET_TRANSLATION_DIRECTION'; payload: 'to-english' | 'from-english' }
@@ -69,6 +71,20 @@ const translationReducer = (state: AppState, action: Action): AppState => {
         sourceLanguage: action.payload === state.sourceLanguage 
           ? (action.payload === 'en' ? 'ht' : 'en') 
           : state.sourceLanguage,
+      };
+
+    case 'SET_TRANSLATION_DIRECTION':
+      const newDirection = action.payload;
+      return {
+        ...state,
+        translationDirection: newDirection,
+        // Update source and target languages based on direction
+        sourceLanguage: newDirection === 'to-english' 
+          ? (state.sourceLanguage === 'en' ? 'ht' : state.sourceLanguage)
+          : 'en',
+        targetLanguage: newDirection === 'to-english' 
+          ? 'en'
+          : (state.targetLanguage === 'en' ? 'ht' : state.targetLanguage),
       };
 
     case 'SWAP_LANGUAGES':

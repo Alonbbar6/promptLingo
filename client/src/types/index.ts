@@ -120,6 +120,7 @@ export interface AppState {
   // Language selection
   sourceLanguage: string;
   targetLanguage: string;
+  translationDirection: 'to-english' | 'from-english';
   
   // Translation direction
   translationDirection: 'to-english' | 'from-english';
