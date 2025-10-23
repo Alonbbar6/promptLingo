@@ -42,13 +42,13 @@ const TextToSpeechPanel: React.FC<TextToSpeechPanelProps> = ({
 
   // Load available voices
   useEffect(() => {
-    const loadVoices = () => {
-      const voices = ttsService.getAvailableVoices();
+    const loadVoices = async () => {
+      const voices = await ttsService.getAvailableVoices();
       setAvailableVoices(voices);
       
       // Auto-select best voice for current language
       if (!selectedVoice && voices.length > 0) {
-        const bestVoice = ttsService.getBestVoiceForLanguage(selectedLanguage);
+        const bestVoice = await ttsService.getBestVoiceForLanguage(selectedLanguage);
         if (bestVoice) {
           setSelectedVoice(bestVoice.id);
         }
@@ -56,10 +56,6 @@ const TextToSpeechPanel: React.FC<TextToSpeechPanelProps> = ({
     };
 
     loadVoices();
-    
-    // Voices might load asynchronously
-    const timer = setTimeout(loadVoices, 100);
-    return () => clearTimeout(timer);
   }, [selectedLanguage, selectedVoice, ttsService]);
 
   // Update text when prop changes (only if text is empty or initialText is different)
@@ -117,8 +113,7 @@ const TextToSpeechPanel: React.FC<TextToSpeechPanelProps> = ({
     try {
       await ttsService.speak(textToSpeak, {
         language: selectedLanguage,
-        voice: selectedVoice,
-        rate: rate
+        voiceId: selectedVoice
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Speech synthesis failed';
@@ -350,7 +345,6 @@ const TextToSpeechPanel: React.FC<TextToSpeechPanelProps> = ({
               {getLanguageVoices().map((voice) => (
                 <option key={voice.id} value={voice.id}>
                   {voice.name} {voice.gender && `(${voice.gender})`}
-                  {voice.isLocal && ' - Local'}
                 </option>
               ))}
             </select>
