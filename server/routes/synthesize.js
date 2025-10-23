@@ -68,18 +68,16 @@ const VOICES = {
   }
 };
 
-// ElevenLabs voice mapping
-// Run 'node server/utils/listVoices.js' to get actual voice IDs from your account
-// These are example IDs - REPLACE with real IDs from the listVoices script
+// ElevenLabs voice mapping - UPDATED with real voice IDs from your account
 const ELEVENLABS_VOICE_IDS = {
-  'male-1': '21m00Tcm4TlvDq8ikWAM',   // Example: Rachel (replace with actual)
-  'female-1': 'EXAVITQu4vr4xnSDxMaL', // Example: Bella (replace with actual)
-  'male-en': '21m00Tcm4TlvDq8ikWAM',  // Example: Rachel (replace with actual)
-  'female-en': 'EXAVITQu4vr4xnSDxMaL' // Example: Bella (replace with actual)
+  'male-1': '2EiwWnXFnvU5JabPnv8n',   // Clyde - American male, middle-aged
+  'female-1': 'EXAVITQu4vr4xnSDxMaL', // Sarah - American female, young
+  'male-en': 'CwhRBWXzGAHq8TQ4Fs17',  // Roger - American male, conversational
+  'female-en': 'cgSgspJ2msm6clMCkdW9' // Jessica - American female, conversational
 };
 
 // Default fallback voice if mapping fails
-const DEFAULT_VOICE_ID = '21m00Tcm4TlvDq8ikWAM'; // Rachel - a common ElevenLabs voice
+const DEFAULT_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL'; // Sarah - reliable American female voice
 
 router.post('/', async (req, res) => {
   const startTime = Date.now();
