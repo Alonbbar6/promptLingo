@@ -45,14 +45,29 @@ export class TextToSpeechService {
     this.updateState();
   }
 
-  private getApiUrl(): string {
-    // Check if we have an explicit API URL (for network access from other devices)
-    const apiUrl = process.env.REACT_APP_API_URL;
-    if (apiUrl) {
-      return `${apiUrl}/api`;
+  private getApiUrl(endpoint = ''): string {
+    // Get base URL from environment or use relative URL
+    let baseUrl = process.env.REACT_APP_API_URL || '';
+    
+    // Remove any trailing slashes and /api if present (to avoid double /api)
+    baseUrl = baseUrl.replace(/\/+$/, '').replace(/\/api$/, '');
+    
+    // Add /api if not in production URL (since Render already includes it)
+    if (baseUrl && !baseUrl.includes('render.com')) {
+      baseUrl += '/api';
+    } else if (!baseUrl) {
+      baseUrl = '/api'; // Default for local development
     }
-    // Use relative URL for API requests - will work in both dev and production
-    return '/api';
+    
+    // Add endpoint if provided and not already in URL
+    if (endpoint) {
+      const cleanEndpoint = endpoint.replace(/^\/+/, ''); // Remove leading slashes
+      if (!baseUrl.endsWith(cleanEndpoint)) {
+        baseUrl += `/${cleanEndpoint}`;
+      }
+    }
+    
+    return baseUrl;
   }
 
   private updateState(updates?: Partial<TTSState>) {
@@ -118,7 +133,7 @@ export class TextToSpeechService {
       voiceId = voiceId || 'male-1'; // Default fallback
 
       // Call backend API
-      const response = await fetch(`${this.getApiUrl()}/synthesize`, {
+      const response = await fetch(this.getApiUrl('synthesize'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
