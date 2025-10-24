@@ -208,7 +208,7 @@ app.get('/api/health', async (req, res) => {
       const axios = require('axios');
       const testResponse = await axios.get('https://api.elevenlabs.io/v1/voices', {
         headers: {
-          'xi-api-key': process.env.ELEVENLABS_API_KEY,
+          'xi-api-key': process.env.ELEVENLABS_API_KEY.trim(), // Trim whitespace
         },
         timeout: 5000,
       });

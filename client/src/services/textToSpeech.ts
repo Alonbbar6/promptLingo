@@ -45,20 +45,24 @@ export class TextToSpeechService {
     this.updateState();
   }
 
-  private getApiUrl(endpoint = ''): string {
+  private getApiUrl(endpoint = 'synthesize'): string {
     // Get base URL and remove trailing slashes
     let baseUrl = process.env.REACT_APP_API_URL 
       ? process.env.REACT_APP_API_URL.replace(/\/+$/, '')
       : '';
     
-    // Only append /synthesize if it's not already in the URL
+    // If no endpoint specified, return base URL
+    if (!endpoint) {
+      return baseUrl || '/api';
+    }
+    
+    // Construct full URL with endpoint
     if (baseUrl) {
-      const endpoint = '/synthesize';
-      return baseUrl.endsWith(endpoint) ? baseUrl : `${baseUrl}${endpoint}`;
+      return `${baseUrl}/${endpoint}`;
     }
     
     // For local development
-    return '/api/synthesize';
+    return `/api/${endpoint}`;
   }
 
   private updateState(updates?: Partial<TTSState>) {
@@ -71,7 +75,7 @@ export class TextToSpeechService {
    */
   async getAvailableVoices(): Promise<TTSVoice[]> {
     try {
-      const response = await fetch(`${this.getApiUrl()}/voices`);
+      const response = await fetch(this.getApiUrl('voices'));
       if (!response.ok) {
         throw new Error('Failed to fetch voices');
       }

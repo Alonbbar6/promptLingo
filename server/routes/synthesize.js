@@ -107,7 +107,8 @@ router.post('/', async (req, res) => {
     }
 
     // Validate API key
-    if (!process.env.ELEVENLABS_API_KEY) {
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) {
       const duration = Date.now() - startTime;
       console.error(`❌ [SYNTHESIZE] ElevenLabs API key not configured after ${duration}ms`);
       return res.status(500).json({
@@ -115,6 +116,12 @@ router.post('/', async (req, res) => {
         message: 'Please configure ELEVENLABS_API_KEY in environment variables'
       });
     }
+    
+    // Log API key status (without exposing the actual key)
+    console.log(`   - API Key status: ${apiKey ? '✓ Present' : '✗ Missing'}`);
+    console.log(`   - API Key length: ${apiKey ? apiKey.length : 0} characters`);
+    console.log(`   - API Key preview: ${apiKey ? apiKey.substring(0, 8) + '...' : 'N/A'}`);
+    console.log(`   - Has whitespace: ${apiKey && /\s/.test(apiKey) ? '⚠️  YES (this could cause issues!)' : 'No'}`);
 
     // Map the voiceId to actual ElevenLabs voice ID
     // If voiceId is already a valid ElevenLabs ID (21+ chars), use it directly
@@ -163,7 +170,7 @@ router.post('/', async (req, res) => {
         headers: {
           'Accept': 'audio/mpeg',
           'Content-Type': 'application/json',
-          'xi-api-key': process.env.ELEVENLABS_API_KEY
+          'xi-api-key': apiKey.trim() // Trim whitespace from API key
         },
         responseType: 'arraybuffer',
         timeout: 30000 // 30 second timeout
