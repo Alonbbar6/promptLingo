@@ -46,7 +46,7 @@ export class TextToSpeechService {
   }
 
   private getApiUrl(): string {
-    return process.env.REACT_APP_API_URL || 'http://localhost:10000/api';
+    return process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
   }
 
   private updateState(updates?: Partial<TTSState>) {
@@ -59,7 +59,7 @@ export class TextToSpeechService {
    */
   async getAvailableVoices(): Promise<TTSVoice[]> {
     try {
-      const response = await fetch(`${this.getApiUrl()}/synthesize`);
+      const response = await fetch(`${this.getApiUrl()}/voices`);
       if (!response.ok) {
         throw new Error('Failed to fetch voices');
       }
