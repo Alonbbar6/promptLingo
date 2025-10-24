@@ -19,7 +19,7 @@ const TextToSpeechPanel: React.FC<TextToSpeechPanelProps> = ({
 }) => {
   const [text, setText] = useState(initialText);
   const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage);
-  const [selectedVoice, setSelectedVoice] = useState<string>('');
+  const [selectedVoice, setSelectedVoice] = useState<string>('male-1');
   const [rate, setRate] = useState(1);
   const [showSettings, setShowSettings] = useState(false);
   const [ttsState, setTTSState] = useState<TTSState>({
@@ -341,7 +341,6 @@ const TextToSpeechPanel: React.FC<TextToSpeechPanelProps> = ({
               onChange={(e) => setSelectedVoice(e.target.value)}
               className="input-field"
             >
-              <option value="">Default Voice</option>
               {getLanguageVoices().map((voice) => (
                 <option key={voice.id} value={voice.id}>
                   {voice.name} {voice.gender && `(${voice.gender})`}
