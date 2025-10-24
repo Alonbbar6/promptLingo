@@ -1,9 +1,12 @@
 [build]
   # Specify the build directory
-  publish = "client/build"
+  publish = "build"
   
   # Build command - only build the client React app
-  command = "cd client && npm install && npm run build"
+  command = "npm install && npm run build"
+  
+  # Base directory for the build
+  base = "client"
   
   # Ignore Python files - they are not needed for this deployment
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ':(exclude)requirements.txt' ':(exclude)streamlit_app.py' ':(exclude)server/'"
