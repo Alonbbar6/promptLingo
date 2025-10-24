@@ -65,7 +65,7 @@ export class TextToSpeechService {
    */
   async getAvailableVoices(): Promise<TTSVoice[]> {
     try {
-      const response = await fetch(`${this.getApiUrl()}/synthesize`);
+      const response = await fetch(`${this.getApiUrl()}/voices`);
       if (!response.ok) {
         throw new Error('Failed to fetch voices');
       }

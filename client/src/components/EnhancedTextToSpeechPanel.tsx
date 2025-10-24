@@ -19,7 +19,7 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
 }) => {
   const [text, setText] = useState(initialText);
   const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage);
-  const [selectedVoice, setSelectedVoice] = useState<string>('');
+  const [selectedVoice, setSelectedVoice] = useState<string>('male-1');
   const [rate, setRate] = useState(1);
   const [showSettings, setShowSettings] = useState(false);
   const [selectedTone, setSelectedTone] = useState<string>('professional');
@@ -47,10 +47,12 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
       const voices = await ttsService.getAvailableVoices();
       setAvailableVoices(voices);
       
-      if (!selectedVoice && voices.length > 0) {
+      if ((!selectedVoice || selectedVoice === '') && voices.length > 0) {
         const bestVoice = await ttsService.getBestVoiceForLanguage(selectedLanguage);
         if (bestVoice) {
           setSelectedVoice(bestVoice.id);
+        } else {
+          setSelectedVoice('male-1'); // Fallback to default
         }
       }
     };
@@ -73,7 +75,7 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
   useEffect(() => {
     if (initialLanguage !== selectedLanguage) {
       setSelectedLanguage(initialLanguage);
-      setSelectedVoice('');
+      setSelectedVoice('male-1'); // Reset to default instead of empty
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialLanguage]);
@@ -456,11 +458,10 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
               Voice
             </label>
             <select
-              value={selectedVoice}
-              onChange={(e) => setSelectedVoice(e.target.value)}
+              value={selectedVoice || 'male-1'}
+              onChange={(e) => setSelectedVoice(e.target.value || 'male-1')}
               className="input-field"
             >
-              <option value="">Default Voice</option>
               {getLanguageVoices().map((voice) => (
                 <option key={voice.id} value={voice.id}>
                   {voice.name} {voice.gender && `(${voice.gender})`}
