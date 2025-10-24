@@ -72,20 +72,6 @@ const translationReducer = (state: AppState, action: Action): AppState => {
           : state.sourceLanguage,
       };
 
-    case 'SET_TRANSLATION_DIRECTION':
-      const newDirection = action.payload;
-      return {
-        ...state,
-        translationDirection: newDirection,
-        // Update source and target languages based on direction
-        sourceLanguage: newDirection === 'to-english' 
-          ? (state.sourceLanguage === 'en' ? 'ht' : state.sourceLanguage)
-          : 'en',
-        targetLanguage: newDirection === 'to-english' 
-          ? 'en'
-          : (state.targetLanguage === 'en' ? 'ht' : state.targetLanguage),
-      };
-
     case 'SWAP_LANGUAGES':
       return {
         ...state,

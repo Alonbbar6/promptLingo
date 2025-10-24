@@ -2,7 +2,6 @@ import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useTranslation } from '../contexts/TranslationContext';
 import { transcribeAudio } from '../services/api';
 import { processChunkedAudio } from '../services/audioProcessing';
-import { translateWithFormality } from '../services/enhancedTranslation';
 import { translateBidirectional } from '../services/bidirectionalTranslation';
 import { Copy, Hash } from 'lucide-react';
 import { copyToClipboard } from '../services/audioUtils';
@@ -237,7 +236,7 @@ const TranslationPanel: React.FC = () => {
       isProcessingRef.current = false;
       setIsProcessing(false);
     }
-  }, [state.audioRecorder.audioBlob, state.audioRecorder.audioUrl, state.sourceLanguage, state.targetLanguage, state.selectedTone, state.isTranslating, userTier, dispatch]);
+  }, [state.audioRecorder.audioBlob, state.audioRecorder.audioUrl, state.sourceLanguage, state.targetLanguage, state.selectedTone, state.isTranslating, state.translationDirection, userTier, dispatch]);
 
   // Trigger translation when audio is recorded
   useEffect(() => {
