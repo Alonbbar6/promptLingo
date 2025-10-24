@@ -46,11 +46,14 @@ export class TextToSpeechService {
   }
 
   private getApiUrl(endpoint = ''): string {
-    // For production (Render)
-    if (process.env.REACT_APP_API_URL) {
-      const baseUrl = process.env.REACT_APP_API_URL.replace(/\/+$/, '');
-      // For production, the URL should be exactly 'https://.../api/synthesize'
-      return `${baseUrl}/api/synthesize`;
+    // Get base URL and remove trailing slashes
+    const baseUrl = process.env.REACT_APP_API_URL 
+      ? process.env.REACT_APP_API_URL.replace(/\/+$/, '')
+      : '';
+    
+    // Simply return the base URL + /synthesize (backend is mounted at /api/synthesize)
+    if (baseUrl) {
+      return `${baseUrl}/synthesize`;
     }
     
     // For local development
