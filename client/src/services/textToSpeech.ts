@@ -123,7 +123,7 @@ export class TextToSpeechService {
       voiceId = voiceId || 'male-1'; // Default fallback
 
       // Call backend API
-      const apiUrl = this.getApiUrl('synthesize');
+      const apiUrl = this.getApiUrl();
       console.log('📡 API URL:', apiUrl); // Debug log
       const response = await fetch(apiUrl, {
         method: 'POST',
