@@ -42,6 +42,9 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:5173', // Vite dev server
+  'http://192.168.1.96:3000', // Local network access
+  'http://192.168.1.96:3001', // Local network access
+  /^http:\/\/192\.168\.\d+\.\d+:\d+$/, // Allow all local network IPs
   'https://promptlingo.netlify.app', // Your Netlify production domain
   /https:\/\/.*\.netlify\.app$/, // All Netlify preview deployments
   'https://promptlingo-frontend.onrender.com', // Your Render frontend domain

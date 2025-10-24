@@ -47,5 +47,5 @@
     "postcss": "^8.4.32",
     "@types/jest": "^29.5.8"
   },
-  "proxy": "http://localhost:3001"
+  "proxy": "http://localhost:10000"
 }

@@ -46,7 +46,13 @@ export class TextToSpeechService {
   }
 
   private getApiUrl(): string {
-    return process.env.REACT_APP_API_URL || 'http://localhost:10000/api';
+    // Check if we have an explicit API URL (for network access from other devices)
+    const apiUrl = process.env.REACT_APP_API_URL;
+    if (apiUrl) {
+      return `${apiUrl}/api`;
+    }
+    // Use relative URL for API requests - will work in both dev and production
+    return '/api';
   }
 
   private updateState(updates?: Partial<TTSState>) {
