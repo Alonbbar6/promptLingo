@@ -47,13 +47,14 @@ export class TextToSpeechService {
 
   private getApiUrl(endpoint = ''): string {
     // Get base URL and remove trailing slashes
-    const baseUrl = process.env.REACT_APP_API_URL 
+    let baseUrl = process.env.REACT_APP_API_URL 
       ? process.env.REACT_APP_API_URL.replace(/\/+$/, '')
       : '';
     
-    // Simply return the base URL + /synthesize (backend is mounted at /api/synthesize)
+    // Only append /synthesize if it's not already in the URL
     if (baseUrl) {
-      return `${baseUrl}/synthesize`;
+      const endpoint = '/synthesize';
+      return baseUrl.endsWith(endpoint) ? baseUrl : `${baseUrl}${endpoint}`;
     }
     
     // For local development
