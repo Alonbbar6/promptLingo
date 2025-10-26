@@ -1,12 +1,10 @@
 use wasm_bindgen::prelude::*;
 use js_sys::Array;
-use web_sys::console;
 use serde::{Deserialize, Serialize};
 use regex::Regex;
-use unicode_segmentation::UnicodeSegmentation;
 use std::collections::HashMap;
 
-// Import the `console.log` function from the browser
+// Import the `console.log` function from JavaScript
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
@@ -46,11 +44,20 @@ pub struct ProcessingResult {
     pub processing_time_ms: f64,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct BenchmarkResult {
+    pub iterations: u32,
+    pub total_time_ms: f64,
+    pub average_time_ms: f64,
+    pub operations_per_second: f64,
+}
+
 // Main text processor struct
 #[wasm_bindgen]
 pub struct TextProcessor {
     profanity_patterns: Vec<Regex>,
     language_patterns: HashMap<String, Vec<Regex>>,
+    #[cfg(feature = "web")]
     performance: web_sys::Performance,
 }
 
@@ -58,13 +65,14 @@ pub struct TextProcessor {
 impl TextProcessor {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Result<TextProcessor, JsValue> {
-        let window = web_sys::window().ok_or("No window object")?;
-        let performance = window.performance().ok_or("No performance object")?;
-        
         let mut processor = TextProcessor {
             profanity_patterns: Vec::new(),
             language_patterns: HashMap::new(),
-            performance,
+            #[cfg(feature = "web")]
+            performance: {
+                let window = web_sys::window().ok_or("No window object")?;
+                window.performance().ok_or("No performance object")?
+            },
         };
         
         processor.initialize_patterns();
@@ -120,10 +128,23 @@ impl TextProcessor {
         self.language_patterns.insert("spanish".to_string(), spanish_patterns);
     }
 
+    // Helper function to get current time
+    fn get_time(&self) -> f64 {
+        #[cfg(feature = "web")]
+        {
+            self.performance.now()
+        }
+        #[cfg(not(feature = "web"))]
+        {
+            // For Node.js, use Date.now() via js_sys
+            js_sys::Date::now()
+        }
+    }
+
     // Fast text analysis function
     #[wasm_bindgen]
     pub fn analyze_text(&self, text: &str) -> Result<JsValue, JsValue> {
-        let start_time = self.performance.now();
+        let start_time = self.get_time();
         
         // Basic text metrics
         let word_count = text.split_whitespace().count();
@@ -153,7 +174,7 @@ impl TextProcessor {
             reading_time_minutes,
         };
 
-        let processing_time = self.performance.now() - start_time;
+        let processing_time = self.get_time() - start_time;
         console_log!("📊 Text analysis completed in {:.2}ms", processing_time);
 
         serde_wasm_bindgen::to_value(&analysis).map_err(|e| JsValue::from_str(&e.to_string()))
@@ -162,7 +183,7 @@ impl TextProcessor {
     // Content filtering and text cleaning
     #[wasm_bindgen]
     pub fn process_text(&self, text: &str, filter_profanity: bool, normalize_whitespace: bool) -> Result<JsValue, JsValue> {
-        let start_time = self.performance.now();
+        let start_time = self.get_time();
         let original_text = text.to_string();
         let mut processed_text = text.to_string();
 
@@ -185,7 +206,7 @@ impl TextProcessor {
         let analysis_result = self.analyze_text(&processed_text)?;
         let analysis: TextAnalysis = serde_wasm_bindgen::from_value(analysis_result)?;
 
-        let processing_time = self.performance.now() - start_time;
+        let processing_time = self.get_time() - start_time;
 
         let result = ProcessingResult {
             original_text,
@@ -201,7 +222,7 @@ impl TextProcessor {
     // Batch process multiple texts (demonstrates performance benefits)
     #[wasm_bindgen]
     pub fn batch_process(&self, texts: &Array) -> Result<JsValue, JsValue> {
-        let start_time = self.performance.now();
+        let start_time = self.get_time();
         let mut results = Vec::new();
 
         for i in 0..texts.length() {
@@ -213,7 +234,7 @@ impl TextProcessor {
             }
         }
 
-        let processing_time = self.performance.now() - start_time;
+        let processing_time = self.get_time() - start_time;
         console_log!("📦 Batch processed {} texts in {:.2}ms", results.len(), processing_time);
 
         let js_array = Array::new();
@@ -238,9 +259,12 @@ impl TextProcessor {
         }
 
         let total_words = text.split_whitespace().count().max(1);
+        
+        // Fix: Create a default value that lives long enough
+        let unknown = String::from("unknown");
         let (best_lang, best_score) = scores.iter()
             .max_by_key(|(_, &score)| score)
-            .unwrap_or((&"unknown".to_string(), &0));
+            .unwrap_or((&unknown, &0));
 
         let confidence = (*best_score as f32 / total_words as f32).min(1.0);
         
@@ -286,24 +310,24 @@ impl TextProcessor {
     #[wasm_bindgen]
     pub fn benchmark(&self, text: &str, iterations: u32) -> Result<JsValue, JsValue> {
         console_log!("🏃 Starting benchmark with {} iterations", iterations);
-        let start_time = self.performance.now();
+        let start_time = self.get_time();
         
         for _ in 0..iterations {
             let _ = self.analyze_text(text)?;
         }
         
-        let total_time = self.performance.now() - start_time;
+        let total_time = self.get_time() - start_time;
         let avg_time = total_time / iterations as f64;
         
-        let benchmark_result = serde_wasm_bindgen::to_value(&serde_json::json!({
-            "iterations": iterations,
-            "total_time_ms": total_time,
-            "average_time_ms": avg_time,
-            "operations_per_second": 1000.0 / avg_time
-        }))?;
+        let result = BenchmarkResult {
+            iterations,
+            total_time_ms: total_time,
+            average_time_ms: avg_time,
+            operations_per_second: 1000.0 / avg_time,
+        };
         
         console_log!("📈 Benchmark completed: {:.2}ms total, {:.4}ms avg", total_time, avg_time);
-        Ok(benchmark_result)
+        serde_wasm_bindgen::to_value(&result).map_err(|e| JsValue::from_str(&e.to_string()))
     }
 }
 
@@ -326,9 +350,10 @@ pub fn is_wasm_supported() -> bool {
 // Memory management utilities
 #[wasm_bindgen]
 pub fn get_memory_usage() -> JsValue {
-    let memory = wasm_bindgen::memory();
+    // Note: Direct memory access API has changed in newer wasm-bindgen versions
+    // Return a simple placeholder for now
     serde_wasm_bindgen::to_value(&serde_json::json!({
-        "buffer_size": memory.buffer().byte_length(),
-        "pages": memory.buffer().byte_length() / 65536
+        "available": true,
+        "note": "Memory stats available via browser DevTools"
     })).unwrap_or(JsValue::NULL)
 }

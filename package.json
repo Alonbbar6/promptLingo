@@ -7,12 +7,16 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd server && npm run dev",
     "client": "cd client && npm start",
-    "build": "cd client && npm run build",
-    "build:netlify": "cd client && npm install && npm run build",
-    "build:render": "cd client && npm install && npm run build",
+    "build": "npm run build:wasm && cd client && npm run build",
+    "build:netlify": "npm run build:wasm && cd client && npm install && npm run build",
+    "build:render": "npm run build:wasm && cd client && npm install && npm run build",
     "start": "cd server && npm start",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
-    "migrate:render": "./migrate-to-render.sh"
+    "migrate:render": "./migrate-to-render.sh",
+    "build:wasm": "cd wasm-text-processor && ./build-all.sh",
+    "build:wasm:web": "cd wasm-text-processor && ./build-web.sh",
+    "build:wasm:nodejs": "cd wasm-text-processor && ./build-nodejs.sh",
+    "wasm:check": "cd wasm-text-processor && cargo check"
   },
   "keywords": [
     "translation",

@@ -1,0 +1,169 @@
+﻿PromptLingo Brand Identity & Design System 
+Brand Identity (Contribution led by the Brand Strategist) 
+Brand Essence 
+The brand essence of PromptLingo is distilled from the core needs and desires of the target audience, Sofia Rodriguez, and the product's value proposition. 
+. Authority: The ability to communicate with the same power and respect as a native speaker. 
+. Clarity: Providing precise, professional, and context-aware language output. . Empowerment: Giving the user control over their academic and professional future. . Trust: A reliable tool that eliminates the fear of critical communication errors. . Efficiency: Saving the user precious time and mental energy. 
+. Warmth: Countering the perception that technology is "cold and impersonal" by being supportive and reassuring. 
+Brand Voice 
+• Tone: Professional, Reassuring, and Confident. The tone must convey competence to counter the user's shame and anxiety, but remain warm and supportive to build trust. It should never be condescending or overly academic. 
+• Language: Clear, Direct, and Aspirational. Use simple, jargon-free explanations for the app's function, but use aspirational language when discussing the user's future (e.g., "Achieve your RN," "Communicate with Authority"). 
+• Communication Style: Solution-Oriented, Emphasizing Gain and Avoidance. Focus on the gain (professional credibility, time saved) and the avoidance (public embarrassment, academic failure, stress). Frame the app as the key to unlocking the user's existing competence. 
+Brand Narrative 
+PromptLingo is the essential bridge for ambitious immigrant women like Sofia Rodriguez, who possess the intelligence, dedication, and knowledge to achieve their American Dream, but are held back by the language barrier. We understand the deep shame, anxiety, and frustration that comes from having your competence masked by awkward English.
+PromptLingo is not a language tutor; it is a professional voice amplifier that instantly converts your knowledge and intent into flawless, context-aware English. We exist to replace the fear of failure with the confidence of authority, ensuring that every professional and academic communication you send is as competent as you are. 
+Design System (Contribution led by the Lead UI/UX Designer and Lead Front-End Developer) 
+Color Palette 
+Primary Colors 
+The primary palette is a gradient representing the smooth, professional transition from the user's native, warm language to the clear, professional English output. • Gradient Base: linear-gradient(deg, #FFB %, #FFBB %, #DEA %, #DBFF %, # %) 
+• Primary Colors (Extracted from gradient): 
+• #FFB (Coral): Warmth (Represents the familiar, native language start). • #FFBB (Peach): Hope (The transitional phase of potential). 
+• #DEA (Mint): Clarity (The moment of successful, clean output). • #DBFF (Sky Blue): Trust (Professionalism and reliability). 
+• # (Deep Indigo): Authority (The final, deep professional tone). 
+Secondary Colors 
+A clean, highly readable neutral palette to support high-contrast readability, essential for users studying complex material. 
+• Dark Blue (Primary Text): #AC (High-contrast, professional text) • Medium Gray (Secondary Text): # (Subtle, non-distracting secondary information) 
+• Light Gray (Backgrounds): #FFAFC (Clean, low-fatigue background) • White: #FFFFFF 
+• Black: # 
+Functional Colors
+Standard, clear functional colors to provide immediate, unambiguous feedback, reducing user anxiety. 
+• Success: #A (Green - Reassurance, completion) 
+• Warning: #DEE (Yellow/Orange - Caution, need for review) 
+• Error: #EEE (Red - Immediate attention required) 
+• Info: #E (Blue - Helpful tips, contextual information) 
+Typography 
+Font Family 
+• Primary Font: Inter, sans-serif. A clean, modern, highly-readable sans-serif font. Justified because its large x-height and clear letterforms ensure maximum legibility, which is non-negotiable for a user (Sofia) reading complex academic and medical texts, often in low-light conditions. 
+• Secondary Font: DM Serif Display, serif. An elegant, sophisticated serif font for major headlines. Justified because it conveys a sense of established authority and professionalism, directly countering the user's feeling of shame and incompetence. 
+Font Sizes 
+A precise typographic scale is necessary for consistency and high readability across devices.
+Element rem px line-height 
+.rem 
+	px 
+	.rem 
+	px 
+	.rem 
+	px 
+	.rem 
+	px 
+	.rem 
+	px 
+	.rem 
+	px 
+	.rem 
+	px 
+	.rem 
+	px 
+	.rem 
+	px 
+	.rem 
+	px 
+	
+
+
+
+H . H . H . H . H . H . Body (Regular) . Body (Small) . Body (XSmall) . 
+Special Text 
+(Display). 
+Special Text 
+(Caption).rem px . 
+Font Weights 
+• Light () 
+• Regular () 
+• Medium () 
+• Semibold () 
+• Bold () 
+UI Components 
+st.dev Components 
+• Forms: For text and prompt input fields. 
+• Feedback: Toast notifications and alerts for success/error states. • Data Display: Tables and lists for displaying translation history. • Disclosure: Accordions for help sections and complex prompt explanations.
+• Navigation: Breadcrumbs and Tabs for internal app structure. 
+MagicUI Components 
+• Animated Cards: For displaying personalized success metrics and progress. • Hover Effects: Subtle, reassuring hover states on buttons and links. • Scroll Animations: Gentle reveal animations to guide the user through long output texts. 
+• Testimonial Carousels: For displaying peer recommendations (Community Trust). • Animated Icons: Small, functional animations for loading states and successful copy actions (e.g., a checkmark animation). 
+reactbits.dev Components 
+• Navigation: Top bar and bottom navigation optimized for mobile-first use. • Layout: Grid and Stack components for responsive design. 
+• Forms: Advanced input components for voice and multi-line text. 
+• Feedback: Progress bars and spinners for translation processing. 
+• Disclosure: Modals and Popovers for quick help and settings access. 
+Custom Components 
+. Prompt Selection Interface: A highly visual, mobile-optimized selector for professional contexts (e.g., "Nursing Note," "Academic Essay," "Formal Email"). 
+. Competence Meter: A visual gauge that rates the professionalism of the raw input and the translated output, providing a sense of control and measurable improvement. 
+. Dual-View Editor: A side-by-side or top-and-bottom view of the native input and the polished English output, allowing for quick comparison and learning. 
+. Time/Energy Saved Dashboard Widget: A prominent dashboard component that quantifies the time and mental energy the user has saved by using the app, appealing directly to their value-driven bias. 
+Micro-Interactions 
+. Button Hover: A subtle, reassuring color shift and elevation (z-index) to confirm the element is interactive. 
+. Form Focus: A clear, thick border highlight using the Sky Blue primary color to draw focus to the active input field.
+. Loading States: A smooth, pulsing gradient animation (using the primary gradient) to convey that the AI is working efficiently, reducing anxiety about waiting. 
+. Success Actions: A quick, satisfying checkmark animation after copying text or sending feedback. 
+. Navigation: A slight, fast transition (slide or fade) between screens to maintain a sense of speed and efficiency. 
+. Scrolling: A gentle sticky header/footer to keep core controls accessible on mobile. 
+Responsive Design (Contribution led by the Lead Front-End Developer) 
+• Mobile-First Approach: This is the core principle. All design and development will start with the smallest screen size, prioritizing touch targets, readability, and single-column layouts. 
+• Breakpoints: 
+• sm: px 
+• md: px 
+• lg: px 
+• xl: px 
+• xl: px 
+• Mobile Adaptations: Simplified navigation (hamburger menu), stacked layouts for dual view editor, larger touch targets (minimum px x px), and persistent bottom navigation for core functions (Input, Output, History). 
+Accessibility 
+• Color Contrast (WCAG AA): All text and interactive elements will meet or exceed WCAG AA contrast standards, especially for the primary text on light/dark backgrounds. • Keyboard Navigation: All interactive elements must be fully accessible and operable via keyboard, ensuring users who cannot use a mouse can navigate the app. • Screen Reader Support (ARIA): Proper ARIA roles, labels, and descriptions will be used throughout the application to ensure a meaningful experience for screen reader users. • Visible Focus Indicators: Clear, high-contrast focus rings will be used on all interactive elements to aid keyboard and low-vision users. 
+• Respect for Reduced Motion: All non-essential animations will be wrapped in a media query to respect the user's system preference for reduced motion.
+Dark/Light Mode 
+Both Dark and Light modes will be supported. DaisyUI themes will be used for rapid implementation and theming capabilities. The application will automatically detect the user's system preference on first load, and a user-selectable toggle will be provided in the settings for manual override. 
+Implementation Guidelines (Contribution led by the Lead Front-End Developer) 
+CSS Framework 
+• Tailwind CSS: Primary utility-first framework for rapid development and responsive styling. 
+• DaisyUI: Used for pre-built, themeable components and Dark/Light mode management. 
+• Custom Utilities: For project-specific, non-standard utilities (e.g., the primary gradient background utility). 
+Animation Library 
+• Framer Motion: Proposed primary animation library for complex, state-based animations and micro-interactions. 
+• Tailwind Animations: Will be used for simple, utility-based animations (e.g., hover effects, subtle fades). 
+Icon System 
+• Heroicons: Propose a standard, comprehensive icon set (preferably the solid style for clarity and visibility on mobile). 
+• Custom SVGs: Will be used for the brand logo and any unique, complex illustrations. 
+Asset Management 
+• SVG: Preferred format for icons and vector graphics (for scalability and small file size). • WebP: Preferred format for all photographic and raster images (for superior compression and quality). 
+• MP/WebM: Preferred formats for video assets (if any). 
+Code Structure
+• Component-Based Architecture: Strict adherence to modern component-based frameworks (e.g., React, Vue, Svelte), ensuring modularity and reusability. • Utility-First CSS: Styling primarily managed through Tailwind utility classes. • Responsive Variants: Extensive use of Tailwind's responsive variants ( sm: , md: , etc.) to ensure a truly mobile-first approach. 
+Design Tokens (As the Lead Front-End Developer) JSON 
+{ 
+ "colors": { 
+ "primary": { 
+ "coral": "#FF7B54", 
+ "peach": "#FFB26B", 
+ "mint": "#8DE3A6", 
+ "skyBlue": "#4D8BFF", 
+ "indigo": "#333399" 
+ }, 
+ "neutral": { 
+ "textPrimary": "#1A202C", 
+ "textSecondary": "#718096", 
+ "backgroundLight": "#F7FAFC", 
+ "white": "#FFFFFF", 
+ "black": "#000000" 
+ }, 
+ "functional": { 
+ "success": "#38A169", 
+ "warning": "#D69E2E", 
+ "error": "#E53E3E", 
+ "info": "#4299E1" 
+ } 
+ }, 
+ "typography": { 
+ "fontFamily": { 
+ "primary": "Inter, sans-serif", 
+ "secondary": "DM Serif Display, serif" 
+ } 
+ }, 
+ "spacing": { 
+ "xs": "0.25rem", 
+ "sm": "0.5rem", 
+ "md": "1rem", 
+ "lg": "1.5rem", 
+ "xl": "2rem",
+ "2xl": "3rem",  "3xl": "4rem"  }, 
+ "borderRadius": {  "sm": "0.125rem",  "md": "0.25rem",  "lg": "0.5rem",  "xl": "1rem",  "full": "9999px"  } 
+}
