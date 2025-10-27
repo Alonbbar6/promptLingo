@@ -379,7 +379,6 @@ export class EnhancedToneService {
       }
 
       // STEP 3: Translation TO target language
-      const targetLangCode = this.mapLanguageCode(detectedLanguage);
       const needsTranslation = targetLanguage !== 'en' || (detectedLanguage !== 'english' && detectedLanguage !== 'unknown');
       
       if (needsTranslation) {
