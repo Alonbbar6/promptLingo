@@ -3,7 +3,7 @@ import { useTranslation } from '../contexts/TranslationContext';
 import { transcribeAudio } from '../services/api';
 import { processChunkedAudio } from '../services/audioProcessing';
 import { translateBidirectional } from '../services/bidirectionalTranslation';
-import { Copy, Hash } from 'lucide-react';
+import { Copy, Hash, Cpu } from 'lucide-react';
 import { copyToClipboard } from '../services/audioUtils';
 import { enhancedLanguageDetection, getLanguageName } from '../services/languageDetection';
 import LoadingSpinner from './LoadingSpinner';
@@ -13,9 +13,12 @@ import LanguageDetectionIndicator from './LanguageDetectionIndicator';
 import EnhancedTextToSpeechPanel from './EnhancedTextToSpeechPanel';
 import TranslationDirectionToggle from './TranslationDirectionToggle';
 import TargetLanguageSelector from './TargetLanguageSelector';
+import { useWasmTextProcessor } from '../hooks/useWasmTextProcessor';
+import type { TextAnalysis } from '../types/wasm';
 
 const TranslationPanel: React.FC = () => {
   const { state, dispatch } = useTranslation();
+  const { analyzeText, isInitialized: isWasmReady } = useWasmTextProcessor(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStage, setProcessingStage] = useState<string>('');
   const [progress, setProgress] = useState(0);
@@ -25,6 +28,9 @@ const TranslationPanel: React.FC = () => {
     translationTime: 0,
     totalTime: 0,
   });
+  // WASM text analysis state
+  const [originalAnalysis, setOriginalAnalysis] = useState<TextAnalysis | null>(null);
+  const [translatedAnalysis, setTranslatedAnalysis] = useState<TextAnalysis | null>(null);
   // Content filter state
   const [filterStatus, setFilterStatus] = useState<{
     wasFiltered: boolean;
@@ -250,6 +256,34 @@ const TranslationPanel: React.FC = () => {
     }
   }, [state.audioRecorder.audioBlob, state.isTranslating, handleTranslate]);
 
+  // Analyze text with WASM when translation is complete
+  useEffect(() => {
+    const analyzeTexts = async () => {
+      if (state.currentTranslation && isWasmReady) {
+        console.log('🦀 Running WASM text analysis...');
+        try {
+          // Analyze original text
+          const origAnalysis = await analyzeText(state.currentTranslation.originalText);
+          if (origAnalysis) {
+            setOriginalAnalysis(origAnalysis);
+            console.log('✅ Original text analyzed:', origAnalysis);
+          }
+
+          // Analyze translated text
+          const transAnalysis = await analyzeText(state.currentTranslation.translatedText);
+          if (transAnalysis) {
+            setTranslatedAnalysis(transAnalysis);
+            console.log('✅ Translated text analyzed:', transAnalysis);
+          }
+        } catch (error) {
+          console.error('❌ WASM analysis failed:', error);
+        }
+      }
+    };
+
+    analyzeTexts();
+  }, [state.currentTranslation, isWasmReady, analyzeText]);
+
   const handleCopyOriginal = async () => {
     if (state.currentTranslation) {
       const success = await copyToClipboard(state.currentTranslation.originalText);
@@ -379,6 +413,34 @@ const TranslationPanel: React.FC = () => {
               </div>
             </div>
             <p className="text-blue-800">{state.currentTranslation.originalText}</p>
+            
+            {/* WASM Analysis for Original Text */}
+            {originalAnalysis && isWasmReady && (
+              <div className="mt-3 pt-3 border-t border-blue-200">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Cpu className="h-4 w-4 text-blue-600" />
+                  <span className="text-xs font-semibold text-blue-700">WASM Analysis</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs text-blue-700">
+                  <div>
+                    <span className="font-medium">Words:</span> {originalAnalysis.word_count}
+                  </div>
+                  <div>
+                    <span className="font-medium">Characters:</span> {originalAnalysis.char_count}
+                  </div>
+                  <div>
+                    <span className="font-medium">Sentences:</span> {originalAnalysis.sentence_count}
+                  </div>
+                  <div>
+                    <span className="font-medium">Read time:</span> {originalAnalysis.reading_time_minutes.toFixed(1)}m
+                  </div>
+                  <div className="col-span-2">
+                    <span className="font-medium">Detected:</span> {originalAnalysis.detected_language} 
+                    <span className="ml-1">({(originalAnalysis.language_confidence * 100).toFixed(0)}% confidence)</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Translated Text */}
@@ -410,6 +472,34 @@ const TranslationPanel: React.FC = () => {
                 <span>{state.currentTranslation.translatedText.length} characters</span>
               </div>
             </div>
+            
+            {/* WASM Analysis for Translated Text */}
+            {translatedAnalysis && isWasmReady && (
+              <div className="mt-3 pt-3 border-t border-green-200">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Cpu className="h-4 w-4 text-green-600" />
+                  <span className="text-xs font-semibold text-green-700">WASM Analysis</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs text-green-700">
+                  <div>
+                    <span className="font-medium">Words:</span> {translatedAnalysis.word_count}
+                  </div>
+                  <div>
+                    <span className="font-medium">Characters:</span> {translatedAnalysis.char_count}
+                  </div>
+                  <div>
+                    <span className="font-medium">Sentences:</span> {translatedAnalysis.sentence_count}
+                  </div>
+                  <div>
+                    <span className="font-medium">Read time:</span> {translatedAnalysis.reading_time_minutes.toFixed(1)}m
+                  </div>
+                  <div className="col-span-2">
+                    <span className="font-medium">Detected:</span> {translatedAnalysis.detected_language} 
+                    <span className="ml-1">({(translatedAnalysis.language_confidence * 100).toFixed(0)}% confidence)</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

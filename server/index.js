@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs-extra');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const transcribeRoute = require('./routes/transcribe');
@@ -13,6 +14,13 @@ const translateRoute = require('./routes/translate');
 const synthesizeRoute = require('./routes/synthesize');
 const voicesRoute = require('./routes/voices');
 const wasmRoute = require('./routes/wasm');
+const authRoute = require('./routes/auth');
+const userRoute = require('./routes/user');
+const healthRoute = require('./routes/health');
+const { testConnection } = require('./db/connection');
+const { requestLogger, errorLogger } = require('./middleware/logger');
+const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+const validateEnv = require('./utils/validateEnv');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -96,16 +104,13 @@ app.options('*', cors(corsOptions));
 // Logging
 app.use(morgan('combined'));
 
-// Request logging middleware with origin tracking
-app.use((req, res, next) => {
-  const origin = req.headers.origin || 'no-origin';
-  console.log(`📨 ${req.method} ${req.path} from ${origin}`);
-  next();
-});
+// Request logging middleware
+app.use(requestLogger);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -238,53 +243,31 @@ app.get('/api/health', async (req, res) => {
 });
 
 // API routes
+app.use('/api/health', healthRoute);
+app.use('/api/auth', authRoute);
+app.use('/api/user', userRoute);
 app.use('/api/transcribe', upload.single('audio'), transcribeRoute);
 app.use('/api/translate', translateRoute);
 app.use('/api/synthesize', synthesizeRoute);
 app.use('/api/voices', voicesRoute);
 app.use('/api/wasm', wasmRoute);
 
+// Error logging middleware
+app.use(errorLogger);
+
 // Error handling middleware
-app.use((error, req, res, next) => {
-  console.error('❌ Error:', error.message);
-  
-  // Handle CORS errors specifically
-  if (error.message === 'Not allowed by CORS') {
-    return res.status(403).json({
-      error: 'CORS Error',
-      message: 'Origin not allowed',
-      origin: req.headers.origin,
-      help: 'This origin is not in the allowed origins list. Contact the administrator.'
-    });
-  }
-  
-  if (error instanceof multer.MulterError) {
-    if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({
-        error: 'File too large',
-        message: 'Audio file must be less than 25MB'
-      });
-    }
-  }
-  
-  res.status(error.status || 500).json({
-    error: error.message || 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
-  });
-});
+app.use(errorHandler);
 
 // 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Route not found',
-    message: `Cannot ${req.method} ${req.originalUrl}`
-  });
-});
+app.use(notFoundHandler);
 
 // API Keys validation
 console.log('🔑 API Keys Check:');
 console.log(`   - OpenAI: ${process.env.OPENAI_API_KEY ? '✓ Set' : '✗ Missing'}`);
 console.log(`   - ElevenLabs: ${process.env.ELEVENLABS_API_KEY ? '✓ Set' : '✗ Missing'}`);
+console.log(`   - Google OAuth: ${process.env.GOOGLE_CLIENT_ID ? '✓ Set' : '✗ Missing'}`);
+console.log(`   - Database: ${process.env.DATABASE_URL ? '✓ Set' : '✗ Missing'}`);
+console.log(`   - JWT Secret: ${process.env.JWT_SECRET ? '✓ Set' : '✗ Missing'}`);
 
 if (!process.env.OPENAI_API_KEY) {
   console.warn('⚠️  WARNING: OPENAI_API_KEY not set. Transcription and translation will fail.');
@@ -294,13 +277,59 @@ if (!process.env.ELEVENLABS_API_KEY) {
   console.warn('⚠️  WARNING: ELEVENLABS_API_KEY not set. Speech synthesis will fail.');
 }
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📁 Uploads directory: ${uploadsDir}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 API Base URL: http://localhost:${PORT}/api`);
-});
+if (!process.env.GOOGLE_CLIENT_ID) {
+  console.warn('⚠️  WARNING: GOOGLE_CLIENT_ID not set. Google authentication will fail.');
+}
+
+if (!process.env.DATABASE_URL) {
+  console.warn('⚠️  WARNING: DATABASE_URL not set. User authentication and data persistence will fail.');
+}
+
+// Initialize database and start server
+const startServer = async () => {
+  try {
+    // Validate environment variables (only for required ones)
+    console.log('\n🔍 Validating environment variables...');
+    try {
+      validateEnv();
+    } catch (error) {
+      console.error('❌ Environment validation failed:', error.message);
+      console.error('   Please check your .env file and ensure all required variables are set.');
+      process.exit(1);
+    }
+
+    // Test database connection
+    if (process.env.DATABASE_URL) {
+      console.log('🔗 Testing database connection...');
+      const connected = await testConnection();
+      if (connected) {
+        console.log('✅ Database ready\n');
+      } else {
+        console.warn('⚠️  Database connection failed, but server will continue\n');
+      }
+    }
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📁 Uploads directory: ${uploadsDir}`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔗 API Base URL: http://localhost:${PORT}/api`);
+      console.log(`\n✅ Google OAuth Authentication System Ready!`);
+      console.log(`   - Login: POST /api/auth/google/login`);
+      console.log(`   - Logout: POST /api/auth/logout`);
+      console.log(`   - Verify: GET /api/auth/verify`);
+      console.log(`   - Refresh: POST /api/auth/refresh`);
+      console.log(`   - Current User: GET /api/auth/user`);
+      console.log(`   - Auth Status: GET /api/auth/status\n`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 // Graceful shutdown
 process.on('SIGTERM', () => {

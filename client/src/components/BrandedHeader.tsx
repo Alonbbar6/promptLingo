@@ -1,6 +1,10 @@
 import React from 'react';
+import { LogIn } from 'lucide-react';
 import { BrandedButton } from './ui';
 import brandDesignSystem from '../config/brandDesignSystem';
+import { useAuth } from '../hooks/useAuth';
+import UserProfile from './UserProfile';
+import GoogleLoginButton from './GoogleLoginButton';
 
 interface BrandedHeaderProps {
   currentPage: 'landing' | 'translator' | 'tts';
@@ -18,6 +22,8 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
   showNavigation = true
 }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const { isAuthenticated, isLoading } = useAuth();
+  const [showLoginModal, setShowLoginModal] = React.useState(false);
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40">
@@ -61,13 +67,23 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
               >
                 Text-to-Speech
               </button>
-              <BrandedButton
-                variant="gradient"
-                size="sm"
-                onClick={() => onPageChange('translator')}
-              >
-                Get Started
-              </BrandedButton>
+              
+              {/* Auth Section */}
+              {!isLoading && (
+                <>
+                  {isAuthenticated ? (
+                    <UserProfile />
+                  ) : (
+                    <button
+                      onClick={() => setShowLoginModal(true)}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      <span>Sign In</span>
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           )}
 
@@ -150,6 +166,28 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
           </div>
         )}
       </nav>
+
+      {/* Login Modal */}
+      {showLoginModal && !isAuthenticated && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
+            <button
+              onClick={() => setShowLoginModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Sign in to PromptLingo</h2>
+              <p className="text-gray-600">Create a profile to save your translations</p>
+            </div>
+            <GoogleLoginButton onSuccess={() => setShowLoginModal(false)} />
+            <div className="mt-6 text-center text-sm text-gray-500">
+              <p>Your data is secure and private</p>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

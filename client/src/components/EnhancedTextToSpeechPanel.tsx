@@ -3,6 +3,7 @@ import { Play, Pause, Square, Volume2, Settings, AlertCircle, Wand2, Eye } from 
 import { getTTSService, TTSState, TTSVoice, isTTSSupported } from '../services/textToSpeech';
 import { getEnhancedToneService, getAvailableTones, EnhancedToneResult } from '../services/enhancedToneService';
 import { LANGUAGES } from '../contexts/TranslationContext';
+import { getLanguageDisplayName, getLanguageConfig } from '../config/languages.config';
 
 interface EnhancedTextToSpeechPanelProps {
   initialText?: string;
@@ -80,7 +81,7 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialLanguage]);
 
-  // Apply tone enhancement
+  // Apply tone enhancement with translation to target language
   const applyToneEnhancement = useCallback(async () => {
     if (!text.trim()) {
       setError('Please enter some text to enhance');
@@ -91,7 +92,8 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
     setError('');
     
     try {
-      const result = await toneService.enhanceTextWithTone(text, selectedTone);
+      console.log(`🎭 Applying tone enhancement with target language: ${selectedLanguage}`);
+      const result = await toneService.enhanceTextWithTone(text, selectedTone, selectedLanguage);
       setToneEnhancementResult(result);
       setEnhancedText(result.enhancedText);
       setShowPreview(true);
@@ -103,7 +105,7 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
     } finally {
       setIsEnhancing(false);
     }
-  }, [text, selectedTone, toneService]);
+  }, [text, selectedTone, selectedLanguage, toneService]);
 
   // Speak with enhanced text using backend ElevenLabs API
   const handleSpeak = useCallback(async () => {
@@ -326,8 +328,9 @@ const EnhancedTextToSpeechPanel: React.FC<EnhancedTextToSpeechPanelProps> = ({
             <div className="text-blue-800 text-sm space-y-1">
               <p>• Detected Language: <span className="font-medium capitalize">{toneEnhancementResult.detectedLanguage}</span> 
                 ({(toneEnhancementResult.languageConfidence * 100).toFixed(1)}% confidence)</p>
+              <p>• Target Language: <span className="font-medium text-purple-700">{getLanguageDisplayName(toneEnhancementResult.targetLanguage)}</span></p>
               {toneEnhancementResult.wasTranslated && (
-                <p>• Translation: <span className="font-medium text-green-700">✓ Translated to English</span></p>
+                <p>• Translation: <span className="font-medium text-green-700">✓ Translated to {getLanguageConfig(toneEnhancementResult.targetLanguage)?.nativeName || toneEnhancementResult.targetLanguage}</span></p>
               )}
             </div>
           </div>

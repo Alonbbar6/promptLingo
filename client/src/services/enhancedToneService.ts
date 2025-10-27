@@ -1,10 +1,11 @@
 /**
  * Enhanced Tone Service with Translation Pipeline
- * Handles non-English text by translating first, then applying tone enhancement
+ * Handles text translation TO the selected target language with tone enhancement
  */
 
 import { translateText } from './api';
 import { sanitizeInput } from '../utils/contentFilter';
+import { getLanguageConfig, isLanguageSupported } from '../config/languages.config';
 // WASM disabled - using JavaScript-only language detection
 
 export interface ToneOption {
@@ -18,6 +19,7 @@ export interface ToneOption {
 export interface EnhancedToneResult {
   originalText: string;
   detectedLanguage: string;
+  targetLanguage: string; // The language we're translating TO
   translatedText?: string; // Only present if translation was needed
   enhancedText: string;
   toneApplied: string;
@@ -333,8 +335,17 @@ export class EnhancedToneService {
 
   /**
    * Main method: Enhanced tone processing with translation pipeline
+   * @param text - The input text to enhance
+   * @param tone - The tone to apply (professional, friendly, etc.)
+   * @param targetLanguage - The language to translate TO (e.g., 'es', 'ht', 'en')
+   * @param userTier - User tier for content filtering
    */
-  async enhanceTextWithTone(text: string, tone: string, userTier: 'free' | 'paid-uncensored' = 'free'): Promise<EnhancedToneResult> {
+  async enhanceTextWithTone(
+    text: string, 
+    tone: string, 
+    targetLanguage: string = 'en',
+    userTier: 'free' | 'paid-uncensored' = 'free'
+  ): Promise<EnhancedToneResult> {
     if (!text || text.trim().length === 0) {
       throw new Error('No text provided for tone enhancement');
     }
@@ -367,19 +378,41 @@ export class EnhancedToneService {
         transformationsApplied.push(`Content filtered: ${detectedIssues.join(', ')}`);
       }
 
-      // STEP 3: Translation if needed
-      if (detectedLanguage !== 'english' && detectedLanguage !== 'unknown' && languageConfidence > 0.3) {
-        console.log('🌐 [ENHANCED TONE] Translation needed, translating to English...');
+      // STEP 3: Translation TO target language
+      const targetLangCode = this.mapLanguageCode(detectedLanguage);
+      const needsTranslation = targetLanguage !== 'en' || (detectedLanguage !== 'english' && detectedLanguage !== 'unknown');
+      
+      if (needsTranslation) {
+        console.log(`🌐 [ENHANCED TONE] Translation needed to ${targetLanguage}...`);
+        
+        // Validate target language is supported
+        if (!isLanguageSupported(targetLanguage)) {
+          console.warn(`⚠️ Target language '${targetLanguage}' not supported, defaulting to English`);
+          targetLanguage = 'en';
+        }
         
         try {
           const sourceLangCode = this.mapLanguageCode(detectedLanguage);
-          const translationResult = await translateText(filteredText, sourceLangCode, 'en', 'neutral', userTier);
+          const languageConfig = getLanguageConfig(targetLanguage);
+          
+          console.log(`🌐 Translating from ${sourceLangCode} to ${targetLanguage}`);
+          console.log(`🌐 Using language config: ${languageConfig?.nativeName || targetLanguage}`);
+          
+          // Translate to target language with tone
+          const translationResult = await translateText(
+            filteredText, 
+            sourceLangCode, 
+            targetLanguage, 
+            tone, 
+            userTier
+          );
           
           translatedText = translationResult.translation;
           textForToneEnhancement = translatedText;
           wasTranslated = true;
           
-          transformationsApplied.push(`Translated from ${detectedLanguage} to English`);
+          const targetLangName = languageConfig?.nativeName || targetLanguage;
+          transformationsApplied.push(`Translated to ${targetLangName} with ${tone} tone`);
           
           console.log('✅ [ENHANCED TONE] Translation completed');
           console.log('🌐 Translated text:', translatedText.substring(0, 100) + (translatedText.length > 100 ? '...' : ''));
@@ -392,7 +425,7 @@ export class EnhancedToneService {
           transformationsApplied.push('Translation failed, using original text');
         }
       } else {
-        console.log('🔄 [ENHANCED TONE] Text is already in English or language detection uncertain, proceeding with tone enhancement');
+        console.log('🔄 [ENHANCED TONE] Text is already in target language, proceeding with tone enhancement');
       }
 
       // STEP 4: Apply tone enhancement
@@ -404,6 +437,7 @@ export class EnhancedToneService {
       const result: EnhancedToneResult = {
         originalText: text,
         detectedLanguage,
+        targetLanguage,
         translatedText,
         enhancedText,
         toneApplied: tone,
@@ -425,6 +459,7 @@ export class EnhancedToneService {
       return {
         originalText: text,
         detectedLanguage: 'unknown',
+        targetLanguage: targetLanguage || 'en',
         enhancedText: text,
         toneApplied: tone,
         transformationsApplied: ['Fallback: Processing failed, using original text'],
@@ -467,11 +502,12 @@ export function getEnhancedToneService(): EnhancedToneService {
  */
 export async function enhanceTextWithTone(
   text: string, 
-  tone: string, 
+  tone: string,
+  targetLanguage: string = 'en',
   userTier: 'free' | 'paid-uncensored' = 'free'
 ): Promise<EnhancedToneResult> {
   const service = getEnhancedToneService();
-  return service.enhanceTextWithTone(text, tone, userTier);
+  return service.enhanceTextWithTone(text, tone, targetLanguage, userTier);
 }
 
 /**

@@ -59,12 +59,30 @@ class WasmTextProcessorService {
     try {
       console.log('🦀 Initializing WASM Text Processor...');
 
-      // Dynamic import of the WASM module
-      // @ts-ignore - WASM module is loaded at runtime from public folder
-      const wasmInit = await import('/wasm/wasm_text_processor.js');
+      // Load WASM module from public folder at runtime
+      const wasmPath = `${process.env.PUBLIC_URL || ''}/wasm/wasm_text_processor.js`;
       
+      // Create a script element to load the WASM module
+      const script = document.createElement('script');
+      script.src = wasmPath;
+      script.type = 'module';
+      
+      await new Promise<void>((resolve, reject) => {
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Failed to load WASM script'));
+        document.head.appendChild(script);
+      });
+
+      // Access the global wasm_bindgen object
+      // @ts-ignore
+      const wasmInit = window.wasm_bindgen;
+      
+      if (!wasmInit) {
+        throw new Error('WASM module not loaded properly');
+      }
+
       // Initialize the WASM module
-      await wasmInit.default();
+      await wasmInit(`${process.env.PUBLIC_URL || ''}/wasm/wasm_text_processor_bg.wasm`);
       
       this.wasmModule = wasmInit as unknown as WasmModule;
       

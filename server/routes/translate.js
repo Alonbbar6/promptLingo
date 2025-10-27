@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+const { getTranslationPrompt, isLanguageSupported, getLanguageConfig } = require('../config/languages.config');
 
 const router = express.Router();
 
@@ -58,15 +59,11 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Validate languages
-    if (!LANGUAGE_CONFIGS[sourceLang] || !LANGUAGE_CONFIGS[targetLang]) {
-      const supportedLanguages = Object.keys(LANGUAGE_CONFIGS).map(code => 
-        `${LANGUAGE_CONFIGS[code].name} (${code})`
-      ).join(', ');
-      
+    // Validate languages using new config
+    if (!isLanguageSupported(sourceLang) || !isLanguageSupported(targetLang)) {
       return res.status(400).json({
         error: 'Invalid language',
-        message: `Supported languages: ${supportedLanguages}`
+        message: `Unsupported language. Source: ${sourceLang}, Target: ${targetLang}`
       });
     }
 
@@ -83,41 +80,18 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // Get language configs
+    const sourceConfig = getLanguageConfig(sourceLang);
+    const targetConfig = getLanguageConfig(targetLang);
+    
     console.log('  → Calling ChatGPT API...');
     const chatgptStart = Date.now();
 
-    // Create content-policy safe system prompt with enhanced slang recognition
-    const systemPrompt = `You are a professional translator specializing in ${LANGUAGE_CONFIGS[sourceLang].name} to ${LANGUAGE_CONFIGS[targetLang].name} translation with advanced language recognition capabilities.
-
-CRITICAL INSTRUCTIONS:
-
-1. SLANG & COLLOQUIALISM HANDLING:
-   - Recognize ALL slang terms, colloquialisms, and informal expressions
-   - Do NOT treat slang terms as proper names or leave them untranslated
-   - Translate slang into appropriate professional equivalents
-   - Examples of common patterns:
-     * Greeting slang → formal greetings
-     * Friend references → appropriate terms
-     * Informal contractions → proper grammar
-     * Casual expressions → professional language
-
-2. TONE APPLICATION:
-   - Apply ${toneConfig.name} tone: ${toneConfig.description}
-   - Preserve the emotional intensity while maintaining professionalism
-   - Use proper grammar, punctuation, and sentence structure
-   - Maintain natural flow and readability
-
-3. LANGUAGE PROCESSING:
-   - Convert informal language to professional ${LANGUAGE_CONFIGS[targetLang].name}
-   - Apply appropriate cultural context and idioms
-   - Ensure grammatical correctness and clarity
-
-4. OUTPUT REQUIREMENTS:
-   - Provide ONLY the translated and formatted text
-   - No explanations, notes, or metadata
-   - Use complete sentences with proper punctuation
-
-Translate the following text:`;
+    // Get language-specific translation prompt
+    const systemPrompt = getTranslationPrompt(sourceLang, targetLang, tone || 'neutral');
+    
+    console.log(`  → Translating from ${sourceConfig.nativeName} to ${targetConfig.nativeName}`);
+    console.log(`  → Using tone: ${tone || 'neutral'}`);
 
     // Call OpenAI ChatGPT API
     const response = await axios.post(
@@ -159,14 +133,16 @@ Translate the following text:`;
     console.log(`✅ [TRANSLATE] Completed in ${totalDuration}ms`);
     console.log(`   - ChatGPT API: ${chatgptDuration}ms`);
     console.log(`   - Translation: ${translation?.substring(0, 50)}...`);
-
+    
     res.json({
       translation,
       model: 'gpt-4o-mini',
       tokensUsed: usage.total_tokens,
       sourceLanguage: sourceLang,
       targetLanguage: targetLang,
-      tone: toneConfig.name
+      sourceLanguageName: sourceConfig.nativeName,
+      targetLanguageName: targetConfig.nativeName,
+      tone: tone || 'neutral'
     });
 
   } catch (error) {
