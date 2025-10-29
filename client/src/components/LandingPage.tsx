@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { BrandedButton, BrandedCard, FeatureCard, TestimonialCard, FAQ } from './ui';
 import brandContent from '../data/brandContent';
-import brandDesignSystem from '../config/brandDesignSystem';
 
 interface LandingPageProps {
   onGetStarted: () => void;
