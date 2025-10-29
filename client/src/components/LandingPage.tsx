@@ -464,15 +464,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             Pricing Questions
           </h3>
           <div className="space-y-4">
-            <BrandedCard variant="flat">
+            <BrandedCard variant="default">
               <p className="font-semibold text-neutral-textPrimary mb-2">Is the free trial a full version?</p>
               <p className="text-neutral-textSecondary">Yes! You get full access to all features for 7 days, no credit card required.</p>
             </BrandedCard>
-            <BrandedCard variant="flat">
+            <BrandedCard variant="default">
               <p className="font-semibold text-neutral-textPrimary mb-2">Can I pay with a prepaid card?</p>
               <p className="text-neutral-textSecondary">Absolutely. We accept all major credit cards, debit cards, and prepaid cards.</p>
             </BrandedCard>
-            <BrandedCard variant="flat">
+            <BrandedCard variant="default">
               <p className="font-semibold text-neutral-textPrimary mb-2">Is there a discount for annual payment?</p>
               <p className="text-neutral-textSecondary">Yes! Save 20% when you pay annually. Contact us for details.</p>
             </BrandedCard>
