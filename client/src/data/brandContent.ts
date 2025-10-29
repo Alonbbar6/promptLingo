@@ -38,34 +38,37 @@ export const brandContent = {
     }
   ],
 
-  // Feature highlights
+  // Feature highlights (4 Core Features from PRD)
   features: [
     {
-      title: "Professional Voice Amplifier",
-      description: "Instantly convert your knowledge and intent into flawless, context-aware English. Not a language tutor—a professional communication tool.",
+      title: "Contextual Prompt Library",
+      description: "Access pre-built, professional prompts for Nursing, Academia, Business, and Immigration forms. Simply select your context and let the AI handle the rest.",
+      metric: "99% reduction in tone-inappropriate communication",
       highlight: true
     },
     {
-      title: "Context-Aware Translation",
-      description: "Understands professional and academic contexts to deliver precise, appropriate language for every situation."
+      title: "Authority-Grade Output",
+      description: "Our AI is trained on millions of professional documents to deliver output that is grammatically flawless, technically precise, and sounds like a native expert wrote it.",
+      metric: "Users report a 40% increase in confidence in written communication"
     },
     {
-      title: "Real-Time Speech Processing",
-      description: "Record your thoughts in your native language and get professional English output instantly."
+      title: "Dual-View Editor",
+      description: "See your original thought and the polished English side-by-side. This builds trust and helps you learn professional phrasing quickly, saving time on expensive tutors."
     },
     {
-      title: "Time & Energy Saver",
-      description: "Finish your work 2+ hours faster. Spend time with family instead of fighting with translation tools."
+      title: "Time-Saver Input (Voice/Text)",
+      description: "Quickly input your thoughts via voice or text, even in Spanglish. PromptLingo understands your intent and delivers the professional output in seconds, freeing up hours for your family and studies."
     }
   ],
 
-  // Testimonials based on Sofia's journey
+  // Testimonials based on Sofia's journey (addressing negative emotions)
   testimonials: [
     {
       name: "Sofia Rodriguez",
       role: "CNA pursuing RN certification",
-      quote: "The problem was never my intelligence. The app simply removed the barrier that was hiding my competence. Now when I speak, the world hears the RN I am about to become.",
-      rating: 5
+      quote: "I no longer feel embarrassed to send emails to my professor. PromptLingo gave me my confidence back.",
+      rating: 5,
+      result: "Passed NCLEX on First Try"
     },
     {
       name: "Maria Garcia",
@@ -76,7 +79,7 @@ export const brandContent = {
     {
       name: "Carmen Reyes",
       role: "Healthcare Professional",
-      quote: "This is what I meant! It sounds like a professional, a peer. The app has given me the voice I already own in my head.",
+      quote: "The constant anxiety of making mistakes in patient notes is gone. PromptLingo ensures every word is professional and accurate.",
       rating: 5
     }
   ],
@@ -109,19 +112,99 @@ export const brandContent = {
     }
   ],
 
-  // Call-to-action messages
+  // Call-to-action messages (PRD-specified)
   cta: {
-    primary: "Start Speaking with Authority",
-    secondary: "Try PromptLingo Free",
-    tagline: "Replace the fear of failure with the confidence of authority"
+    primary: "Start Your 7-Day Free Trial",
+    secondary: "See the Before & After",
+    tagline: "Join thousands of ambitious professionals who replaced anxiety with authority. Start your free trial and unlock your true potential today.",
+    microcopy: "Free 7-Day Trial • $10/Month After • Cancel Anytime • Setup in 2 Minutes"
   },
 
   // Brand narrative
   narrative: {
     problem: "You possess the intelligence, dedication, and knowledge to achieve your American Dream, but are held back by the language barrier. The deep shame, anxiety, and frustration of having your competence masked by awkward English.",
-    solution: "PromptLingo is not a language tutor; it is a professional voice amplifier that instantly converts your knowledge and intent into flawless, context-aware English.",
+    solution: "Stop letting language barriers mask your competence. PromptLingo instantly refines your ideas into flawless, professional English for your essays, emails, and patient notes, so you can focus on your career.",
     outcome: "Replace the fear of failure with the confidence of authority, ensuring that every professional and academic communication you send is as competent as you are."
-  }
+  },
+
+  // Pain points (3-column grid)
+  painPoints: [
+    {
+      title: "The Shame of Miscommunication",
+      description: "Your intelligence is hidden by awkward, robotic English that fails to convey your true competence.",
+      icon: "user-x"
+    },
+    {
+      title: "The Anxiety of Error",
+      description: "The constant fear of making a critical mistake in a patient note or academic essay that could jeopardize your future.",
+      icon: "alert-triangle"
+    },
+    {
+      title: "The Time-Sink Exhaustion",
+      description: "Hours wasted on manual translation and proofreading, stealing precious time from your family and sleep.",
+      icon: "clock"
+    }
+  ],
+
+  // Trust indicators
+  trustIndicators: {
+    preHeadline: "Trusted by Students, Nurses, and Professionals in 40+ Countries",
+    stats: [
+      { value: "5,000+", label: "Students & Professionals" },
+      { value: "40+", label: "Countries" },
+      { value: "2+ hours", label: "Saved Per Task" },
+      { value: "99%", label: "Accuracy Rate" }
+    ]
+  },
+
+  // Pricing tiers
+  pricing: [
+    {
+      name: "Student/Basic",
+      price: 10,
+      period: "month",
+      description: "Core features, limited usage",
+      features: [
+        "50 professional translations/month",
+        "Basic prompt library",
+        "Voice & text input",
+        "Email support"
+      ],
+      cta: "Start Free Trial",
+      popular: false
+    },
+    {
+      name: "Professional/Unlimited",
+      price: 15,
+      period: "month",
+      description: "Unlimited usage, advanced features",
+      features: [
+        "Unlimited translations",
+        "Advanced prompt library",
+        "Dual-view editor",
+        "Voice & text input",
+        "Priority support",
+        "Context-aware AI"
+      ],
+      cta: "Start Free Trial",
+      popular: true
+    },
+    {
+      name: "Enterprise/Institutional",
+      price: null,
+      period: "custom",
+      description: "For colleges or nursing programs",
+      features: [
+        "Bulk licensing",
+        "Custom integrations",
+        "Dedicated support",
+        "Analytics dashboard",
+        "Training sessions"
+      ],
+      cta: "Request Institutional Pricing",
+      popular: false
+    }
+  ]
 };
 
 export default brandContent;

@@ -1,0 +1,355 @@
+Product Requirements Document: PromptLingo Landing Page
+Executive Overview
+Product: PromptLingo: Prompt-Powered AI Translation App Purpose: Convert highly motivated, Problem Aware users (like Sofia Rodriguez) by immediately addressing their core pain points (shame, anxiety, time-sink) and demonstrating how the app provides professional authority and credibility for a low-risk, high-value monthly subscription. The page must build trust and clearly position the app as an essential tool for academic and career advancement, not just another translation app.
+Page Architecture & UI Components
+1. Navigation Bar
+Requirement
+Specification
+Adaptation for PromptLingo
+Position
+Fixed/sticky header, remains visible on scroll.
+Unchanged. Essential for quick access to the primary CTA.
+Components
+Logo (left-aligned), Primary links, Secondary actions.
+Primary links: Features, How It Works, Testimonials, Pricing.
+Secondary actions
+"Start Free Trial" (Primary CTA), "Sign In" (text link).
+Change "Request Demo" to "Start Free Trial" (primary CTA).
+Specifications
+Height: 72px desktop, 60px mobile. Max-width: 1440px.
+Unchanged.
+
+2. Hero Section
+Requirement
+Specification
+Adaptation for PromptLingo
+Layout
+Two-column split (60/40) - Copy left, Visual right.
+Unchanged.
+Pre-headline
+Small text badge showing credibility indicator.
+Example: "Trusted by Students, Nurses, and Professionals in 40+ Countries"
+Headline (H1)
+Clear, outcome-focused statement addressing business problem.
+Example: "Communicate with the Authority You Deserve. Instantly." (Focus on authority/respect)
+Subheadline
+2-3 sentences expanding on value proposition.
+Focus: Eliminating the shame of awkward English and the time wasted on bad translation. Content: "Stop letting language barriers mask your competence. PromptLingo instantly refines your ideas into flawless, professional English for your essays, emails, and patient notes, so you can focus on your career."
+Trust Indicators
+Logo bar of recognizable client companies.
+Change: Logo bar of recognized Educational Institutions (e.g., Community College names, Nursing Boards) or Media Mentions (e.g., Forbes, Univision).
+Dual CTA Strategy
+Primary: "Schedule a Demo," Secondary: "See How It Works."
+Primary: "Start Your 7-Day Free Trial" (High-contrast, direct conversion). Secondary: "See the Before & After" (Outline button linking to a section/video).
+Micro-copy
+"Free consultation • No credit card required • 30-day trial."
+Change: "Free 7-Day Trial • $10/Month After • Cancel Anytime • Setup in 2 Minutes."
+Visual Component
+Product screenshot or interactive demo preview.
+Type: A split-screen visual showing the transformation: Left: Sofia's original Spanish/broken English input. Right: The flawless, professional English output, highlighted with the authority-conveying language.
+Technical Specs
+Section height: 90vh minimum. Background: Subtle gradient.
+Use the PromptLingo Brand Gradient for the background.
+
+3. Problem/Pain Point Section
+Requirement
+Specification
+Adaptation for PromptLingo
+Purpose
+Establish problem awareness and relate to avatar's daily challenges.
+Unchanged. Must directly tap into Sofia's Shame, Anxiety, and Resentment.
+Section Headline
+Question format that surfaces the pain.
+Example: "Is Your English Barrier Costing You Your Career and Confidence?"
+Problem Statements
+3-column grid presenting common pain points.
+Column 1: The Shame of Miscommunication - "Your intelligence is hidden by awkward, robotic English that fails to convey your true competence."
+
+
+
+
+Column 2: The Anxiety of Error - "The constant fear of making a critical mistake in a patient note or academic essay that could jeopardize your future."
+
+
+
+
+Column 3: The Time-Sink Exhaustion - "Hours wasted on manual translation and proofreading, stealing precious time from your family and sleep."
+Supporting Statistics
+Each pain point includes a stat from industry research.
+Change: Use statistics related to immigrant wage gaps, ESL student dropout rates, or time spent on translation.
+Visual Treatment
+Icons or illustrations representing each pain point.
+Style: Use line icons with a warm brand accent color. Visuals should be empathetic (e.g., a clock with wings, a person hiding their face).
+
+4. Solution Positioning Section
+Requirement
+Specification
+Adaptation for PromptLingo
+Purpose
+Position product as the comprehensive answer to stated problems.
+Unchanged. Position PromptLingo as the Professional Voice Amplifier.
+Headline
+Direct solution statement.
+Example: "PromptLingo: The Professional Voice Amplifier That Honors Your Effort."
+Solution Narrative
+2-3 paragraphs explaining approach (not features yet).
+Focus: Paragraph 1: Bridge from the pain of awkward translation to the philosophy of context-aware, prompt-powered AI. Paragraph 2: Explain that the app is an investment in professional authority, not a slow language lesson. Paragraph 3: Outcome-focused statement on gaining respect and time.
+Visual Proof
+Side-by-side comparison or transformation visual.
+"Before State" vs "After State" with platform. Visual: A diagram showing the mental burden of "Translate -> Edit -> Stress -> Repeat" vs. "Input -> PromptLingo -> Professional Output."
+Unique Value Proposition Callout
+Highlighted box with key differentiator.
+Example: "Unlike generic translators, PromptLingo uses professional-grade prompts (e.g., 'Rewrite this as a formal nursing note') to ensure the tone and terminology are always perfect."
+
+5. Features & Benefits Section
+Requirement
+Specification
+Adaptation for PromptLingo
+Purpose
+Detail specific capabilities tied to business outcomes.
+Tie features directly to the Wants and Avoids of Sofia (e.g., "Write flawless emails," "Avoid embarrassment").
+Number of Features
+4-6 primary features.
+Focus on 4 Core Features:
+Feature 1
+Contextual Prompt Library
+Benefit: Eliminates the need to guess the right tone. Description: "Access pre-built, professional prompts for Nursing, Academia, Business, and Immigration forms. Simply select your context and let the AI handle the rest." Metric: "99% reduction in tone-inappropriate communication."
+Feature 2
+Authority-Grade Output
+Benefit: Ensures professional credibility. Description: "Our AI is trained on millions of professional documents to deliver output that is grammatically flawless, technically precise, and sounds like a native expert wrote it." Metric: "Users report a 40% increase in confidence in written communication."
+Feature 3
+Dual-View Editor
+Benefit: Provides a learning tool and proof of accuracy. Description: "See your original thought and the polished English side-by-side. This builds trust and helps you learn professional phrasing quickly, saving time on expensive tutors."
+Feature 4
+Time-Saver Input (Voice/Text)
+Benefit: Saves time and mental energy. Description: "Quickly input your thoughts via voice or text, even in Spanglish. PromptLingo understands your intent and delivers the professional output in seconds, freeing up hours for your family and studies."
+Layout Pattern
+Alternating left/right image-text layout.
+Unchanged. Use product screenshots of the relevant feature.
+
+6. ROI Calculator Section
+Requirement
+Specification
+Adaptation for PromptLingo
+Purpose
+Provide tangible, personalized value demonstration.
+Unchanged. Must demonstrate Time Saved and Income Potential.
+Type
+Interactive calculator tool.
+Change: "Future Income & Time Saved Calculator"
+Input Fields
+Number of sales reps, Average deal size, etc.
+Change to:
+
+
+
+
+1. Current Hourly Wage (e.g., CNA wage: $18/hr, text input)
+
+
+
+
+2. Target Hourly Wage (e.g., RN wage: $35/hr, text input)
+
+
+
+
+3. Hours Spent on Translation/Proofreading Per Week (slider, 0-10)
+
+
+
+
+4. Months Until RN Exam (number input)
+Calculation Logic
+Time saved calculation, Productivity gain, Annual ROI.
+Change to:
+
+
+
+
+Time Saved: (Translation hours * 52 weeks) = Total hours saved annually.
+
+
+
+
+Income Gap: (Target Wage - Current Wage) * 2080 hours = Annual Income Difference.
+
+
+
+
+ROI: Show the total cost of the app vs. the potential income gain within the first year of becoming an RN.
+Output Display
+Large, prominent number showing annual value.
+Change: Prominent display of "Total Hours Saved Annually" and "Potential Annual Income Increase."
+CTA
+"Get Your Custom ROI Report."
+Change: "Get Your Personalized Success Plan" (Lead capture for follow-up content).
+
+7. Social Proof / Case Study Section
+Requirement
+Specification
+Adaptation for PromptLingo
+Purpose
+Build credibility through customer success stories.
+Unchanged. Must focus on peer-to-peer trust (Sofia's bias).
+Primary Case Study
+Full-width feature with company logo, results, and quote.
+Change: Featured success story of a Latina or Haitian woman who used PromptLingo to pass her NCLEX (RN exam) or land a higher-paying job.
+Key results
+3 specific metrics.
+Example: "Passed NCLEX on First Try
+Supporting Testimonials
+3-column grid of testimonial cards.
+Focus: Quotes must directly address the negative emotions (Shame, Anxiety, Time-Sink). Example Quote: "I no longer feel embarrassed to send emails to my professor. PromptLingo gave me my confidence back."
+Stats Bar
+4-5 aggregate metrics.
+Example: "5,000+ Students & Professionals
+
+8. Pricing Section
+Requirement
+Specification
+Adaptation for PromptLingo
+Purpose
+Present transparent pricing tiers.
+Unchanged. Must justify the $10/month price point as a low-risk investment.
+Pricing Tiers
+3-tier pricing table.
+Simplify to 2 Tiers + 1 Enterprise:
+
+
+
+
+Tier 1: Student/Basic ($10/month) - Core features, limited usage (e.g., 50 professional translations/month). CTA: "Start Free Trial."
+
+
+
+
+Tier 2: Professional/Unlimited (Most Popular - $15/month) - Unlimited usage, advanced prompts, dual-view editor. CTA: "Start Free Trial."
+
+
+
+
+Tier 3: Enterprise/Institutional - For colleges or nursing programs to buy in bulk. CTA: "Request Institutional Pricing."
+Feature Comparison Table
+Detailed comparison below pricing cards.
+Unchanged. Essential to justify the $15/month tier.
+FAQ Micro-Section
+3-4 pricing-related questions.
+Example: "Is the free trial a full version?" "Can I pay with a prepaid card?" "Is there a discount for annual payment?"
+
+9. Integration & Security Section
+Requirement
+Specification
+Adaptation for PromptLingo
+Purpose
+Address technical buyers' concerns.
+Change: Address the user's concern about Trust and Privacy.
+Integrations Component
+Logo Grid of partners.
+Change: Logos of Key Integrations (e.g., Google Docs, Microsoft Word, Canvas/Blackboard LMS) and Source Languages (Spanish, Haitian Creole, Portuguese).
+Security & Compliance
+Certification/compliance badges.
+Change: Focus on Privacy and Data Security. Badges: "100% Data Privacy Guarantee," "No Data Shared with Third Parties," "Encrypted Communications."
+Feature List
+Security features in brief bullets.
+Change: "GDPR/CCPA Compliant," "All data encrypted at rest," "No personal data stored after translation."
+
+10. Demo/Video Section
+Requirement
+Specification
+Adaptation for PromptLingo
+Purpose
+Provide self-service product walkthrough.
+Unchanged. Essential for visual learners and the risk-averse user.
+Headline
+"See [Product Name] in Action."
+Example: "See How PromptLingo Turns Frustration into Flawless English."
+Content
+Quick tour of key features solving main pain points.
+Focus: A short video (90 seconds max) showing the Problem -> Input -> Flawless Output sequence for a nursing note or academic essay.
+Secondary CTA
+"Ready to try it yourself? Schedule a personalized demo."
+Change: "Ready to feel confident? Start Your Free Trial Now."
+
+11. Final CTA Section
+Requirement
+Specification
+Adaptation for PromptLingo
+Purpose
+Strong conversion push before footer.
+Unchanged. High-impact section.
+Headline
+Direct, action-oriented.
+Example: "Stop Letting Language Barriers Hold You Back." (Taps into Resentment/Avoidance)
+Supporting Text
+Reinforcing value and ease.
+Example: "Join thousands of ambitious professionals who replaced anxiety with authority. Start your free trial and unlock your true potential today."
+Dual CTAs
+Primary: "Start Free Trial," Secondary: "Schedule a Demo."
+Primary: "Start Your Free Trial Now" (Large, prominent). Secondary: "See Pricing & Plans" (Outline button).
+Visual Design
+Background: Brand gradient or solid accent color.
+Use the PromptLingo Brand Gradient for maximum impact.
+
+12. Footer
+Requirement
+Specification
+Adaptation for PromptLingo
+Content Sections
+Multi-column layout with organized link groups.
+Simplify/Focus: Column 1: Company Info. Column 2: Product (Features, Pricing, How It Works). Column 3: Resources (Blog, Help Center, Community Forum). Column 4: Legal (Privacy, Terms).
+Optional Newsletter Signup
+Email input field + Subscribe button.
+Change: "Join the Confidence Community" (Focus on emotional benefit).
+Technical Specifications
+Background: Dark/Light contrast.
+Unchanged.
+
+Visual Style Guide (Based on PromptLingo Brand Identity & Design System)
+Element
+Specification
+Color Palette (Primary)
+Gradient Base: linear-gradient(135deg, #FF7B54 0%, #FFB26B 25%, #8DE3A6 50%, #4D8BFF 75%, #333399 100%)
+Color Palette (Accent)
+Sky Blue (#4D8BFF) for CTAs and primary focus elements (Trust/Clarity).
+Color Palette (Neutral)
+Background: #F7FAFC (light mode), Text Primary: #1A202C (light mode).
+Typography (Headings)
+DM Serif Display, serif (Authority/Respect).
+Typography (Body)
+Inter, sans-serif (Readability/Clarity).
+Type Scale
+Use the precise scale defined in the Brand & Design System document.
+Buttons (Primary)
+Background: Sky Blue (#4D8BFF), Text: White. Border-radius: 8px.
+Iconography
+Heroicons (Solid style). Size: 24px standard, 32px for feature icons.
+
+Technical Requirements (Adapted from Template)
+Category
+Requirement
+Adaptation for PromptLingo
+Performance
+Page Load: < 3 seconds on 3G. Lighthouse Score: > 90.
+Critical. Users may be on strained mobile connections.
+Code Architecture
+React Components, Utility-First Styling (Tailwind CSS).
+Unchanged.
+Accessibility (WCAG 2.1 AA)
+Semantic HTML5, Proper heading hierarchy, Alt text, Aria labels, Color contrast 4.5:1.
+Critical. Ensures the app is usable by all, reinforcing the value of respect.
+SEO Requirements
+Title: "PromptLingo: Professional AI Translator for Students & Immigrants." Description: "Instantly translate your thoughts into flawless English for academic essays, patient notes, and professional emails. Start your free trial."
+Focus keywords: "AI Translator," "Professional English," "Academic English," "Latino/Haitian Community."
+Analytics & Tracking
+Event tracking for: CTA clicks, Trial submissions, Pricing selections, ROI Calculator interactions, Prompt Library views.
+Critical. Track the low-risk conversion path and the use of the value-driven calculator.
+Forms & Lead Capture
+Trial/Signup Form Fields: Full Name, Email, Primary Native Language (dropdown: Spanish/Haitian Creole/Other), Primary Goal (dropdown: Academic/Career/Personal).
+Change: Simplify fields for low-friction signup. Capture language and goal for better segmentation.
+Browser Support
+Chrome (last 2 versions), Firefox, Safari, Mobile Browsers.
+Unchanged.
+
+This Product Requirements Document (PRD) is based on the provided B2B template, adapted to the specific needs and psychological profile of the Problem Aware Customer Avatar (Sofia Rodriguez) and the PromptLingo AI Translation App.
+
