@@ -45,19 +45,46 @@ export class LiveTranscriptionService {
     try {
       this.config.onStatusChange('recording');
 
+      // Check if browser supports required APIs
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Your browser does not support audio recording. Please use a modern browser like Chrome, Firefox, or Safari.');
+      }
+
       // Create audio context for volume analysis
       if (!this.audioContext || this.audioContext.state === 'closed') {
         this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
 
-      // Get microphone access
-      this.audioStream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          sampleRate: 16000,
-        },
-      });
+      // Get microphone access with better error handling
+      try {
+        this.audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            sampleRate: 16000,
+          },
+        });
+      } catch (micError: any) {
+        console.error('❌ Microphone access error:', micError);
+
+        // Handle specific permission errors
+        if (micError.name === 'NotAllowedError' || micError.name === 'PermissionDeniedError') {
+          throw new Error('Microphone access denied. Please allow microphone permissions in your browser settings and try again.');
+        } else if (micError.name === 'NotFoundError' || micError.name === 'DevicesNotFoundError') {
+          throw new Error('No microphone found. Please connect a microphone and try again.');
+        } else if (micError.name === 'NotReadableError' || micError.name === 'TrackStartError') {
+          throw new Error('Microphone is already in use by another application. Please close other apps using the microphone and try again.');
+        } else if (micError.name === 'OverconstrainedError' || micError.name === 'ConstraintNotSatisfiedError') {
+          throw new Error('Your microphone does not meet the required specifications. Please try a different microphone.');
+        } else {
+          throw new Error(`Microphone error: ${micError.message || 'Unable to access microphone'}`);
+        }
+      }
+
+      // Check if MediaRecorder is supported
+      if (!window.MediaRecorder) {
+        throw new Error('Your browser does not support audio recording. Please use a modern browser like Chrome, Firefox, or Safari.');
+      }
 
       // Create MediaRecorder
       const options = { mimeType: 'audio/webm;codecs=opus' };
@@ -75,7 +102,7 @@ export class LiveTranscriptionService {
       // Add error handler
       this.mediaRecorder.onerror = (event: any) => {
         console.error('❌ MediaRecorder error:', event);
-        this.config.onError(new Error('MediaRecorder error'));
+        this.config.onError(new Error('Recording error occurred. Please try again.'));
       };
 
       // Start recording

@@ -155,8 +155,8 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
 
         {/* Mobile menu */}
         {showNavigation && isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="flex flex-col gap-4">
+          <div className="md:hidden py-4 border-t border-gray-200 animate-slide-in">
+            <div className="flex flex-col gap-3">
               <button
                 onClick={() => {
                   onPageChange('translator');
@@ -210,19 +210,27 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
                 Pricing
               </button>
 
-              {!isAuthenticated && (
-                <BrandedButton
-                  variant="gradient"
-                  size="md"
-                  onClick={() => {
-                    setShowLoginModal(true);
+              {/* Auth Section for Mobile */}
+              <div className="border-t border-gray-200 pt-3 mt-2">
+                {isAuthenticated ? (
+                  <UserProfile onNavigate={(page) => {
+                    onPageChange(page);
                     setIsMenuOpen(false);
-                  }}
-                  className="w-full"
-                >
-                  Sign In
-                </BrandedButton>
-              )}
+                  }} />
+                ) : (
+                  <BrandedButton
+                    variant="gradient"
+                    size="md"
+                    onClick={() => {
+                      setShowLoginModal(true);
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full"
+                  >
+                    Sign In
+                  </BrandedButton>
+                )}
+              </div>
             </div>
           </div>
         )}

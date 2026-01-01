@@ -161,16 +161,24 @@ const LiveTranscriptionCaptions: React.FC = () => {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col">
       {/* Header Controls */}
-      <div className="bg-black/50 backdrop-blur-md border-b border-gray-700 p-4 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-white">Live Transcription</h1>
+      <div className="bg-black/50 backdrop-blur-md border-b border-gray-700 p-4 sticky top-16 z-30">
+        {/* Title and Status - Full width on mobile */}
+        <div className="max-w-7xl mx-auto mb-4">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <h1 className="text-xl sm:text-2xl font-bold text-white">Live Transcription</h1>
 
             {/* Status Indicator */}
             <div className="flex items-center space-x-2">
               <div className={`w-3 h-3 rounded-full ${getStatusColor()} ${status === 'recording' ? 'animate-pulse' : ''}`} />
               <span className="text-sm text-gray-300">{getStatusText()}</span>
             </div>
+          </div>
+        </div>
+
+        {/* Controls Section */}
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+          <div className="hidden sm:block flex-shrink-0">
+            {/* Spacer for desktop layout */}
           </div>
 
           <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
@@ -245,7 +253,7 @@ const LiveTranscriptionCaptions: React.FC = () => {
           <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-700">
             <h3 className="text-white font-semibold mb-3">Settings</h3>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-gray-300 mb-2">
                   Chunk Duration: {chunkDuration / 1000}s
@@ -288,12 +296,28 @@ const LiveTranscriptionCaptions: React.FC = () => {
       </div>
 
       {/* Caption Display Area */}
-      <div className="flex-1 flex items-end justify-center p-8 overflow-hidden">
+      <div className="flex-1 flex items-end justify-center p-4 sm:p-8 overflow-hidden">
         <div className="w-full max-w-5xl">
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-4 bg-red-500/20 border border-red-500 rounded-lg">
-              <p className="text-red-200 text-center">{error}</p>
+            <div className="mb-4 p-4 sm:p-6 bg-red-500/20 border-2 border-red-500 rounded-lg shadow-lg backdrop-blur-sm">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0">
+                  <svg className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-red-200 font-semibold mb-2 text-lg">Recording Error</h3>
+                  <p className="text-red-100 text-sm sm:text-base whitespace-pre-line">{error}</p>
+                  <button
+                    onClick={() => setError('')}
+                    className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -312,7 +336,7 @@ const LiveTranscriptionCaptions: React.FC = () => {
           <div className="space-y-4">
             {captions.map((caption, index) => {
               const isCurrent = index === captions.length - 1;
-              const fontSize = isCurrent ? 'text-4xl' : 'text-2xl';
+              const fontSize = isCurrent ? 'text-2xl sm:text-3xl lg:text-4xl' : 'text-lg sm:text-xl lg:text-2xl';
               const fontWeight = isCurrent ? 'font-bold' : 'font-medium';
 
               return (
@@ -324,7 +348,7 @@ const LiveTranscriptionCaptions: React.FC = () => {
                     transform: `translateY(${isCurrent ? '0' : '-10px'})`,
                   }}
                 >
-                  <div className="bg-black/80 backdrop-blur-sm px-8 py-4 rounded-lg border border-gray-700 shadow-2xl">
+                  <div className="bg-black/80 backdrop-blur-sm px-4 py-3 sm:px-8 sm:py-4 rounded-lg border border-gray-700 shadow-2xl">
                     {/* Original Text */}
                     <p className="text-white text-center leading-relaxed">
                       {caption.text}
