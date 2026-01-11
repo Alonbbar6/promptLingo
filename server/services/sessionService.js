@@ -126,6 +126,16 @@ const invalidateAllUserSessions = async (userId) => {
 };
 
 /**
+ * Invalidate all user sessions except one (useful for password change)
+ */
+const invalidateAllUserSessionsExcept = async (userId, refreshTokenToKeep) => {
+  await db.query(
+    'UPDATE sessions SET is_valid = false WHERE user_id = $1 AND refresh_token != $2',
+    [userId, refreshTokenToKeep]
+  );
+};
+
+/**
  * Clean up expired sessions
  */
 const cleanupExpiredSessions = async () => {
@@ -177,6 +187,7 @@ module.exports = {
   invalidateSession,
   invalidateSessionByToken,
   invalidateAllUserSessions,
+  invalidateAllUserSessionsExcept,
   cleanupExpiredSessions,
   getSessionByRefreshToken,
   deleteOldSessions,

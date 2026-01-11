@@ -1,5 +1,9 @@
 const jwt = require('jsonwebtoken');
-const authConfig = require('../config/auth.config');
+
+// JWT configuration from environment variables
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_ACCESS_TOKEN_EXPIRY = '15m';
+const JWT_REFRESH_TOKEN_EXPIRY = '7d';
 
 /**
  * Generate JWT access token
@@ -11,8 +15,8 @@ const generateAccessToken = (user) => {
     googleId: user.google_id,
   };
 
-  return jwt.sign(payload, authConfig.jwt.accessTokenSecret, {
-    expiresIn: authConfig.jwt.accessTokenExpiry,
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_ACCESS_TOKEN_EXPIRY,
   });
 };
 
@@ -25,8 +29,8 @@ const generateRefreshToken = (user) => {
     email: user.email,
   };
 
-  return jwt.sign(payload, authConfig.jwt.refreshTokenSecret, {
-    expiresIn: authConfig.jwt.refreshTokenExpiry,
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_REFRESH_TOKEN_EXPIRY,
   });
 };
 
@@ -35,7 +39,7 @@ const generateRefreshToken = (user) => {
  */
 const verifyAccessToken = (token) => {
   try {
-    return jwt.verify(token, authConfig.jwt.accessTokenSecret);
+    return jwt.verify(token, JWT_SECRET);
   } catch (error) {
     throw new Error('Invalid or expired access token');
   }
@@ -46,7 +50,7 @@ const verifyAccessToken = (token) => {
  */
 const verifyRefreshToken = (token) => {
   try {
-    return jwt.verify(token, authConfig.jwt.refreshTokenSecret);
+    return jwt.verify(token, JWT_SECRET);
   } catch (error) {
     throw new Error('Invalid or expired refresh token');
   }

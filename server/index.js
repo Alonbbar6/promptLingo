@@ -54,24 +54,20 @@ const { cleanupOrphanedFiles } = require('./utils/cleanupOrphanedFiles');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Security middleware - configured for Google OAuth
-// Disable COOP in development to allow Google OAuth popups
+// Security middleware
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginOpenerPolicy: isDevelopment ? false : { policy: "same-origin-allow-popups" }, // Disable in dev
-  crossOriginEmbedderPolicy: false, // Disable to allow Google OAuth
+  crossOriginOpenerPolicy: isDevelopment ? false : { policy: "same-origin-allow-popups" },
+  crossOriginEmbedderPolicy: false,
   contentSecurityPolicy: isDevelopment ? false : { // Disable CSP in development
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "https://accounts.google.com", "https://oauth2.googleapis.com"],
-      frameSrc: ["'self'", "https://accounts.google.com"],
-      // SECURITY: Removed 'unsafe-inline' to prevent XSS attacks
-      // Google OAuth scripts are loaded from their CDN with integrity checks
-      scriptSrc: ["'self'", "https://accounts.google.com", "https://apis.google.com"],
-      // Use nonce or hash for inline styles if needed, but avoid 'unsafe-inline'
-      styleSrc: ["'self'", "https://accounts.google.com"],
+      connectSrc: ["'self'"],
+      frameSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'"],
       imgSrc: ["'self'", "data:", "https:"],
       fontSrc: ["'self'", "data:"],
     }
@@ -113,8 +109,8 @@ const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:5173', // Vite dev server
-    'http://192.168.1.96:3000', // Your specific local IP
-    'http://192.168.1.96:3001',
+    'http://192.168.1.243:3000', // Your specific local IP
+    'http://192.168.1.243:3001',
   ] : []),
 
   // Production origins - MUST be exact matches
@@ -414,7 +410,6 @@ app.use(notFoundHandler);
 console.log('🔑 API Keys Check:');
 console.log(`   - OpenAI: ${process.env.OPENAI_API_KEY ? '✓ Set' : '✗ Missing'}`);
 console.log(`   - ElevenLabs: ${process.env.ELEVENLABS_API_KEY ? '✓ Set' : '✗ Missing'}`);
-console.log(`   - Google OAuth: ${process.env.GOOGLE_CLIENT_ID ? '✓ Set' : '✗ Missing'}`);
 console.log(`   - Database: ${process.env.DATABASE_URL ? '✓ Set' : '✗ Missing'}`);
 console.log(`   - JWT Secret: ${process.env.JWT_SECRET ? '✓ Set' : '✗ Missing'}`);
 
@@ -424,10 +419,6 @@ if (!process.env.OPENAI_API_KEY) {
 
 if (!process.env.ELEVENLABS_API_KEY) {
   console.warn('⚠️  WARNING: ELEVENLABS_API_KEY not set. Speech synthesis will fail.');
-}
-
-if (!process.env.GOOGLE_CLIENT_ID) {
-  console.warn('⚠️  WARNING: GOOGLE_CLIENT_ID not set. Google authentication will fail.');
 }
 
 if (!process.env.DATABASE_URL) {
@@ -460,13 +451,17 @@ const startServer = async () => {
       console.log(`📁 Uploads directory: ${uploadsDir}`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log(`🔗 API Base URL: http://localhost:${PORT}/api`);
-      console.log(`\n✅ Google OAuth Authentication System Ready!`);
-      console.log(`   - Login: POST /api/auth/google/login`);
+      console.log(`\n✅ Email/Password Authentication System Ready!`);
+      console.log(`   - Register: POST /api/auth/register`);
+      console.log(`   - Login: POST /api/auth/login`);
+      console.log(`   - Verify Email: POST /api/auth/verify-email`);
+      console.log(`   - Forgot Password: POST /api/auth/forgot-password`);
+      console.log(`   - Reset Password: POST /api/auth/reset-password`);
+      console.log(`   - Change Password: POST /api/auth/change-password`);
       console.log(`   - Logout: POST /api/auth/logout`);
-      console.log(`   - Verify: GET /api/auth/verify`);
-      console.log(`   - Refresh: POST /api/auth/refresh`);
-      console.log(`   - Current User: GET /api/auth/user`);
-      console.log(`   - Auth Status: GET /api/auth/status\n`);
+      console.log(`   - Verify Token: GET /api/auth/verify`);
+      console.log(`   - Refresh Token: POST /api/auth/refresh`);
+      console.log(`   - Current User: GET /api/auth/user\n`);
 
       // Run cleanup immediately on startup
       cleanupOrphanedFiles();

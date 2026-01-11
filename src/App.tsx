@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { TranslationProvider } from './contexts/TranslationContext';
 import { ToastProvider, useToast } from './contexts/ToastContext';
@@ -11,11 +11,14 @@ import TextToSpeechPage from './components/TextToSpeechPage';
 import { WasmDemo } from './components/WasmDemo';
 import LiveTranscriptionCaptions from './components/LiveTranscriptionCaptions';
 import SignInPrompt from './components/SignInPrompt';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 import './index.css';
 
 type AppPage = 'translator' | 'tts' | 'wasm' | 'live';
-
-const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
 
 // Inner component that has access to AuthContext
 const AppContent: React.FC = () => {
@@ -80,24 +83,28 @@ const AppContent: React.FC = () => {
 };
 
 function App() {
-  // Debug: Log Google Client ID on mount
-  React.useEffect(() => {
-    console.log('🔑 Google Client ID:', GOOGLE_CLIENT_ID ? '✅ Set' : '❌ Missing');
-    console.log('🔑 Full Client ID:', GOOGLE_CLIENT_ID);
-  }, []);
-
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <BrowserRouter>
       <LanguageProvider>
         <ToastProvider>
           <AuthProvider>
             <TranslationProvider>
-              <AppContent />
+              <Routes>
+                {/* Auth Routes */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/verify-email" element={<VerifyEmailPage />} />
+
+                {/* Main App Routes */}
+                <Route path="/*" element={<AppContent />} />
+              </Routes>
             </TranslationProvider>
           </AuthProvider>
         </ToastProvider>
       </LanguageProvider>
-    </GoogleOAuthProvider>
+    </BrowserRouter>
   );
 }
 

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LogIn, Shield, Zap, History, AlertCircle } from 'lucide-react';
-import GoogleLoginButton from './GoogleLoginButton';
 
 const SignInPrompt: React.FC = () => {
   const [showAuthMessage, setShowAuthMessage] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user was redirected due to auth requirement
@@ -83,9 +84,22 @@ const SignInPrompt: React.FC = () => {
           </div>
         </div>
 
-        {/* Sign in button */}
+        {/* Sign in buttons */}
         <div className="flex flex-col items-center space-y-4">
-          <GoogleLoginButton />
+          <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+            <button
+              onClick={() => navigate('/login')}
+              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => navigate('/register')}
+              className="flex-1 bg-white hover:bg-gray-50 text-gray-900 font-semibold py-3 px-6 rounded-lg border-2 border-gray-300 transition-all"
+            >
+              Create Account
+            </button>
+          </div>
 
           <p className="text-xs text-gray-500 max-w-md">
             By signing in, you agree to our Terms of Service and Privacy Policy.

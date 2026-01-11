@@ -7,8 +7,6 @@ const validateEnv = () => {
   const required = [
     'DATABASE_URL',
     'JWT_SECRET',
-    'GOOGLE_CLIENT_ID',
-    'GOOGLE_CLIENT_SECRET',
     'FRONTEND_URL',
     'PORT'
   ];

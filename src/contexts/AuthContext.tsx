@@ -75,15 +75,42 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     initAuth();
   }, []);
 
-  const login = async (googleResponse: any) => {
+  const register = async (email: string, password: string, name: string) => {
     try {
       setIsLoading(true);
-      const idToken = googleResponse.credential;
+      console.log('📝 Attempting registration...');
 
-      console.log('🔑 Attempting login with Google token...');
+      await authService.register(email, password, name);
 
-      // Send token to backend (cookies will be set by server)
-      const response = await authService.loginWithGoogle(idToken);
+      console.log('✅ Registration successful! Please check email for verification.');
+      // Don't set user yet - they need to verify email first
+    } catch (error: any) {
+      console.error('❌ Registration failed:', error);
+
+      let errorMessage = 'Failed to register. Please try again.';
+
+      if (error.response) {
+        console.error('🔴 Backend Error Response:', {
+          status: error.response.status,
+          data: error.response.data,
+          errorMessage: error.response.data?.message || error.response.data?.error
+        });
+
+        errorMessage = error.response.data?.error || error.response.data?.message || errorMessage;
+      }
+
+      throw new Error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const login = async (email: string, password: string) => {
+    try {
+      setIsLoading(true);
+      console.log('🔑 Attempting login...');
+
+      const response = await authService.login(email, password);
 
       console.log('✅ Login successful!');
 
@@ -94,54 +121,131 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (error: any) {
       console.error('❌ Login failed:', error);
 
-      // Log detailed error information
+      // Extract the error message from the backend response
+      let errorMessage = 'Failed to log in. Please try again.';
+
       if (error.response) {
         console.error('🔴 Backend Error Response:', {
           status: error.response.status,
-          statusText: error.response.statusText,
           data: error.response.data,
           errorMessage: error.response.data?.message || error.response.data?.error
         });
-      } else if (error.request) {
-        console.error('🔴 No response received from backend');
-      } else {
-        console.error('🔴 Error setting up request:', error.message);
+
+        // Use the backend's error message
+        errorMessage = error.response.data?.error || error.response.data?.message || errorMessage;
       }
 
-      throw error;
+      // Throw a new Error with the extracted message
+      throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const loginWithDevMode = async () => {
+  const verifyEmail = async (token: string) => {
     try {
       setIsLoading(true);
-      console.log('🔧 Attempting developer mode login...');
+      console.log('✉️ Verifying email...');
 
-      // Call dev mode login endpoint (cookies will be set by server)
-      const response = await authService.loginWithDevMode();
+      await authService.verifyEmail(token);
 
-      console.log('✅ Developer login successful!');
-
-      // Store user data only (tokens are in HttpOnly cookies)
-      const userData = response.data.user;
-      setUser(userData);
-      setStoredUser(userData);
+      console.log('✅ Email verified successfully!');
     } catch (error: any) {
-      console.error('❌ Developer login failed:', error);
+      console.error('❌ Email verification failed:', error);
 
-      // Log detailed error information
       if (error.response) {
         console.error('🔴 Backend Error Response:', {
           status: error.response.status,
-          statusText: error.response.statusText,
           data: error.response.data,
-          errorMessage: error.response.data?.message || error.response.data?.error
         });
       }
 
-      throw error;
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'An error occurred';
+      throw new Error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const forgotPassword = async (email: string) => {
+    try {
+      setIsLoading(true);
+      console.log('🔒 Requesting password reset...');
+
+      await authService.forgotPassword(email);
+
+      console.log('✅ Password reset email sent!');
+    } catch (error: any) {
+      console.error('❌ Password reset request failed:', error);
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'An error occurred';
+      throw new Error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetPassword = async (token: string, password: string) => {
+    try {
+      setIsLoading(true);
+      console.log('🔑 Resetting password...');
+
+      await authService.resetPassword(token, password);
+
+      console.log('✅ Password reset successful!');
+    } catch (error: any) {
+      console.error('❌ Password reset failed:', error);
+
+      if (error.response) {
+        console.error('🔴 Backend Error Response:', {
+          status: error.response.status,
+          data: error.response.data,
+        });
+      }
+
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'An error occurred';
+      throw new Error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      setIsLoading(true);
+      console.log('🔐 Changing password...');
+
+      await authService.changePassword(currentPassword, newPassword);
+
+      console.log('✅ Password changed successfully!');
+    } catch (error: any) {
+      console.error('❌ Password change failed:', error);
+
+      if (error.response) {
+        console.error('🔴 Backend Error Response:', {
+          status: error.response.status,
+          data: error.response.data,
+        });
+      }
+
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'An error occurred';
+      throw new Error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resendVerification = async (email: string) => {
+    try {
+      setIsLoading(true);
+      console.log('📧 Resending verification email...');
+
+      await authService.resendVerification(email);
+
+      console.log('✅ Verification email resent!');
+    } catch (error: any) {
+      console.error('❌ Failed to resend verification:', error);
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'An error occurred';
+      throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -173,12 +277,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       await authService.refreshAccessToken();
 
       // User data should remain the same (no user in refresh response)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Token refresh failed:', error);
       // Clear everything and logout
       clearStoredUser();
       setUser(null);
-      throw error;
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'An error occurred';
+      throw new Error(errorMessage);
     }
   };
 
@@ -187,10 +292,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isAuthenticated: !!user,
     isLoading,
     error: null,
-    accessToken: null, // SECURITY: No longer exposed (in HttpOnly cookie)
-    login: async (googleResponse: any) => login(googleResponse),
-    loginWithDevMode,
+    register,
+    login,
     logout,
+    verifyEmail,
+    forgotPassword,
+    resetPassword,
+    changePassword,
+    resendVerification,
     refreshToken,
   };
 

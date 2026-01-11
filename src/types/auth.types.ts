@@ -2,22 +2,15 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  avatar: string;
-  googleId: string;
+  avatar?: string;
   subscriptionTier?: string;
-  subscription_tier?: string;
-}
-
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
+  emailVerified?: boolean;
+  createdAt?: string;
+  lastLogin?: string;
 }
 
 export interface AuthResponse {
   success: boolean;
-  accessToken: string;
-  refreshToken: string;
   user: User;
   expiresIn: number;
 }
@@ -27,20 +20,64 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  accessToken: string | null;
-  login: (googleResponse: any) => Promise<void>;
-  loginWithDevMode: () => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  verifyEmail: (token: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (token: string, password: string) => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  resendVerification: (email: string) => Promise<void>;
   refreshToken: () => Promise<void>;
 }
 
 export interface LoginResponse {
   success: boolean;
   data: {
-    accessToken: string;
-    refreshToken: string;
     user: User;
     expiresIn: number;
+  };
+  message: string;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  data: {
+    message: string;
+    email: string;
+  };
+  message: string;
+}
+
+export interface VerifyEmailResponse {
+  success: boolean;
+  data: {
+    message: string;
+    email: string;
+  };
+  message: string;
+}
+
+export interface ForgotPasswordResponse {
+  success: boolean;
+  data: {
+    message: string;
+  };
+  message: string;
+}
+
+export interface ResetPasswordResponse {
+  success: boolean;
+  data: {
+    message: string;
+  };
+  message: string;
+}
+
+export interface ChangePasswordResponse {
+  success: boolean;
+  data: {
+    message: string;
   };
   message: string;
 }
@@ -48,15 +85,9 @@ export interface LoginResponse {
 export interface TokenRefreshResponse {
   success: boolean;
   data: {
-    accessToken: string;
-    refreshToken: string;
     expiresIn: number;
   };
   message: string;
-}
-
-export interface GoogleResponse {
-  credential: string;
 }
 
 export interface APIError {
@@ -81,4 +112,11 @@ export interface TranslationHistoryItem {
   target_language: string;
   tone: string;
   created_at: string;
+}
+
+// Password validation result
+export interface PasswordValidation {
+  isValid: boolean;
+  errors: string[];
+  strength?: 'weak' | 'medium' | 'strong';
 }

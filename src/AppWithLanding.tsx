@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { TranslationProvider } from './contexts/TranslationContext';
 import { ToastProvider, useToast } from './contexts/ToastContext';
@@ -11,6 +11,11 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import RefundPolicyPage from './pages/RefundPolicyPage';
 import AccountSettingsPage from './pages/AccountSettingsPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 import OnboardingTutorial from './components/OnboardingTutorial';
 import CookieConsentBanner from './components/CookieConsentBanner';
 import MainContent from './components/MainContent';
@@ -21,8 +26,6 @@ import SignInPrompt from './components/SignInPrompt';
 import './index.css';
 
 type AppPage = 'landing' | 'translator' | 'tts' | 'live' | 'pricing' | 'subscription' | 'privacy' | 'refund-policy' | 'settings';
-
-const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
 
 /**
  * AppWithLanding - Enhanced App with integrated landing page
@@ -168,23 +171,28 @@ const AppContent: React.FC = () => {
 };
 
 function AppWithLanding() {
-  // Debug: Log Google Client ID on mount
-  React.useEffect(() => {
-    console.log('🔑 Google Client ID:', GOOGLE_CLIENT_ID ? '✅ Set' : '❌ Missing');
-  }, []);
-
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <BrowserRouter>
       <LanguageProvider>
         <ToastProvider>
           <AuthProvider>
             <TranslationProvider>
-              <AppContent />
+              <Routes>
+                {/* Auth Routes */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/verify-email" element={<VerifyEmailPage />} />
+
+                {/* Main App Routes */}
+                <Route path="/*" element={<AppContent />} />
+              </Routes>
             </TranslationProvider>
           </AuthProvider>
         </ToastProvider>
       </LanguageProvider>
-    </GoogleOAuthProvider>
+    </BrowserRouter>
   );
 }
 

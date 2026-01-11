@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const { hashPassword, comparePassword } = require('./passwordService');
 
 /**
  * Find user by Google ID
@@ -341,6 +342,171 @@ const updateSubscriptionTier = async (userId, tier) => {
   return result.rows[0];
 };
 
+// ============================================
+// Email/Password Authentication Functions
+// ============================================
+
+/**
+ * Create new user with email and password
+ */
+const createUserWithPassword = async (email, password, name) => {
+  // Hash the password
+  const passwordHash = await hashPassword(password);
+
+  const result = await db.query(
+    `INSERT INTO users (email, name, password_hash, auth_method, email_verified, last_login, preferences, settings, subscription_tier, api_calls_this_month, monthly_reset_date)
+     VALUES ($1, $2, $3, 'email', false, CURRENT_TIMESTAMP, '{}', '{}', 'free', 0, DATE_TRUNC('month', CURRENT_TIMESTAMP + INTERVAL '1 month'))
+     RETURNING *`,
+    [email, name, passwordHash]
+  );
+
+  return result.rows[0];
+};
+
+/**
+ * Verify user password
+ */
+const verifyUserPassword = async (userId, password) => {
+  const user = await findUserById(userId);
+  if (!user || !user.password_hash) {
+    return false;
+  }
+
+  return await comparePassword(password, user.password_hash);
+};
+
+/**
+ * Set email verification token
+ */
+const setEmailVerificationToken = async (userId, token, expiresAt) => {
+  await db.query(
+    `UPDATE users
+     SET email_verification_token = $1,
+         email_verification_expires = $2
+     WHERE id = $3`,
+    [token, expiresAt, userId]
+  );
+};
+
+/**
+ * Verify email with token
+ */
+const verifyEmailWithToken = async (token) => {
+  const result = await db.query(
+    `UPDATE users
+     SET email_verified = true,
+         email_verified_at = CURRENT_TIMESTAMP,
+         email_verification_token = NULL,
+         email_verification_expires = NULL
+     WHERE email_verification_token = $1
+     AND email_verification_expires > CURRENT_TIMESTAMP
+     RETURNING *`,
+    [token]
+  );
+
+  return result.rows[0];
+};
+
+/**
+ * Find user by email verification token
+ */
+const findUserByVerificationToken = async (token) => {
+  const result = await db.query(
+    `SELECT * FROM users
+     WHERE email_verification_token = $1
+     AND email_verification_expires > CURRENT_TIMESTAMP`,
+    [token]
+  );
+  return result.rows[0];
+};
+
+/**
+ * Set password reset token
+ */
+const setPasswordResetToken = async (userId, token, expiresAt) => {
+  await db.query(
+    `UPDATE users
+     SET password_reset_token = $1,
+         password_reset_expires = $2
+     WHERE id = $3`,
+    [token, expiresAt, userId]
+  );
+};
+
+/**
+ * Find user by password reset token
+ */
+const findUserByResetToken = async (token) => {
+  const result = await db.query(
+    `SELECT * FROM users
+     WHERE password_reset_token = $1
+     AND password_reset_expires > CURRENT_TIMESTAMP`,
+    [token]
+  );
+  return result.rows[0];
+};
+
+/**
+ * Reset password with token
+ */
+const resetPasswordWithToken = async (token, newPassword) => {
+  const passwordHash = await hashPassword(newPassword);
+
+  const result = await db.query(
+    `UPDATE users
+     SET password_hash = $1,
+         password_reset_token = NULL,
+         password_reset_expires = NULL
+     WHERE password_reset_token = $2
+     AND password_reset_expires > CURRENT_TIMESTAMP
+     RETURNING *`,
+    [passwordHash, token]
+  );
+
+  return result.rows[0];
+};
+
+/**
+ * Change user password (when logged in)
+ */
+const changeUserPassword = async (userId, currentPassword, newPassword) => {
+  // Verify current password
+  const isValid = await verifyUserPassword(userId, currentPassword);
+  if (!isValid) {
+    throw new Error('Current password is incorrect');
+  }
+
+  // Hash new password
+  const passwordHash = await hashPassword(newPassword);
+
+  const result = await db.query(
+    `UPDATE users
+     SET password_hash = $1
+     WHERE id = $2
+     RETURNING *`,
+    [passwordHash, userId]
+  );
+
+  return result.rows[0];
+};
+
+/**
+ * Resend email verification
+ */
+const resendEmailVerification = async (email, token, expiresAt) => {
+  const result = await db.query(
+    `UPDATE users
+     SET email_verification_token = $1,
+         email_verification_expires = $2
+     WHERE email = $3
+     AND email_verified = false
+     RETURNING *`,
+    [token, expiresAt, email]
+  );
+
+  return result.rows[0];
+};
+
 module.exports = {
   findUserByGoogleId,
   findUserByEmail,
@@ -366,4 +532,15 @@ module.exports = {
   checkAndResetMonthlyUsage,
   updateSubscriptionTier,
   getUsageQuota,
+  // Email/Password Authentication
+  createUserWithPassword,
+  verifyUserPassword,
+  setEmailVerificationToken,
+  verifyEmailWithToken,
+  findUserByVerificationToken,
+  setPasswordResetToken,
+  findUserByResetToken,
+  resetPasswordWithToken,
+  changeUserPassword,
+  resendEmailVerification,
 };

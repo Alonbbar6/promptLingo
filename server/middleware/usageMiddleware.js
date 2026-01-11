@@ -4,7 +4,6 @@
  */
 
 const db = require('../config/database');
-const authConfig = require('../config/auth.config');
 const { hasActivePromotion, deactivateExpiredPromotions } = require('../services/promotionService');
 
 // Use centralized database pool with proper SSL configuration
@@ -36,16 +35,7 @@ const trackUsage = async (req, res, next) => {
       return next();
     }
 
-    // Check if this is a developer mode user - they get unlimited usage
-    if (authConfig.developerMode.enabled && req.user.google_id === authConfig.developerMode.user.googleId) {
-      console.log('🔧 Developer mode: Bypassing usage limits');
-      req.usage = {
-        tier: 'dev',
-        used: 0,
-        limit: 'unlimited'
-      };
-      return next();
-    }
+    // Developer mode has been removed - all users follow tier limits
 
     // Check if user has an active promotion (unlimited usage)
     await deactivateExpiredPromotions(userId);
@@ -178,21 +168,6 @@ const getUsage = async (req, res) => {
     }
 
     const userId = req.user.id;
-
-    // Check if this is a developer mode user
-    if (authConfig.developerMode.enabled && req.user.google_id === authConfig.developerMode.user.googleId) {
-      return res.json({
-        success: true,
-        data: {
-          tier: 'dev',
-          used: 0,
-          limit: null,
-          unlimited: true,
-          resetDate: null,
-          remaining: null
-        }
-      });
-    }
 
     // Check if user has an active promotion
     await deactivateExpiredPromotions(userId);

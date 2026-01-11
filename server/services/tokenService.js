@@ -4,7 +4,12 @@
  */
 
 const jwt = require('jsonwebtoken');
-const authConfig = require('../config/auth.config');
+
+// JWT configuration from environment variables
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_ACCESS_TOKEN_EXPIRY = '15m';
+const JWT_REFRESH_TOKEN_EXPIRY = '7d';
+const JWT_ALGORITHM = 'HS256';
 
 /**
  * Generate access token for user
@@ -18,9 +23,9 @@ const generateAccessToken = (userId) => {
     iat: Math.floor(Date.now() / 1000)
   };
 
-  return jwt.sign(payload, authConfig.jwt.secret, {
-    expiresIn: authConfig.jwt.accessTokenExpiry,
-    algorithm: authConfig.jwt.algorithm
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_ACCESS_TOKEN_EXPIRY,
+    algorithm: JWT_ALGORITHM
   });
 };
 
@@ -36,9 +41,9 @@ const generateRefreshToken = (userId) => {
     iat: Math.floor(Date.now() / 1000)
   };
 
-  return jwt.sign(payload, authConfig.jwt.secret, {
-    expiresIn: authConfig.jwt.refreshTokenExpiry,
-    algorithm: authConfig.jwt.algorithm
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_REFRESH_TOKEN_EXPIRY,
+    algorithm: JWT_ALGORITHM
   });
 };
 
@@ -49,8 +54,8 @@ const generateRefreshToken = (userId) => {
  */
 const verifyAccessToken = (token) => {
   try {
-    const decoded = jwt.verify(token, authConfig.jwt.secret);
-    
+    const decoded = jwt.verify(token, JWT_SECRET);
+
     if (decoded.type !== 'access') {
       return { valid: false, decoded: null, error: 'Invalid token type' };
     }
@@ -68,8 +73,8 @@ const verifyAccessToken = (token) => {
  */
 const verifyRefreshToken = (token) => {
   try {
-    const decoded = jwt.verify(token, authConfig.jwt.secret);
-    
+    const decoded = jwt.verify(token, JWT_SECRET);
+
     if (decoded.type !== 'refresh') {
       return { valid: false, decoded: null, error: 'Invalid token type' };
     }

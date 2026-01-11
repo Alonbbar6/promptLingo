@@ -1,7 +1,16 @@
 import axios from 'axios';
-import { LoginResponse, TokenRefreshResponse, User } from '../types/auth.types';
+import {
+  LoginResponse,
+  RegisterResponse,
+  VerifyEmailResponse,
+  ForgotPasswordResponse,
+  ResetPasswordResponse,
+  ChangePasswordResponse,
+  TokenRefreshResponse,
+  User,
+} from '../types/auth.types';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:10000';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 // SECURITY: Configure axios to send HttpOnly cookies with requests
 const axiosConfig = {
@@ -10,26 +19,37 @@ const axiosConfig = {
 
 export const authService = {
   /**
-   * Login with Google ID token
-   * Tokens will be set as HttpOnly cookies by the server
+   * Register new user with email and password
    */
-  loginWithGoogle: async (idToken: string): Promise<LoginResponse> => {
+  register: async (email: string, password: string, name: string): Promise<RegisterResponse> => {
     const response = await axios.post(
-      `${API_URL}/api/auth/google/login`,
-      { idToken },
+      `${API_URL}/api/auth/register`,
+      { email, password, name },
       axiosConfig
     );
     return response.data;
   },
 
   /**
-   * Developer mode login (only works when DEV_MODE=true on backend)
+   * Verify email with token
+   */
+  verifyEmail: async (token: string): Promise<VerifyEmailResponse> => {
+    const response = await axios.post(
+      `${API_URL}/api/auth/verify-email`,
+      { token },
+      axiosConfig
+    );
+    return response.data;
+  },
+
+  /**
+   * Login with email and password
    * Tokens will be set as HttpOnly cookies by the server
    */
-  loginWithDevMode: async (): Promise<LoginResponse> => {
+  login: async (email: string, password: string): Promise<LoginResponse> => {
     const response = await axios.post(
-      `${API_URL}/api/auth/dev/login`,
-      {},
+      `${API_URL}/api/auth/login`,
+      { email, password },
       axiosConfig
     );
     return response.data;
@@ -46,7 +66,7 @@ export const authService = {
   /**
    * Verify access token from cookie
    */
-  verifyToken: async (): Promise<{ valid: boolean; user: User }> => {
+  verifyToken: async (): Promise<{ user: User }> => {
     const response = await axios.get(
       `${API_URL}/api/auth/verify`,
       axiosConfig
@@ -75,6 +95,54 @@ export const authService = {
       `${API_URL}/api/auth/user`,
       axiosConfig
     );
-    return response.data.data;
+    return response.data.data.user;
+  },
+
+  /**
+   * Request password reset
+   */
+  forgotPassword: async (email: string): Promise<ForgotPasswordResponse> => {
+    const response = await axios.post(
+      `${API_URL}/api/auth/forgot-password`,
+      { email },
+      axiosConfig
+    );
+    return response.data;
+  },
+
+  /**
+   * Reset password with token
+   */
+  resetPassword: async (token: string, password: string): Promise<ResetPasswordResponse> => {
+    const response = await axios.post(
+      `${API_URL}/api/auth/reset-password`,
+      { token, password },
+      axiosConfig
+    );
+    return response.data;
+  },
+
+  /**
+   * Change password (authenticated)
+   */
+  changePassword: async (currentPassword: string, newPassword: string): Promise<ChangePasswordResponse> => {
+    const response = await axios.post(
+      `${API_URL}/api/auth/change-password`,
+      { currentPassword, newPassword },
+      axiosConfig
+    );
+    return response.data;
+  },
+
+  /**
+   * Resend email verification
+   */
+  resendVerification: async (email: string): Promise<RegisterResponse> => {
+    const response = await axios.post(
+      `${API_URL}/api/auth/resend-verification`,
+      { email },
+      axiosConfig
+    );
+    return response.data;
   },
 };

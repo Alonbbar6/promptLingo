@@ -1,55 +1,122 @@
 /**
  * Authentication Routes
- * Handles Google OAuth login, logout, token refresh, and verification
+ * Handles email/password authentication, email verification, and password management
  */
 
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const { authenticateToken } = require('../middleware/authMiddleware');
-const { 
-  validateGoogleLogin, 
-  validateRefreshToken, 
-  handleValidationErrors 
+const {
+  validateRegister,
+  validateLogin,
+  validateVerifyEmail,
+  validateForgotPassword,
+  validateResetPassword,
+  validateChangePassword,
+  validateResendVerification,
+  handleValidationErrors
 } = require('../middleware/validationMiddleware');
 
-// Google login
+// ============================================
+// Registration & Email Verification
+// ============================================
+
+// Register new user
 router.post(
-  '/google/login',
-  validateGoogleLogin,
+  '/register',
+  validateRegister,
   handleValidationErrors,
-  authController.googleLogin
+  authController.register
 );
 
-// Developer login (only works when DEV_MODE=true)
-router.post('/dev/login', authController.developerLogin);
+// Verify email with token
+router.post(
+  '/verify-email',
+  validateVerifyEmail,
+  handleValidationErrors,
+  authController.verifyEmail
+);
+
+// Resend email verification
+router.post(
+  '/resend-verification',
+  validateResendVerification,
+  handleValidationErrors,
+  authController.resendVerification
+);
+
+// ============================================
+// Login & Logout
+// ============================================
+
+// Login with email and password
+router.post(
+  '/login',
+  validateLogin,
+  handleValidationErrors,
+  authController.login
+);
 
 // Logout
 router.post('/logout', authController.logout);
 
-// Verify token
+// ============================================
+// Token Management
+// ============================================
+
+// Verify access token
 router.get('/verify', authenticateToken, authController.verifyToken);
 
 // Refresh access token
-router.post(
-  '/refresh', 
-  validateRefreshToken, 
-  handleValidationErrors, 
-  authController.refreshAccessToken
-);
+router.post('/refresh', authController.refreshAccessToken);
 
 // Get current user
 router.get('/user', authenticateToken, authController.getCurrentUser);
+
+// ============================================
+// Password Management
+// ============================================
+
+// Request password reset
+router.post(
+  '/forgot-password',
+  validateForgotPassword,
+  handleValidationErrors,
+  authController.forgotPassword
+);
+
+// Reset password with token
+router.post(
+  '/reset-password',
+  validateResetPassword,
+  handleValidationErrors,
+  authController.resetPassword
+);
+
+// Change password (authenticated)
+router.post(
+  '/change-password',
+  authenticateToken,
+  validateChangePassword,
+  handleValidationErrors,
+  authController.changePassword
+);
+
+// ============================================
+// Auth Status
+// ============================================
 
 // Auth status check
 router.get('/status', (req, res) => {
   res.json({
     success: true,
     data: {
-      googleOAuthConfigured: !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET),
+      authMethod: 'email/password',
+      emailVerificationRequired: true,
+      passwordResetEnabled: true,
       databaseConnected: true,
       jwtConfigured: !!process.env.JWT_SECRET,
-      devMode: process.env.DEV_MODE === 'true'
     },
     message: 'Auth status retrieved'
   });

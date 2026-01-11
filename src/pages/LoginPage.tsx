@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import GoogleLoginButton from '../components/GoogleLoginButton';
+import LoginForm from '../components/LoginForm';
 
 const LoginPage: React.FC = () => {
-  const { isAuthenticated, loginWithDevMode } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [isDevMode] = useState(process.env.REACT_APP_DEV_MODE === 'true');
-
-  // Debug logging
-  console.log('REACT_APP_DEV_MODE:', process.env.REACT_APP_DEV_MODE);
-  console.log('isDevMode:', isDevMode);
 
   useEffect(() => {
     // If already authenticated, redirect to home
@@ -18,20 +13,6 @@ const LoginPage: React.FC = () => {
       navigate('/', { replace: true });
     }
   }, [isAuthenticated, navigate]);
-
-  const handleLoginSuccess = () => {
-    navigate('/', { replace: true });
-  };
-
-  const handleDevLogin = async () => {
-    try {
-      await loginWithDevMode();
-      navigate('/', { replace: true });
-    } catch (error) {
-      console.error('Dev login failed:', error);
-      alert('Developer login failed. Make sure DEV_MODE is enabled on the backend.');
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
@@ -44,30 +25,12 @@ const LoginPage: React.FC = () => {
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">PromptLingo</h1>
             <p className="text-gray-600">
-              Secure translation with advanced AI
+              Sign in to access your translations
             </p>
           </div>
 
-          {/* Google Sign-In Button */}
-          <div className="mb-6">
-            <GoogleLoginButton onSuccess={handleLoginSuccess} />
-          </div>
-
-          {/* Developer Mode Login Button */}
-          {isDevMode && (
-            <div className="mb-6">
-              <button
-                onClick={handleDevLogin}
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
-              >
-                <span>🔧</span>
-                <span>Developer Login (Test Mode)</span>
-              </button>
-              <p className="text-xs text-yellow-600 mt-2 text-center">
-                Skip Google OAuth - For testing only
-              </p>
-            </div>
-          )}
+          {/* Login Form */}
+          <LoginForm />
 
           {/* Features */}
           <div className="space-y-3 mt-8 pt-8 border-t border-gray-200">
@@ -104,7 +67,6 @@ const LoginPage: React.FC = () => {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-xs text-gray-500 text-center">
               By signing in, you agree to our Terms of Service and Privacy Policy.
-              We use Google authentication for secure access.
             </p>
           </div>
         </div>

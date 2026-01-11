@@ -1,9 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Mic, Languages, Volume2, Cpu, LogIn, Radio } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../contexts/LanguageContext';
 import UserProfile from './UserProfile';
-import GoogleLoginButton from './GoogleLoginButton';
 import LanguageSelector from './LanguageSelector';
 
 type AppPage = 'translator' | 'tts' | 'wasm' | 'live';
@@ -16,6 +16,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ currentPage = 'translator', onPageChange }) => {
   const { isAuthenticated, isLoading } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [showLoginModal, setShowLoginModal] = React.useState(false);
 
   // Debug logging
@@ -130,11 +131,29 @@ const Header: React.FC<HeaderProps> = ({ currentPage = 'translator', onPageChang
               <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('auth.signInTitle')}</h2>
               <p className="text-gray-600">{t('auth.signInSubtitle')}</p>
             </div>
-            <GoogleLoginButton onSuccess={() => {
-              setShowLoginModal(false);
-              // Navigate to translator after successful login if onPageChange is available
-              onPageChange?.('translator');
-            }} />
+
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  setShowLoginModal(false);
+                  navigate('/login');
+                }}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg"
+              >
+                Sign In
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowLoginModal(false);
+                  navigate('/register');
+                }}
+                className="w-full bg-white hover:bg-gray-50 text-gray-900 font-semibold py-3 px-6 rounded-lg border-2 border-gray-300 transition-all"
+              >
+                Create Account
+              </button>
+            </div>
+
             <div className="mt-6 text-center text-sm text-gray-500">
               <p>{t('auth.dataSecure')}</p>
             </div>

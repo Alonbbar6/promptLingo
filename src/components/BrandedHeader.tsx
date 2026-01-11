@@ -1,10 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import { BrandedButton } from './ui';
 import brandDesignSystem from '../config/brandDesignSystem';
 import { useAuth } from '../hooks/useAuth';
 import UserProfile from './UserProfile';
-import GoogleLoginButton from './GoogleLoginButton';
 import LanguageSelector from './LanguageSelector';
 
 interface BrandedHeaderProps {
@@ -24,6 +24,7 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const { isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
   const [showLoginModal, setShowLoginModal] = React.useState(false);
 
   return (
@@ -250,11 +251,29 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Sign in to PromptLingo</h2>
               <p className="text-gray-600">Create a profile to save your translations</p>
             </div>
-            <GoogleLoginButton onSuccess={() => {
-              setShowLoginModal(false);
-              // Navigate to translator after successful login
-              onPageChange('translator');
-            }} />
+
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  setShowLoginModal(false);
+                  navigate('/login');
+                }}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg"
+              >
+                Sign In
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowLoginModal(false);
+                  navigate('/register');
+                }}
+                className="w-full bg-white hover:bg-gray-50 text-gray-900 font-semibold py-3 px-6 rounded-lg border-2 border-gray-300 transition-all"
+              >
+                Create Account
+              </button>
+            </div>
+
             <div className="mt-6 text-center text-sm text-gray-500">
               <p>Your data is secure and private</p>
             </div>
