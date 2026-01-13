@@ -43,6 +43,7 @@ const healthRoute = require('./routes/health');
 const usageRoute = require('./routes/usage');
 const stripeRoute = require('./routes/stripe');
 const promotionsRoute = require('./routes/promotions');
+const debugRoute = require('./routes/debug');
 const { testConnection } = require('./db/connection');
 const { requestLogger, errorLogger} = require('./middleware/logger');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
@@ -380,6 +381,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/health', healthRoute);
+app.use('/api/debug', debugRoute); // Debug endpoints for troubleshooting cookies/auth
 app.use('/api/auth', authRoute);
 app.use('/api/auth', accountRoute);
 app.use('/api/user', userRoute);

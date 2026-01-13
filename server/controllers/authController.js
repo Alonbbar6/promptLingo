@@ -15,22 +15,38 @@ const isProduction = process.env.NODE_ENV === 'production';
 /**
  * Set authentication cookies
  */
-function setAuthCookies(res, accessToken, refreshToken) {
-  res.cookie('accessToken', accessToken, {
+function setAuthCookies(res, accessToken, refreshToken, req = null) {
+  const cookieConfig = {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',
     // Don't set domain - let browser use backend's actual domain for cross-origin cookies
+  };
+
+  res.cookie('accessToken', accessToken, {
+    ...cookieConfig,
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
 
   res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'none' : 'lax',
-    // Don't set domain - let browser use backend's actual domain for cross-origin cookies
+    ...cookieConfig,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
+
+  // Enhanced logging for debugging mobile cookie issues
+  if (req) {
+    const userAgent = req.headers['user-agent'] || 'unknown';
+    const isMobile = /Mobile|Android|iPhone|iPad/i.test(userAgent);
+    console.log('🍪 [AUTH] Cookies set:', {
+      httpOnly: cookieConfig.httpOnly,
+      secure: cookieConfig.secure,
+      sameSite: cookieConfig.sameSite,
+      domain: 'auto',
+      environment: isProduction ? 'production' : 'development',
+      isMobile: isMobile,
+      userAgent: userAgent.substring(0, 50) + '...'
+    });
+  }
 }
 
 /**
@@ -210,7 +226,7 @@ const login = async (req, res) => {
     await sessionService.createSession(user.id, accessToken, refreshToken, expiresAt);
 
     // Set HTTP-only cookies
-    setAuthCookies(res, accessToken, refreshToken);
+    setAuthCookies(res, accessToken, refreshToken, req);
 
     console.log(`✅ User logged in: ${user.email}`);
 
@@ -329,7 +345,7 @@ const refreshAccessToken = async (req, res) => {
     await sessionService.createSession(user.id, newAccessToken, newRefreshToken, expiresAt);
 
     // Set new cookies
-    setAuthCookies(res, newAccessToken, newRefreshToken);
+    setAuthCookies(res, newAccessToken, newRefreshToken, req);
 
     console.log(`✅ Token refreshed for user: ${user.email}`);
 
