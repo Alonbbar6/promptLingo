@@ -58,7 +58,8 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
           const url = `${API_BASE_URL}/api/voices/${language}`;
           console.log('🎤 [VoiceSelector] Requesting:', url);
           const response = await fetch(url, {
-            cache: 'no-store' // Prevent caching
+            cache: 'no-store', // Prevent caching
+            credentials: 'include' // Send cookies with cross-origin requests
           });
           
           if (response.ok) {

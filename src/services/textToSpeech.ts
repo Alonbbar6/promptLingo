@@ -76,7 +76,9 @@ export class TextToSpeechService {
    */
   async getAvailableVoices(): Promise<TTSVoice[]> {
     try {
-      const response = await fetch(this.getApiUrl('voices'));
+      const response = await fetch(this.getApiUrl('voices'), {
+        credentials: 'include' // Send cookies with cross-origin requests
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch voices');
       }

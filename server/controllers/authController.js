@@ -20,7 +20,7 @@ function setAuthCookies(res, accessToken, refreshToken) {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',
-    domain: isProduction ? '.promptlingo.ai' : undefined,
+    // Don't set domain - let browser use backend's actual domain for cross-origin cookies
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
 
@@ -28,7 +28,7 @@ function setAuthCookies(res, accessToken, refreshToken) {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',
-    domain: isProduction ? '.promptlingo.ai' : undefined,
+    // Don't set domain - let browser use backend's actual domain for cross-origin cookies
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 }
@@ -41,7 +41,7 @@ function clearAuthCookies(res) {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? 'none' : 'lax',
-    domain: isProduction ? '.promptlingo.ai' : undefined,
+    // Don't set domain - must match how cookies were set
   };
 
   res.clearCookie('accessToken', cookieOptions);
