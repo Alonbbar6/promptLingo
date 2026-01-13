@@ -49,28 +49,46 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
       try {
         setLoading(true);
         setError(null);
-        
+
+        console.log('🎤 [VoiceSelector] Fetching voices for language:', language);
+
         // Try to fetch ElevenLabs voices first
         const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
         try {
-          const response = await fetch(`${API_BASE_URL}/api/voices/${language}`);
+          const url = `${API_BASE_URL}/api/voices/${language}`;
+          console.log('🎤 [VoiceSelector] Requesting:', url);
+          const response = await fetch(url, {
+            cache: 'no-store' // Prevent caching
+          });
           
           if (response.ok) {
             const data = await response.json();
-            
+            console.log('🎤 [VoiceSelector] Response data:', data);
+            console.log('🎤 [VoiceSelector] Voice count:', data.voices?.length);
+            console.log('🎤 [VoiceSelector] Source:', data.source);
+            console.log('🎤 [VoiceSelector] Voice names:', data.voices?.map((v: any) => v.name));
+
             if (data.voices && data.voices.length > 0 && data.source === 'elevenlabs') {
               console.log('✅ Using ElevenLabs voices');
               setVoices(data.voices.slice(0, 10)); // Limit to 10 voices
               setSource('elevenlabs');
-              
-              // Set default voice if none selected
-              if (!selectedVoice && data.voices[0]) {
+
+              // Always set the first voice as default for the new language
+              if (data.voices[0]) {
                 const voiceId = isElevenLabsVoice(data.voices[0]) ? data.voices[0].voice_id : data.voices[0].id;
+                console.log('🎤 [VoiceSelector] Setting default voice:', voiceId, 'for language:', language);
                 onVoiceChange(voiceId);
               }
               setLoading(false);
               return;
+            } else {
+              console.warn('❌ [VoiceSelector] ElevenLabs check failed:');
+              console.warn('   - Has voices?', !!data.voices);
+              console.warn('   - Voice count:', data.voices?.length);
+              console.warn('   - Source matches?', data.source === 'elevenlabs', '(actual:', data.source, ')');
             }
+          } else {
+            console.error('❌ [VoiceSelector] API request failed:', response.status, response.statusText);
           }
         } catch (elevenLabsError) {
           console.warn('⚠️ ElevenLabs not available:', elevenLabsError);
@@ -110,7 +128,8 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
     };
 
     fetchVoices();
-  }, [language, selectedVoice, onVoiceChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language]); // Only re-fetch when language changes
 
   if (loading) {
     return (
@@ -156,6 +175,9 @@ export const VoiceSelector: React.FC<VoiceSelectorProps> = ({
             (Browser TTS - Free)
           </span>
         )}
+        <span className="ml-2 text-xs text-gray-500 font-mono">
+          [lang: {language}]
+        </span>
       </label>
       
       {source === 'browser' && (
