@@ -50,7 +50,7 @@ const validateTranslation = [
   body('tone')
     .optional()
     .isString().withMessage('Tone must be a string')
-    .isIn(['casual', 'business', 'formal', 'informal', 'medical', 'professional', 'friendly', 'enthusiastic', 'calm', 'authoritative', 'neutral']).withMessage('Invalid tone'),
+    .isIn(['casual', 'business', 'formal', 'informal', 'medical', 'legal', 'restaurant', 'construction', 'education', 'emergency', 'professional', 'friendly', 'enthusiastic', 'calm', 'authoritative', 'neutral']).withMessage('Invalid tone'),
   handleValidationErrors,
 ];
 

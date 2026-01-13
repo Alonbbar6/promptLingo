@@ -37,22 +37,9 @@ function getElevenLabsLanguageCode(languageCode) {
   return mappedLanguage;
 }
 
-// Available voices configuration
+// Available voices configuration - 2 per language
 const VOICES = {
-  'male-1': {
-    id: 'male-1',
-    name: 'Jean-Pierre',
-    gender: 'male',
-    language: 'ht',
-    description: 'Male Haitian Creole voice - warm and professional'
-  },
-  'female-1': {
-    id: 'female-1',
-    name: 'Marie-Claire',
-    gender: 'female',
-    language: 'ht',
-    description: 'Female Haitian Creole voice - clear and friendly'
-  },
+  // English
   'male-en': {
     id: 'male-en',
     name: 'David',
@@ -66,15 +53,50 @@ const VOICES = {
     gender: 'female',
     language: 'en',
     description: 'Female English voice - warm and articulate'
+  },
+  // Spanish
+  'male-es': {
+    id: 'male-es',
+    name: 'Carlos',
+    gender: 'male',
+    language: 'es',
+    description: 'Male Spanish voice - clear and natural'
+  },
+  'female-es': {
+    id: 'female-es',
+    name: 'Maria',
+    gender: 'female',
+    language: 'es',
+    description: 'Female Spanish voice - warm and expressive'
+  },
+  // Haitian Creole
+  'male-ht': {
+    id: 'male-ht',
+    name: 'Jean-Pierre',
+    gender: 'male',
+    language: 'ht',
+    description: 'Male Haitian Creole voice - warm and professional'
+  },
+  'female-ht': {
+    id: 'female-ht',
+    name: 'Marie-Claire',
+    gender: 'female',
+    language: 'ht',
+    description: 'Female Haitian Creole voice - clear and friendly'
   }
 };
 
-// ElevenLabs voice mapping - UPDATED with real voice IDs from your account
+// ElevenLabs voice mapping - maps our friendly IDs to actual ElevenLabs voice IDs
 const ELEVENLABS_VOICE_IDS = {
-  'male-1': '2EiwWnXFnvU5JabPnv8n',   // Clyde - American male, middle-aged
-  'female-1': 'EXAVITQu4vr4xnSDxMaL', // Sarah - American female, young
+  // English voices
   'male-en': 'CwhRBWXzGAHq8TQ4Fs17',  // Roger - American male, conversational
-  'female-en': 'cgSgspJ2msm6clMCkdW9' // Jessica - American female, conversational
+  'female-en': 'EXAVITQu4vr4xnSDxMaL', // Sarah - American female, young
+  // Spanish voices
+  'male-es': '2EiwWnXFnvU5JabPnv8n',   // Clyde (multilingual, works for Spanish)
+  'female-es': 'cgSgspJ2msm6clMCkdW9', // Jessica (multilingual, works for Spanish)
+  // Haitian Creole voices (using French-capable voices)
+  'male-ht': '2EiwWnXFnvU5JabPnv8n',   // Clyde - works with French/Haitian Creole
+  'female-ht': 'EXAVITQu4vr4xnSDxMaL'  // Sarah - works with French/Haitian Creole
 };
 
 // Default fallback voice if mapping fails

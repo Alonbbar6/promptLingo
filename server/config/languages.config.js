@@ -250,6 +250,78 @@ function getToneInstructions(tone, targetLang) {
       fr: 'Use neutral French with balanced formality',
       pt: 'Use neutral Portuguese with balanced formality',
       de: 'Use neutral German with balanced formality'
+    },
+    medical: {
+      en: 'Use precise medical terminology, anatomical terms, clear and professional healthcare language',
+      es: 'Use precise medical terminology in Spanish with formal healthcare language',
+      ht: 'Use clear Kreyòl medical terms with explanations when needed, professional healthcare language',
+      fr: 'Use precise French medical terminology with professional healthcare language',
+      pt: 'Use precise Portuguese medical terminology with professional healthcare language',
+      de: 'Use precise German medical terminology with professional healthcare language'
+    },
+    legal: {
+      en: 'Use formal legal terminology, contractual language, precise legal phrasing',
+      es: 'Use formal legal Spanish terminology with proper legal phrases and contractual language',
+      ht: 'Use formal Kreyòl legal terms with clear explanations, proper legal language',
+      fr: 'Use formal French legal terminology with proper legal phrases',
+      pt: 'Use formal Portuguese legal terminology with contractual language',
+      de: 'Use formal German legal terminology with contractual language'
+    },
+    restaurant: {
+      en: 'Use food service vocabulary, menu items, dining and hospitality language',
+      es: 'Use Spanish food and dining terms with hospitality phrases like "¿Le gustaría?", "Buen provecho"',
+      ht: 'Use Kreyòl food terms and dining expressions with hospitality language',
+      fr: 'Use French culinary and dining terms with hospitality phrases like "Bon appétit"',
+      pt: 'Use Portuguese food and dining terms with hospitality language',
+      de: 'Use German food and dining terms with hospitality language like "Guten Appetit"'
+    },
+    construction: {
+      en: 'Use technical building terms, construction industry vocabulary, safety language',
+      es: 'Use Spanish construction and building terms with safety vocabulary',
+      ht: 'Use Kreyòl construction terms and safety language with clear explanations',
+      fr: 'Use French construction and building terms with safety vocabulary',
+      pt: 'Use Portuguese construction and building terms with safety vocabulary',
+      de: 'Use German construction and building terms with safety vocabulary'
+    },
+    education: {
+      en: 'Use teaching and classroom language, educational terminology, clear instructional phrasing',
+      es: 'Use Spanish educational and classroom terms with instructional language',
+      ht: 'Use Kreyòl teaching and classroom terms with clear instructional language',
+      fr: 'Use French educational and classroom terms with instructional language',
+      pt: 'Use Portuguese educational and classroom terms with instructional language',
+      de: 'Use German educational and classroom terms with instructional language'
+    },
+    emergency: {
+      en: 'Use clear, urgent, concise language for medical emergencies with direct communication',
+      es: 'Use urgent Spanish with clear, direct emergency medical terms and concise phrases',
+      ht: 'Use urgent Kreyòl with clear emergency terms, direct and concise communication',
+      fr: 'Use urgent French with clear emergency medical terms and concise communication',
+      pt: 'Use urgent Portuguese with clear emergency medical terms and concise communication',
+      de: 'Use urgent German with clear emergency medical terms and concise communication'
+    },
+    business: {
+      en: 'Professional but approachable, industry-appropriate terminology',
+      es: 'Use professional Spanish with business terminology, formal but approachable',
+      ht: 'Use professional Kreyòl with business terms, formal but approachable',
+      fr: 'Use professional French with business terminology, formal but approachable',
+      pt: 'Use professional Portuguese with business terminology',
+      de: 'Use professional German with business terminology'
+    },
+    formal: {
+      en: 'Respectful address, no slang, proper grammatical structures',
+      es: 'Use formal "usted" with respectful address, proper grammar, no slang',
+      ht: 'Use formal respectful Kreyòl, proper grammar, no slang',
+      fr: 'Use formal "vous" with respectful address, proper grammar',
+      pt: 'Use formal Portuguese with respectful address, proper grammar',
+      de: 'Use formal "Sie" with respectful address, proper grammar'
+    },
+    informal: {
+      en: 'Very relaxed, friendly, conversational style',
+      es: 'Use very informal "tú" form with relaxed conversational Spanish',
+      ht: 'Use very relaxed conversational Kreyòl',
+      fr: 'Use very informal "tu" with relaxed conversational French',
+      pt: 'Use very informal Portuguese with relaxed conversational style',
+      de: 'Use very informal "du" with relaxed conversational German'
     }
   };
 

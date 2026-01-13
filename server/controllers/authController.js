@@ -140,37 +140,60 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log('🔍 [LOGIN] Login attempt for:', email);
+    console.log('🔍 [LOGIN] Password received:', password ? `${password.substring(0, 5)}...` : 'NO PASSWORD');
+
     if (!email || !password) {
+      console.log('❌ [LOGIN] Missing credentials');
       return errorResponse(res, 'Email and password are required', 400);
     }
 
     // Find user by email
     const user = await userService.findUserByEmail(email);
+    console.log('🔍 [LOGIN] User found:', !!user);
 
     // Timing attack prevention - always hash even if user doesn't exist
     if (!user) {
+      console.log('❌ [LOGIN] User not found in database');
       await comparePassword(password, '$2a$10$invalidhashtopreventtimingattack');
       return unauthorizedResponse(res, 'Wrong email or password. Please try again or reset your password.');
     }
 
+    console.log('🔍 [LOGIN] User details:', {
+      id: user.id,
+      email: user.email,
+      auth_method: user.auth_method,
+      email_verified: user.email_verified,
+      is_active: user.is_active,
+      has_password_hash: !!user.password_hash,
+      password_hash_length: user.password_hash?.length
+    });
+
     // Check auth method
     if (user.auth_method !== 'email') {
+      console.log('❌ [LOGIN] Wrong auth method:', user.auth_method);
       return errorResponse(res, 'Please use Google Sign-In for this account', 400);
     }
 
     // Check if email is verified
     if (!user.email_verified) {
+      console.log('❌ [LOGIN] Email not verified');
       return errorResponse(res, 'Please verify your email address before logging in. Check your inbox for the verification link.', 403);
     }
 
     // Check if account is active
     if (!user.is_active) {
+      console.log('❌ [LOGIN] Account not active');
       return errorResponse(res, 'Your account has been deactivated. Please contact support.', 403);
     }
 
     // Verify password
+    console.log('🔍 [LOGIN] Comparing password with hash...');
     const isValidPassword = await comparePassword(password, user.password_hash);
+    console.log('🔍 [LOGIN] Password valid:', isValidPassword);
+
     if (!isValidPassword) {
+      console.log('❌ [LOGIN] Invalid password');
       return unauthorizedResponse(res, 'Wrong email or password. Please try again or reset your password.');
     }
 

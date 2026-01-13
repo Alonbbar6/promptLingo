@@ -533,4 +533,34 @@ export const TONES: Tone[] = [
     description: 'Healthcare terminology',
     prompt: 'Use precise medical terminology, clear and professional',
   },
+  {
+    id: 'legal',
+    name: 'Legal',
+    description: 'Legal and contracts',
+    prompt: 'Legal terminology, formal contracts language, precise legal phrasing',
+  },
+  {
+    id: 'restaurant',
+    name: 'Restaurant',
+    description: 'Food service and dining',
+    prompt: 'Food service, menu items, dining vocabulary, hospitality language',
+  },
+  {
+    id: 'construction',
+    name: 'Construction',
+    description: 'Technical building terms',
+    prompt: 'Technical building terms, safety language, construction industry vocabulary',
+  },
+  {
+    id: 'education',
+    name: 'Education',
+    description: 'Teaching and classroom',
+    prompt: 'Teaching context, classroom language, educational terminology',
+  },
+  {
+    id: 'emergency',
+    name: 'Emergency',
+    description: 'Urgent medical situations',
+    prompt: 'Clear, urgent, medical emergency terms, concise and direct communication',
+  },
 ];

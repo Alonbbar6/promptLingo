@@ -31,6 +31,31 @@ const TONE_CONFIGS = {
     name: 'Medical',
     description: 'Use precise medical terminology, clear and professional',
     prompt: 'Use precise medical terminology, clear and professional'
+  },
+  legal: {
+    name: 'Legal',
+    description: 'Legal terminology, formal contracts language',
+    prompt: 'Legal terminology, formal contracts language, precise legal phrasing'
+  },
+  restaurant: {
+    name: 'Restaurant',
+    description: 'Food service, menu items, dining vocabulary',
+    prompt: 'Food service, menu items, dining vocabulary, hospitality language'
+  },
+  construction: {
+    name: 'Construction',
+    description: 'Technical building terms, safety language',
+    prompt: 'Technical building terms, safety language, construction industry vocabulary'
+  },
+  education: {
+    name: 'Education',
+    description: 'Teaching context, classroom language',
+    prompt: 'Teaching context, classroom language, educational terminology'
+  },
+  emergency: {
+    name: 'Emergency',
+    description: 'Clear, urgent, medical emergency terms',
+    prompt: 'Clear, urgent, medical emergency terms, concise and direct communication'
   }
 };
 

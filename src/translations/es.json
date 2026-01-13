@@ -137,6 +137,31 @@
         "name": "Médico",
         "description": "Terminología de salud",
         "prompt": "Usa terminología médica precisa, claro y profesional"
+      },
+      "legal": {
+        "name": "Legal",
+        "description": "Legal y contratos",
+        "prompt": "Terminología legal, lenguaje formal de contratos, frases legales precisas"
+      },
+      "restaurant": {
+        "name": "Restaurante",
+        "description": "Servicio de comida y restaurante",
+        "prompt": "Servicio de alimentos, elementos del menú, vocabulario de restaurante, lenguaje de hospitalidad"
+      },
+      "construction": {
+        "name": "Construcción",
+        "description": "Términos técnicos de construcción",
+        "prompt": "Términos técnicos de construcción, lenguaje de seguridad, vocabulario de la industria de construcción"
+      },
+      "education": {
+        "name": "Educación",
+        "description": "Enseñanza y aula",
+        "prompt": "Contexto de enseñanza, lenguaje de aula, terminología educativa"
+      },
+      "emergency": {
+        "name": "Emergencia",
+        "description": "Situaciones médicas urgentes",
+        "prompt": "Términos médicos de emergencia claros y urgentes, comunicación concisa y directa"
       }
     },
     "tips": {
@@ -358,5 +383,55 @@
     "english": "English",
     "spanish": "Español",
     "haitianCreole": "Kreyòl Ayisyen"
+  },
+  "onboarding": {
+    "title": "Mira Cómo Funciona PromptLingo",
+    "stepCount": "Paso {{current}} de {{total}}",
+    "skipTutorial": "Saltar Tutorial",
+    "previousExample": "← Ejemplo Anterior",
+    "nextExample": "Siguiente Ejemplo",
+    "startUsing": "Comenzar a Usar PromptLingo",
+    "before": "Antes de PromptLingo",
+    "after": "Después de PromptLingo",
+    "awkward": "😔 Incómodo y Vergonzoso",
+    "professional": "✨ Profesional y Seguro",
+    "clickToSee": "Haz clic en \"Transformar con PromptLingo\" para ver la magia ✨",
+    "transformButton": "Transformar con PromptLingo",
+    "ahaTitle": "💚 Este Es El Momento Aha",
+    "ahaQuote": "\"Espera... esto es exactamente lo que quería decir. ¿Por qué no pude escribir esto yo mismo?\"",
+    "differenceTitle": "La Diferencia:",
+    "quoteThought": "\"Así es como sueno en mi cabeza... Sé que el contenido es bueno, pero mi inglés me hace parecer incompetente.\"",
+    "finalTitle": "Estás Lista, Sofía",
+    "finalMessage": "Has visto cómo PromptLingo transforma tu conocimiento en inglés profesional. Ahora es tu turno. Escribe tu primera tarea, correo electrónico o nota de paciente. Siente el alivio de la confianza.",
+    "steps": {
+      "step1": {
+        "title": "El Ensayo de Enfermería",
+        "context": "Lo que podrías escribir después de trabajar un turno de 12 horas:",
+        "before": "La técnica aséptica es muy importancia para prevenir la infección en paciente. Enfermera debe lavar manos antes y después del procedimiento. Es crítico que equipo están estéril y no contaminación suceder.",
+        "after": "La técnica aséptica es esencial para la prevención de infecciones en el cuidado del paciente. Las enfermeras deben realizar higiene de manos antes y después de cada procedimiento. Es fundamental que todo el equipo permanezca estéril y se evite la contaminación durante todo el proceso.",
+        "insight": "El mismo conocimiento. La misma experiencia. Pero ahora suenas como la enfermera profesional que estás llegando a ser."
+      },
+      "step2": {
+        "title": "El Correo de Trabajo",
+        "context": "Solicitando un cambio de horario a tu supervisor:",
+        "before": "Hola, necesito preguntar si es posible cambiar mi turno el próximo martes porque tengo cita para el doctor de mi hijo. Perdón por la molestia. Gracias.",
+        "after": "Buenos días,\n\nMe gustaría solicitar un ajuste de horario para el próximo martes, ya que tengo una cita médica para mi hijo. Pido disculpas por cualquier inconveniente que esto pueda causar y agradezco su comprensión.\n\nGracias por considerar mi solicitud.",
+        "insight": "Profesional, respetuoso y claro. Tu supervisor te ve como un colega, no como alguien que lucha con el inglés."
+      },
+      "step3": {
+        "title": "La Nota del Paciente",
+        "context": "Documentando una interacción con el paciente:",
+        "before": "Paciente dice que tiene dolor en estómago desde la mañana. Ella no comer desayuno. Yo dar medicina para dolor y avisar supervisor.",
+        "after": "La paciente informa que experimenta dolor abdominal desde esta mañana. No ha consumido desayuno. Se administró medicamento para el dolor según protocolo y se notificó inmediatamente a la enfermera a cargo.",
+        "insight": "Documentación médica perfecta. Nadie cuestionará tu competencia cuando lean esta nota."
+      },
+      "step4": {
+        "title": "La Diferencia que Hace PromptLingo",
+        "context": "Lo que dicen los usuarios después de usar PromptLingo:",
+        "before": "\"Siempre siento vergüenza cuando el profesor devuelve mi trabajo con marcas rojas por todas partes. Mis ideas son buenas pero mi inglés me hace parecer estúpido.\"",
+        "after": "\"Obtuve una A- en mi ensayo. Mi profesor escribió 'Excelente estructura y articulación clara.' Por primera vez, siento que mi inteligencia es visible.\"",
+        "insight": "Esto es lo que PromptLingo te da: una voz que coincide con tu competencia. No más vergüenza. No más esconderse. Solo confianza."
+      }
+    }
   }
 }

@@ -137,6 +137,31 @@
         "name": "Medikal",
         "description": "Tèminoloji sante",
         "prompt": "Itilize tèminoloji medikal presi, klè e pwofesyonèl"
+      },
+      "legal": {
+        "name": "Legal",
+        "description": "Legal ak kontra",
+        "prompt": "Tèminoloji legal, langaj fòmèl pou kontra, fraz legal presi"
+      },
+      "restaurant": {
+        "name": "Restoran",
+        "description": "Sèvis manje ak restoran",
+        "prompt": "Sèvis manje, atik meni, vokabilè restoran, langaj ospitalite"
+      },
+      "construction": {
+        "name": "Konstriksyon",
+        "description": "Tèm teknik konstriksyon",
+        "prompt": "Tèm teknik pou konstriksyon, langaj sekirite, vokabilè endistri konstriksyon"
+      },
+      "education": {
+        "name": "Edikasyon",
+        "description": "Ansèyman ak klas",
+        "prompt": "Kontèks ansèyman, langaj sal klas, tèminoloji edikatif"
+      },
+      "emergency": {
+        "name": "Ijans",
+        "description": "Sitiyasyon medikal ijan",
+        "prompt": "Tèm medikal ijans klè ak ijan, kominikasyon konsiz ak dirèk"
       }
     },
     "tips": {
@@ -358,5 +383,55 @@
     "english": "English",
     "spanish": "Español",
     "haitianCreole": "Kreyòl Ayisyen"
+  },
+  "onboarding": {
+    "title": "Gade Kijan PromptLingo Fonksyone",
+    "stepCount": "Etap {{current}} sou {{total}}",
+    "skipTutorial": "Sote Tityòl",
+    "previousExample": "← Egzanp Anvan",
+    "nextExample": "Pwochen Egzanp",
+    "startUsing": "Kòmanse Itilize PromptLingo",
+    "before": "Anvan PromptLingo",
+    "after": "Apre PromptLingo",
+    "awkward": "😔 Jennen e Wont",
+    "professional": "✨ Pwofesyonèl e Konfyan",
+    "clickToSee": "Klike sou \"Transfòme ak PromptLingo\" pou wè laji a ✨",
+    "transformButton": "Transfòme ak PromptLingo",
+    "ahaTitle": "💚 Sa Se Moman Aha a",
+    "ahaQuote": "\"Tann... sa se egzakteman sa m te vle di. Poukisa mwen pa t kapab ekri sa tèt mwen?\"",
+    "differenceTitle": "Diferans lan:",
+    "quoteThought": "\"Se konsa m sone nan tèt mwen... Mwen konnen kontni a bon, men anglè m fè m sanble enkonpetan.\"",
+    "finalTitle": "Ou Pare, Sofia",
+    "finalMessage": "Ou te wè kijan PromptLingo transfòme konesans ou an anglè pwofesyonèl. Kounye a se tou pa w. Ekri premye devwa w, imèl ou, oswa nòt pasyan ou. Santi soulajman konfyans lan.",
+    "steps": {
+      "step1": {
+        "title": "Esè Enfimyè a",
+        "context": "Sa ou ta ka ekri apre ou travay yon chanj 12 èdtan:",
+        "before": "Teknik aseptik la se trè enpòtans pou anpeche enfeksyon nan pasyan. Enfimyè dwe lave men anvan e apre pwosedi a. Se kritik ke ekipman yo esteril e pa gen kontaminasyon fèt.",
+        "after": "Teknik aseptik la esansyèl pou prevansyon enfeksyon nan swen pasyan. Enfimyè yo dwe fè ijyèn men yo anvan e apre chak pwosedi. Li kritik ke tout ekipman rete esteril e evite kontaminasyon pandan tout pwosesis la.",
+        "insight": "Menm konesans. Menm ekspètiz. Men kounye a ou sone tankou enfimyè pwofesyonèl w ap devni an."
+      },
+      "step2": {
+        "title": "Imèl Travay la",
+        "context": "Ap mande yon chanjman orè ak sipèvizè w:",
+        "before": "Bonjou, mwen bezwen mande si posib pou chanje chanj mwen madi pwochen paske mwen gen randevou pou doktè pitit mwen. Eskize pou traka. Mèsi.",
+        "after": "Bonjou,\n\nM ta renmen mande yon ajisteman orè pou madi pwochen, paske mwen gen yon randevou medikal pou pitit mwen. M mande padon pou nenpòt traka sa ka lakòz e m apresye konpreyansyon w.\n\nMèsi pou konsidere demann mwen.",
+        "insight": "Pwofesyonèl, respektye, e klè. Sipèvizè w wè w tankou yon kolèg, pa yon moun kap lite ak anglè."
+      },
+      "step3": {
+        "title": "Nòt Pasyan an",
+        "context": "Ap dokimante yon entèraksyon ak pasyan:",
+        "before": "Pasyan di li gen doulè nan vant li depi maten. Li pa t manje dejene. M bay medikaman pou doulè e di sipèvizè.",
+        "after": "Pasyan raporte li gen doulè nan vant li depi maten an. Li pa t konsome dejene. Medikaman pou doulè te administre selon pwotokòl la, e enfimyè an chaj te avize imedyatman.",
+        "insight": "Dokimantasyon medikal pafè. Pèsonn p ap kesyone konpetans ou lè yo li nòt sa a."
+      },
+      "step4": {
+        "title": "Diferans PromptLingo Fè",
+        "context": "Sa itilizatè yo di apre yo itilize PromptLingo:",
+        "before": "\"Mwen toujou santi wont lè pwofesè a retounen papye m ak mak wouj toupatou. Lide m yo bon men anglè m fè m sanble estipid.\"",
+        "after": "\"Mwen jwenn yon A- sou esè m. Pwofesè m ekri 'Estrikti ekselan ak artikilasyon klè.' Pou premye fwa, m santi tankou entèlijans mwen vizib.\"",
+        "insight": "Sa se sa PromptLingo ba w: yon vwa ki koresponn ak konpetans ou. Pa gen ankò wont. Pa gen ankò kache. Jis konfyans."
+      }
+    }
   }
 }

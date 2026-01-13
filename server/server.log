@@ -1,0 +1,225 @@
+⚠️  Sentry DSN not configured - error tracking disabled
+✅ Stripe initialized successfully
+🌐 CORS Configuration:
+   - Environment: development
+   - Allowed Origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://192.168.1.243:3000, http://192.168.1.243:3001, https://promptlingo.ai, https://www.promptlingo.ai, https://promptmylingo.netlify.app, https://promptlingomobile.netlify.app
+🔑 API Keys Check:
+   - OpenAI: ✓ Set
+   - ElevenLabs: ✓ Set
+   - Database: ✓ Set
+   - JWT Secret: ✓ Set
+⚠️  Environment variable warnings:
+   - JWT_ACCESS_TOKEN_EXPIRY not set, using default: 15m
+   - JWT_REFRESH_TOKEN_EXPIRY not set, using default: 7d
+✅ All required environment variables are set
+✅ Database client connected
+✅ Database connection successful
+📅 Server time: 2026-01-13T15:09:20.858Z
+🚀 Server running on port 3001
+📁 Uploads directory: /Users/user/Documents/promptLingoBuisnes/promptLingo/server/uploads
+🌍 Environment: development
+🔗 API Base URL: http://localhost:3001/api
+
+✅ Email/Password Authentication System Ready!
+   - Register: POST /api/auth/register
+   - Login: POST /api/auth/login
+   - Verify Email: POST /api/auth/verify-email
+   - Forgot Password: POST /api/auth/forgot-password
+   - Reset Password: POST /api/auth/reset-password
+   - Change Password: POST /api/auth/change-password
+   - Logout: POST /api/auth/logout
+   - Verify Token: GET /api/auth/verify
+   - Refresh Token: POST /api/auth/refresh
+   - Current User: GET /api/auth/user
+
+🧹 [CLEANUP] Starting orphaned file cleanup...
+🧹 Automated file cleanup enabled (runs every 5 minutes)
+
+   - No files to clean up
+📥 GET /api/health {
+  ip: '::1',
+  userAgent: 'curl/8.7.1',
+  timestamp: '2026-01-13T15:08:56.222Z'
+}
+::1 - - [13/Jan/2026:15:08:56 +0000] "GET /api/health HTTP/1.1" 200 126 "-" "curl/8.7.1"
+🟢 GET / - 200 (117ms)
+🔌 Database client removed from pool
+📥 GET /api/auth/verify {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:10:45.581Z'
+}
+::1 - - [13/Jan/2026:15:10:45 +0000] "GET /api/auth/verify HTTP/1.1" 401 120 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 GET /verify - 401 (2ms)
+📥 GET /api/auth/verify {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:10:45.594Z'
+}
+::1 - - [13/Jan/2026:15:10:45 +0000] "GET /api/auth/verify HTTP/1.1" 401 120 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 GET /verify - 401 (1ms)
+📥 GET /api/voices {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:13:27.543Z'
+}
+🎙️ Fetching available voices from ElevenLabs...
+❌ Failed to fetch ElevenLabs voices: Request failed with status code 401
+::1 - - [13/Jan/2026:15:13:27 +0000] "GET /api/voices HTTP/1.1" 200 639 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🟢 GET / - 200 (222ms)
+📥 GET /api/voices {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:13:27.767Z'
+}
+🎙️ Fetching available voices from ElevenLabs...
+❌ Failed to fetch ElevenLabs voices: Request failed with status code 401
+::1 - - [13/Jan/2026:15:13:27 +0000] "GET /api/voices HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🟢 GET / - 304 (70ms)
+📥 GET /api/voices {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:13:27.838Z'
+}
+🎙️ Fetching available voices from ElevenLabs...
+❌ Failed to fetch ElevenLabs voices: Request failed with status code 401
+::1 - - [13/Jan/2026:15:13:28 +0000] "GET /api/voices HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🟢 GET / - 304 (415ms)
+📥 GET /api/voices {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:13:28.253Z'
+}
+🎙️ Fetching available voices from ElevenLabs...
+❌ Failed to fetch ElevenLabs voices: Request failed with status code 401
+::1 - - [13/Jan/2026:15:13:28 +0000] "GET /api/voices HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🟢 GET / - 304 (75ms)
+📥 GET /api/voices {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:13:28.328Z'
+}
+🎙️ Fetching available voices from ElevenLabs...
+❌ Failed to fetch ElevenLabs voices: Request failed with status code 401
+::1 - - [13/Jan/2026:15:13:28 +0000] "GET /api/voices HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🟢 GET / - 304 (89ms)
+📥 GET /api/voices {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:13:28.418Z'
+}
+🎙️ Fetching available voices from ElevenLabs...
+❌ Failed to fetch ElevenLabs voices: Request failed with status code 401
+::1 - - [13/Jan/2026:15:13:28 +0000] "GET /api/voices HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🟢 GET / - 304 (70ms)
+📥 GET /api/voices {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:13:28.490Z'
+}
+🎙️ Fetching available voices from ElevenLabs...
+❌ Failed to fetch ElevenLabs voices: Request failed with status code 401
+::1 - - [13/Jan/2026:15:13:28 +0000] "GET /api/voices HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🟢 GET / - 304 (77ms)
+📥 GET /api/voices {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:13:28.569Z'
+}
+🎙️ Fetching available voices from ElevenLabs...
+❌ Failed to fetch ElevenLabs voices: Request failed with status code 401
+::1 - - [13/Jan/2026:15:13:28 +0000] "GET /api/voices HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🟢 GET / - 304 (82ms)
+🧹 [CLEANUP] Starting orphaned file cleanup...
+   - No files to clean up
+📥 GET /api/auth/verify {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:16:29.273Z'
+}
+::1 - - [13/Jan/2026:15:16:29 +0000] "GET /api/auth/verify HTTP/1.1" 401 120 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 GET /verify - 401 (0ms)
+📥 GET /api/auth/verify {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:16:29.275Z'
+}
+::1 - - [13/Jan/2026:15:16:29 +0000] "GET /api/auth/verify HTTP/1.1" 401 120 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 GET /verify - 401 (0ms)
+📥 POST /api/auth/login {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:17:39.850Z'
+}
+✅ Database client connected
+::1 - - [13/Jan/2026:15:17:40 +0000] "POST /api/auth/login HTTP/1.1" 401 164 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 POST /login - 401 (930ms)
+📥 POST /api/auth/login {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:17:44.160Z'
+}
+::1 - - [13/Jan/2026:15:17:44 +0000] "POST /api/auth/login HTTP/1.1" 403 194 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 POST /login - 403 (117ms)
+📥 POST /api/auth/login {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:17:55.021Z'
+}
+::1 - - [13/Jan/2026:15:17:55 +0000] "POST /api/auth/login HTTP/1.1" 403 194 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 POST /login - 403 (112ms)
+🔌 Database client removed from pool
+🧹 [CLEANUP] Starting orphaned file cleanup...
+   - No files to clean up
+📥 POST /api/auth/login {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:20:11.001Z'
+}
+✅ Database client connected
+::1 - - [13/Jan/2026:15:20:11 +0000] "POST /api/auth/login HTTP/1.1" 403 194 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 POST /login - 403 (762ms)
+📥 GET /api/auth/verify {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:20:16.157Z'
+}
+::1 - - [13/Jan/2026:15:20:16 +0000] "GET /api/auth/verify HTTP/1.1" 401 120 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 GET /verify - 401 (1ms)
+📥 GET /api/auth/verify {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:20:16.159Z'
+}
+::1 - - [13/Jan/2026:15:20:16 +0000] "GET /api/auth/verify HTTP/1.1" 401 120 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 GET /verify - 401 (1ms)
+🔌 Database client removed from pool
+📥 POST /api/auth/login {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:21:03.012Z'
+}
+✅ Database client connected
+::1 - - [13/Jan/2026:15:21:03 +0000] "POST /api/auth/login HTTP/1.1" 401 164 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 POST /login - 401 (955ms)
+📥 POST /api/auth/login {
+  ip: '::1',
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+  timestamp: '2026-01-13T15:21:15.361Z'
+}
+::1 - - [13/Jan/2026:15:21:15 +0000] "POST /api/auth/login HTTP/1.1" 401 164 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+🔴 POST /login - 401 (112ms)
+🔌 Database client removed from pool
+🧹 [CLEANUP] Starting orphaned file cleanup...
+   - No files to clean up
+📥 POST /api/auth/login {
+  ip: '::1',
+  userAgent: 'curl/8.7.1',
+  timestamp: '2026-01-13T15:25:33.045Z'
+}
+✅ Database client connected
+::1 - - [13/Jan/2026:15:25:33 +0000] "POST /api/auth/login HTTP/1.1" 401 164 "-" "curl/8.7.1"
+🔴 POST /login - 401 (929ms)
+🔌 Database client removed from pool
+🧹 [CLEANUP] Starting orphaned file cleanup...
+   - No files to clean up

@@ -137,6 +137,31 @@
         "name": "Medical",
         "description": "Healthcare terminology",
         "prompt": "Use precise medical terminology, clear and professional"
+      },
+      "legal": {
+        "name": "Legal",
+        "description": "Legal and contracts",
+        "prompt": "Legal terminology, formal contracts language, precise legal phrasing"
+      },
+      "restaurant": {
+        "name": "Restaurant",
+        "description": "Food service and dining",
+        "prompt": "Food service, menu items, dining vocabulary, hospitality language"
+      },
+      "construction": {
+        "name": "Construction",
+        "description": "Technical building terms",
+        "prompt": "Technical building terms, safety language, construction industry vocabulary"
+      },
+      "education": {
+        "name": "Education",
+        "description": "Teaching and classroom",
+        "prompt": "Teaching context, classroom language, educational terminology"
+      },
+      "emergency": {
+        "name": "Emergency",
+        "description": "Urgent medical situations",
+        "prompt": "Clear, urgent, medical emergency terms, concise and direct communication"
       }
     },
     "tips": {
@@ -358,5 +383,55 @@
     "english": "English",
     "spanish": "Español",
     "haitianCreole": "Kreyòl Ayisyen"
+  },
+  "onboarding": {
+    "title": "See How PromptLingo Works",
+    "stepCount": "Step {{current}} of {{total}}",
+    "skipTutorial": "Skip Tutorial",
+    "previousExample": "← Previous Example",
+    "nextExample": "Next Example",
+    "startUsing": "Start Using PromptLingo",
+    "before": "Before PromptLingo",
+    "after": "After PromptLingo",
+    "awkward": "😔 Awkward & Embarrassing",
+    "professional": "✨ Professional & Confident",
+    "clickToSee": "Click \"Transform with PromptLingo\" to see the magic ✨",
+    "transformButton": "Transform with PromptLingo",
+    "ahaTitle": "💚 This Is The Aha Moment",
+    "ahaQuote": "\"Wait... this is exactly what I wanted to say. Why couldn't I write this myself?\"",
+    "differenceTitle": "The Difference:",
+    "quoteThought": "\"This is how I sound in my head... I know the content is good, but my English makes me look incompetent.\"",
+    "finalTitle": "You're Ready, Sofia",
+    "finalMessage": "You've seen how PromptLingo transforms your knowledge into professional English. Now it's your turn. Type your first assignment, email, or patient note. Feel the relief of confidence.",
+    "steps": {
+      "step1": {
+        "title": "The Nursing Essay",
+        "context": "What you might write after working a 12-hour shift:",
+        "before": "The aseptic technique is very importance for preventing infection in patient. Nurse must to wash hands before and after the procedure. Is critical that equipment are sterile and no contamination happen.",
+        "after": "Aseptic technique is essential for infection prevention in patient care. Nurses must perform hand hygiene before and after each procedure. It is critical that all equipment remains sterile and contamination is avoided throughout the process.",
+        "insight": "Same knowledge. Same expertise. But now you sound like the professional RN you're becoming."
+      },
+      "step2": {
+        "title": "The Work Email",
+        "context": "Requesting a schedule change from your supervisor:",
+        "before": "Hi, I need to ask if possible to change my shift next Tuesday because I have appointment for my son doctor. Sorry for inconvenient. Thank you.",
+        "after": "Good morning,\n\nI would like to request a schedule adjustment for next Tuesday, as I have a medical appointment for my son. I apologize for any inconvenience this may cause and appreciate your understanding.\n\nThank you for considering my request.",
+        "insight": "Professional, respectful, and clear. Your supervisor sees you as a peer, not someone struggling with English."
+      },
+      "step3": {
+        "title": "The Patient Note",
+        "context": "Documenting a patient interaction:",
+        "before": "Patient say she have pain in stomach since morning. She not eat breakfast. I give medicine for pain and tell supervisor.",
+        "after": "Patient reports experiencing abdominal pain since this morning. She has not consumed breakfast. Pain medication was administered per protocol, and the charge nurse was notified immediately.",
+        "insight": "Perfect medical documentation. No one will question your competence when they read this note."
+      },
+      "step4": {
+        "title": "The Difference PromptLingo Makes",
+        "context": "What users say after using PromptLingo:",
+        "before": "\"I always feel shame when professor return my paper with red marks everywhere. My ideas are good but my English make me look stupid.\"",
+        "after": "\"I got an A- on my essay. My professor wrote 'Excellent structure and clear articulation.' For the first time, I feel like my intelligence is visible.\"",
+        "insight": "This is what PromptLingo gives you: a voice that matches your competence. No more shame. No more hiding. Just confidence."
+      }
+    }
   }
 }
