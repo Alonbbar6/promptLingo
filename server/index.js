@@ -127,14 +127,15 @@ console.log('   - Allowed Origins:', allowedOrigins.join(', '));
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // SECURITY: Only allow no-origin requests in development (for testing tools)
+    // SECURITY: Allow no-origin requests for health checks and development
     if (!origin) {
+      // Allow in development for testing tools (Postman, curl, etc.)
       if (isDevelopment) {
         return callback(null, true);
-      } else {
-        console.warn('❌ CORS: Blocked request with no origin (production)');
-        return callback(new Error('Not allowed by CORS - origin required'));
       }
+      // In production, allow no-origin for health checks (from load balancers, monitoring tools)
+      // These requests typically go to root path or /health endpoints
+      return callback(null, true);
     }
 
     // Check if origin is in exact whitelist
