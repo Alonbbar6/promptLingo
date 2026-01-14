@@ -65,12 +65,24 @@ app.use(helmet({
   contentSecurityPolicy: isDevelopment ? false : { // Disable CSP in development
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'"],
+      connectSrc: [
+        "'self'",
+        "https://www.promptlingo.ai",
+        "https://promptlingo.ai",
+        "https://api.promptlingo.ai"
+      ],
       frameSrc: ["'self'"],
       scriptSrc: ["'self'"],
-      styleSrc: ["'self'"],
+      styleSrc: [
+        "'self'",
+        "https://fonts.googleapis.com"
+      ],
       imgSrc: ["'self'", "data:", "https:"],
-      fontSrc: ["'self'", "data:"],
+      fontSrc: [
+        "'self'",
+        "data:",
+        "https://fonts.gstatic.com"
+      ],
     }
   }
 }));
