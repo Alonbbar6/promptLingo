@@ -139,7 +139,7 @@ const PricingPage: React.FC = () => {
       }
 
       // Create Stripe checkout session
-      const response = await api.post('/stripe/create-checkout-session', {
+      const response = await api.post('/api/stripe/create-checkout-session', {
         planType,
       });
 
