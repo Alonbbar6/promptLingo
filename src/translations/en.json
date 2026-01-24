@@ -192,7 +192,7 @@
     "resetsIn": "Resets in {hours} hours",
     "remaining": "{used} of {total} remaining",
     "percentUsed": "{percent}% used",
-    "signupPrompt": "Sign up to get 15 translations per month instead of 10 per day!",
+    "signupPrompt": "Sign up for free to get 15 translations per day!",
     "recordToStart": "Record audio to get started",
     "speechWillBe": "Your speech will be transcribed and translated",
     "audioWillAppear": "Audio will appear here after translation",
@@ -272,7 +272,7 @@
     "free": {
       "name": "Free",
       "features": {
-        "translations": "15 translations per month",
+        "translations": "15 translations per day",
         "voices": "All voice options",
         "history": "Translation history",
         "support": "Standard support"
@@ -362,7 +362,7 @@
     "dataSecure": "Your data is secure and private",
     "pleaseSignIn": "Please sign in to view your subscription",
     "sessionExpired": "Your session has expired. Please sign in again to continue.",
-    "authRequired": "Please sign in to use this feature. Sign up for free to get 15 translations per month!"
+    "authRequired": "Please sign in to use this feature. Sign up for free to get 15 translations per day!"
   },
   "errors": {
     "loadingFailed": "Unable to load subscription",

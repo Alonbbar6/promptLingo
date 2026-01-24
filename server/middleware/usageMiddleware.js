@@ -10,8 +10,8 @@ const { hasActivePromotion, deactivateExpiredPromotions } = require('../services
 const pool = db.pool;
 
 // Tier limits
-const FREE_TIER_LIMIT = 15;
-const ESSENTIAL_TIER_LIMIT = 200;
+const FREE_TIER_DAILY_LIMIT = 15;  // Free tier: 15 per day
+const ESSENTIAL_TIER_LIMIT = 200;  // Essential tier: 200 per month
 
 /**
  * Check and track API usage for authenticated users
@@ -78,27 +78,48 @@ const trackUsage = async (req, res, next) => {
     const today = new Date();
     const resetDate = new Date(user.monthly_reset_date);
 
-    // Check if we need to reset the monthly counter
-    if (today.getMonth() !== resetDate.getMonth() || today.getFullYear() !== resetDate.getFullYear()) {
-      // Reset counter for new month
-      await pool.query(
-        `UPDATE users
-         SET api_calls_this_month = 0,
-             monthly_reset_date = CURRENT_DATE
-         WHERE id = $1`,
-        [userId]
-      );
-      user.api_calls_this_month = 0;
-      console.log(`📅 Reset monthly usage for user ${userId}`);
+    // Different reset logic based on tier
+    if (user.subscription_tier === 'free') {
+      // Free tier: daily reset
+      const todayStr = today.toISOString().split('T')[0];
+      const resetDateStr = resetDate.toISOString().split('T')[0];
+
+      if (todayStr !== resetDateStr) {
+        // Reset counter for new day
+        await pool.query(
+          `UPDATE users
+           SET api_calls_this_month = 0,
+               monthly_reset_date = CURRENT_DATE
+           WHERE id = $1`,
+          [userId]
+        );
+        user.api_calls_this_month = 0;
+        console.log(`📅 Reset daily usage for free user ${userId}`);
+      }
+    } else {
+      // Paid tiers: monthly reset
+      if (today.getMonth() !== resetDate.getMonth() || today.getFullYear() !== resetDate.getFullYear()) {
+        await pool.query(
+          `UPDATE users
+           SET api_calls_this_month = 0,
+               monthly_reset_date = CURRENT_DATE
+           WHERE id = $1`,
+          [userId]
+        );
+        user.api_calls_this_month = 0;
+        console.log(`📅 Reset monthly usage for user ${userId}`);
+      }
     }
 
     // Check subscription tier limits
     let limit = null;
     let tierName = '';
+    let limitPeriod = 'month';
 
     if (user.subscription_tier === 'free') {
-      limit = FREE_TIER_LIMIT;
+      limit = FREE_TIER_DAILY_LIMIT;
       tierName = 'Free';
+      limitPeriod = 'day';
     } else if (user.subscription_tier === 'essential') {
       limit = ESSENTIAL_TIER_LIMIT;
       tierName = 'Essential';
@@ -108,17 +129,18 @@ const trackUsage = async (req, res, next) => {
     // Check if user has exceeded their tier limit
     if (limit !== null && user.api_calls_this_month >= limit) {
       const upgradeMessage = user.subscription_tier === 'free'
-        ? 'Upgrade to Essential ($9.99/month) for 200 translations, or Pro ($19.99/month) for unlimited.'
+        ? 'Upgrade to Student ($9.99/month) for 200 translations/month, or Pro ($19.99/month) for unlimited.'
         : 'Upgrade to Pro ($19.99/month) for unlimited translations.';
 
       return res.status(429).json({
         success: false,
-        error: 'Monthly limit exceeded',
-        message: `You've reached your ${tierName} tier limit of ${limit} translations per month. ${upgradeMessage}`,
+        error: limitPeriod === 'day' ? 'Daily limit exceeded' : 'Monthly limit exceeded',
+        message: `You've reached your ${tierName} tier limit of ${limit} translations per ${limitPeriod}. ${upgradeMessage}`,
         usage: {
           used: user.api_calls_this_month,
           limit: limit,
-          resetDate: user.monthly_reset_date
+          resetDate: user.monthly_reset_date,
+          period: limitPeriod
         }
       });
     }
@@ -214,9 +236,11 @@ const getUsage = async (req, res) => {
 
     let limit = null;
     let unlimited = false;
+    let period = 'month';
 
     if (user.subscription_tier === 'free') {
-      limit = FREE_TIER_LIMIT;
+      limit = FREE_TIER_DAILY_LIMIT;
+      period = 'day';
     } else if (user.subscription_tier === 'essential') {
       limit = ESSENTIAL_TIER_LIMIT;
     } else if (user.subscription_tier === 'pro') {
@@ -233,7 +257,8 @@ const getUsage = async (req, res) => {
         resetDate: user.monthly_reset_date,
         remaining: limit !== null
           ? Math.max(0, limit - user.api_calls_this_month)
-          : null
+          : null,
+        period: period
       }
     });
   } catch (error) {
@@ -248,6 +273,6 @@ const getUsage = async (req, res) => {
 module.exports = {
   trackUsage,
   getUsage,
-  FREE_TIER_LIMIT,
+  FREE_TIER_DAILY_LIMIT,
   ESSENTIAL_TIER_LIMIT
 };

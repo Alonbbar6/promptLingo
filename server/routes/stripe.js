@@ -231,9 +231,9 @@ router.get('/pricing', async (req, res) => {
           id: 'free',
           name: 'Free',
           price: 0,
-          interval: 'month',
+          interval: 'day',
           features: [
-            '15 translations per month',
+            '15 translations per day',
             'All voice options',
             'Translation history',
             'Standard support',

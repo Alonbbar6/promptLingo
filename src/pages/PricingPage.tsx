@@ -7,7 +7,7 @@ import api from '../services/api';
  * PricingPage - Sofia-focused pricing
  *
  * Pricing Strategy:
- * - Free tier: 10 translations/month (enough to test, not enough to rely on)
+ * - Free tier: 15 translations/day (enough to test, not enough to rely on)
  * - Student tier: $9.99/month (targets Sofia directly - affordable on CNA wage)
  * - Professional tier: $19.99/month (for working professionals)
  *
@@ -42,7 +42,7 @@ const pricingTiers: PricingTier[] = [
     emotionalBenefit: 'See if this finally ends your translation frustration',
     badge: 'Try Before You Commit',
     features: [
-      { text: '10 professional translations per month', included: true },
+      { text: '15 professional translations per day', included: true },
       { text: 'All 5 tone styles (Casual, Business, Formal, Medical, Informal)', included: true },
       { text: 'Voice & text input', included: true },
       { text: 'Haitian Creole + Spanish support', included: true },

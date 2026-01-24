@@ -46,7 +46,7 @@ const AccountSettingsPage: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700">Current Plan</label>
               <p className="text-gray-900">
-                {user.subscriptionTier === 'free' && 'Free (10 translations/month)'}
+                {user.subscriptionTier === 'free' && 'Free (15 translations/day)'}
                 {user.subscriptionTier === 'student' && 'Student - $9.99/month'}
                 {user.subscriptionTier === 'professional' && 'Professional - $19.99/month'}
               </p>

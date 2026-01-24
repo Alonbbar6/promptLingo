@@ -219,7 +219,7 @@ const SubscriptionPage: React.FC = () => {
                 <ul className="space-y-1 text-sm text-gray-600">
                   {isFree && (
                     <>
-                      <li>✓ 15 translations per month</li>
+                      <li>✓ 15 translations per day</li>
                       <li>✓ All voice options</li>
                       <li>✓ Translation history</li>
                       <li>✓ Standard support</li>

@@ -32,7 +32,7 @@ const AppContent: React.FC = () => {
     const sessionExpired = localStorage.getItem('session_expired');
 
     if (authRequired === 'true') {
-      showToast('Please sign in to use this feature. Sign up for free to get 15 translations per month!', 'warning', 7000);
+      showToast('Please sign in to use this feature. Sign up for free to get 15 translations per day!', 'warning', 7000);
       localStorage.removeItem('auth_required');
     } else if (sessionExpired === 'true') {
       showToast('Your session has expired. Please sign in again to continue.', 'warning', 7000);
