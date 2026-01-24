@@ -204,18 +204,18 @@ const PricingPage: React.FC = () => {
             <div
               key={index}
               className={`relative bg-white rounded-2xl shadow-lg overflow-hidden ${
-                tier.popular ? 'ring-4 ring-primary-skyBlue scale-105' : ''
+                tier.popular ? 'ring-4 ring-brand-skyBlue scale-105' : ''
               }`}
             >
               {/* Popular Badge */}
               {tier.popular && (
-                <div className="absolute top-0 right-0 bg-primary-skyBlue text-white px-4 py-1 text-sm font-semibold rounded-bl-lg">
+                <div className="absolute top-0 right-0 bg-brand-skyBlue text-white px-4 py-1 text-sm font-semibold rounded-bl-lg">
                   ⭐ {tier.badge}
                 </div>
               )}
 
               {/* Plan Header */}
-              <div className={`p-8 ${tier.popular ? 'bg-gradient-to-br from-primary-skyBlue/10 to-primary-mint/10' : 'bg-neutral-backgroundLight'}`}>
+              <div className={`p-8 ${tier.popular ? 'bg-gradient-to-br from-brand-skyBlue/10 to-brand-mint/10' : 'bg-neutral-backgroundLight'}`}>
                 <h3 className="text-2xl font-bold text-neutral-textPrimary mb-2 font-serif">
                   {tier.name}
                 </h3>
@@ -224,8 +224,8 @@ const PricingPage: React.FC = () => {
                 </p>
 
                 {/* Emotional Benefit */}
-                <div className="bg-white rounded-lg p-4 mb-6 border-2 border-primary-mint/20">
-                  <p className="text-sm font-medium text-primary-mint">
+                <div className="bg-white rounded-lg p-4 mb-6 border-2 border-brand-mint/20">
+                  <p className="text-sm font-medium text-brand-mint">
                     💚 {tier.emotionalBenefit}
                   </p>
                 </div>
@@ -257,8 +257,8 @@ const PricingPage: React.FC = () => {
                   disabled={loading === tier.name}
                   className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-200 flex items-center justify-center group ${
                     tier.popular
-                      ? 'bg-primary-skyBlue text-white hover:bg-primary-indigo shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed'
-                      : 'bg-neutral-backgroundLight text-neutral-textPrimary hover:bg-primary-mint/20 border-2 border-neutral-textSecondary/20 disabled:opacity-50 disabled:cursor-not-allowed'
+                      ? 'bg-brand-skyBlue text-white hover:bg-brand-indigo shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed'
+                      : 'bg-neutral-backgroundLight text-neutral-textPrimary hover:bg-brand-mint/20 border-2 border-neutral-textSecondary/20 disabled:opacity-50 disabled:cursor-not-allowed'
                   }`}
                 >
                   {loading === tier.name ? 'Loading...' : tier.cta}
@@ -272,7 +272,7 @@ const PricingPage: React.FC = () => {
                   {tier.features.map((feature, fIndex) => (
                     <li key={fIndex} className="flex items-start">
                       {feature.included ? (
-                        <Check className="h-5 w-5 text-primary-mint mr-3 flex-shrink-0 mt-0.5" />
+                        <Check className="h-5 w-5 text-brand-mint mr-3 flex-shrink-0 mt-0.5" />
                       ) : (
                         <X className="h-5 w-5 text-neutral-textSecondary/30 mr-3 flex-shrink-0 mt-0.5" />
                       )}
@@ -389,7 +389,7 @@ const PricingPage: React.FC = () => {
             <button
               onClick={() => handleSelectPlan(pricingTiers[1])}
               disabled={loading !== null}
-              className="bg-white text-primary-skyBlue px-8 py-4 rounded-lg font-semibold text-lg hover:bg-neutral-backgroundLight transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-white text-brand-skyBlue px-8 py-4 rounded-lg font-semibold text-lg hover:bg-neutral-backgroundLight transition-all duration-200 shadow-xl hover:shadow-2xl flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading === pricingTiers[1].name ? 'Loading...' : 'Start Your Free Trial (10 Translations)'}
               {loading !== pricingTiers[1].name && <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />}
