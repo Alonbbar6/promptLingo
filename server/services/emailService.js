@@ -1,10 +1,41 @@
 /**
  * Email Service
- * Currently logs emails to console for development
- * Can be upgraded to use SendGrid, AWS SES, or other email providers
+ * Uses Resend for sending transactional emails
  */
 
+const { Resend } = require('resend');
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'PromptLingo <onboarding@resend.dev>';
+
+/**
+ * Send an email using Resend
+ * @param {Object} emailContent - Email content object
+ */
+async function sendEmail(emailContent) {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: emailContent.to,
+      subject: emailContent.subject,
+      html: emailContent.html,
+      text: emailContent.text,
+    });
+
+    if (error) {
+      console.error('❌ Email send error:', error);
+      return { success: false, error: error.message };
+    }
+
+    console.log(`✅ Email sent successfully to ${emailContent.to} (ID: ${data.id})`);
+    return { success: true, id: data.id };
+  } catch (err) {
+    console.error('❌ Email service error:', err);
+    return { success: false, error: err.message };
+  }
+}
 
 /**
  * Send email verification email
@@ -57,21 +88,7 @@ PromptLingo - AI-Powered Translation
     `
   };
 
-  // Log to console for development
-  console.log('\n' + '='.repeat(80));
-  console.log('📧 EMAIL: Verification Email');
-  console.log('='.repeat(80));
-  console.log(`To: ${emailContent.to}`);
-  console.log(`Subject: ${emailContent.subject}`);
-  console.log('-'.repeat(80));
-  console.log(`\n🔗 VERIFICATION LINK:\n${verificationUrl}\n`);
-  console.log('='.repeat(80) + '\n');
-
-  // TODO: Replace with actual email service
-  // await sendGridEmail(emailContent);
-  // or await sesEmail(emailContent);
-
-  return { success: true, message: 'Verification email logged to console' };
+  return await sendEmail(emailContent);
 }
 
 /**
@@ -125,18 +142,7 @@ PromptLingo - AI-Powered Translation
     `
   };
 
-  // Log to console for development
-  console.log('\n' + '='.repeat(80));
-  console.log('📧 EMAIL: Password Reset');
-  console.log('='.repeat(80));
-  console.log(`To: ${emailContent.to}`);
-  console.log(`Subject: ${emailContent.subject}`);
-  console.log('-'.repeat(80));
-  console.log(`\n🔗 RESET LINK:\n${resetUrl}\n`);
-  console.log('⏰ Expires in: 1 hour');
-  console.log('='.repeat(80) + '\n');
-
-  return { success: true, message: 'Password reset email logged to console' };
+  return await sendEmail(emailContent);
 }
 
 /**
@@ -186,17 +192,7 @@ PromptLingo - AI-Powered Translation
     `
   };
 
-  // Log to console for development
-  console.log('\n' + '='.repeat(80));
-  console.log('📧 EMAIL: Password Changed Confirmation');
-  console.log('='.repeat(80));
-  console.log(`To: ${emailContent.to}`);
-  console.log(`Subject: ${emailContent.subject}`);
-  console.log('-'.repeat(80));
-  console.log('Password changed successfully');
-  console.log('='.repeat(80) + '\n');
-
-  return { success: true, message: 'Password changed email logged to console' };
+  return await sendEmail(emailContent);
 }
 
 /**
@@ -209,7 +205,7 @@ async function sendWelcomeEmail(user) {
     subject: 'Welcome to PromptLingo!',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #2563eb;">Welcome to PromptLingo! 🎉</h2>
+        <h2 style="color: #2563eb;">Welcome to PromptLingo! </h2>
         <p>Hi ${user.name || 'there'},</p>
         <p>Your email has been verified! You're now ready to start using PromptLingo.</p>
         <h3>What you can do with PromptLingo:</h3>
@@ -231,17 +227,29 @@ async function sendWelcomeEmail(user) {
           © 2026 PromptLingo. All rights reserved.
         </p>
       </div>
+    `,
+    text: `
+Welcome to PromptLingo!
+
+Hi ${user.name || 'there'},
+
+Your email has been verified! You're now ready to start using PromptLingo.
+
+What you can do with PromptLingo:
+- Translate text between English, Spanish, and Haitian Creole
+- Use voice input for hands-free translation
+- Listen to translations with text-to-speech
+- Save your translation history
+
+Visit ${FRONTEND_URL} to start translating!
+
+---
+PromptLingo - AI-Powered Translation
+© 2026 PromptLingo. All rights reserved.
     `
   };
 
-  console.log('\n' + '='.repeat(80));
-  console.log('📧 EMAIL: Welcome Email');
-  console.log('='.repeat(80));
-  console.log(`To: ${emailContent.to}`);
-  console.log(`Subject: ${emailContent.subject}`);
-  console.log('='.repeat(80) + '\n');
-
-  return { success: true, message: 'Welcome email logged to console' };
+  return await sendEmail(emailContent);
 }
 
 module.exports = {
