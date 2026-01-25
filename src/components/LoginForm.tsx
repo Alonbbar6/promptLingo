@@ -3,15 +3,20 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const LoginForm: React.FC = () => {
-  const { login, isLoading, error } = useAuth();
+  const { login, resendVerification, isLoading, error } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [localError, setLocalError] = useState('');
+  const [showResendOption, setShowResendOption] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMessage, setResendMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError('');
+    setShowResendOption(false);
+    setResendMessage('');
 
     // Basic validation
     if (!email || !password) {
@@ -22,7 +27,32 @@ const LoginForm: React.FC = () => {
     try {
       await login(email, password);
     } catch (err: any) {
-      setLocalError(err.message || 'Failed to log in');
+      const errorMsg = err.message || 'Failed to log in';
+      setLocalError(errorMsg);
+      // Show resend option if error is about email verification
+      if (errorMsg.toLowerCase().includes('verify') || errorMsg.toLowerCase().includes('verified')) {
+        setShowResendOption(true);
+      }
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!email) {
+      setLocalError('Please enter your email address first');
+      return;
+    }
+
+    setResendLoading(true);
+    setResendMessage('');
+
+    try {
+      await resendVerification(email);
+      setResendMessage('Verification email sent! Check your inbox.');
+      setShowResendOption(false);
+    } catch (err: any) {
+      setResendMessage(err.message || 'Failed to send verification email');
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -94,6 +124,31 @@ const LoginForm: React.FC = () => {
       {(localError || error) && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
           {localError || error}
+          {/* Resend Verification Option */}
+          {showResendOption && (
+            <div className="mt-3 pt-3 border-t border-red-200">
+              <p className="text-gray-700 mb-2">Need a new verification email?</p>
+              <button
+                type="button"
+                onClick={handleResendVerification}
+                disabled={resendLoading}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+              >
+                {resendLoading ? 'Sending...' : 'Resend Verification Email'}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Resend Success Message */}
+      {resendMessage && !localError && (
+        <div className={`px-4 py-3 rounded-lg text-sm ${
+          resendMessage.includes('sent')
+            ? 'bg-green-50 border border-green-200 text-green-700'
+            : 'bg-yellow-50 border border-yellow-200 text-yellow-700'
+        }`}>
+          {resendMessage}
         </div>
       )}
 
