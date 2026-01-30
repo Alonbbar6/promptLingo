@@ -8,6 +8,7 @@ import BrandedHeader from './components/BrandedHeader';
 import { LandingPage } from './components/LandingPage';
 import PricingPage from './pages/PricingPage';
 import SubscriptionPage from './pages/SubscriptionPage';
+import { shouldShowSubscriptionUI } from './utils/platform';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import RefundPolicyPage from './pages/RefundPolicyPage';
 import AccountSettingsPage from './pages/AccountSettingsPage';
@@ -121,11 +122,12 @@ const AppContent: React.FC = () => {
         <LandingPage onGetStarted={() => handlePageChange('translator')} />
       )}
 
-      {currentPage === 'pricing' && (
+      {/* Pricing and Subscription pages only shown on web (Netflix model) */}
+      {currentPage === 'pricing' && shouldShowSubscriptionUI() && (
         <PricingPage />
       )}
 
-      {currentPage === 'subscription' && (
+      {currentPage === 'subscription' && shouldShowSubscriptionUI() && (
         <SubscriptionPage />
       )}
 

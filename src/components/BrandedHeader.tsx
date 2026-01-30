@@ -6,6 +6,7 @@ import brandDesignSystem from '../config/brandDesignSystem';
 import { useAuth } from '../hooks/useAuth';
 import UserProfile from './UserProfile';
 import LanguageSelector from './LanguageSelector';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 interface BrandedHeaderProps {
   currentPage: 'landing' | 'translator' | 'tts' | 'live' | 'pricing' | 'subscription' | 'privacy' | 'refund-policy' | 'settings';
@@ -83,16 +84,19 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
                 >
                   Live Transcription
                 </button>
-                <button
-                  onClick={() => onPageChange('pricing')}
-                  className={`text-sm font-medium transition-colors ${
-                    currentPage === 'pricing'
-                      ? 'text-brand-skyBlue'
-                      : 'text-neutral-textSecondary hover:text-neutral-textPrimary'
-                  }`}
-                >
-                  Pricing
-                </button>
+                {/* Pricing link hidden in native apps (Netflix model) */}
+                {shouldShowSubscriptionUI() && (
+                  <button
+                    onClick={() => onPageChange('pricing')}
+                    className={`text-sm font-medium transition-colors ${
+                      currentPage === 'pricing'
+                        ? 'text-brand-skyBlue'
+                        : 'text-neutral-textSecondary hover:text-neutral-textPrimary'
+                    }`}
+                  >
+                    Pricing
+                  </button>
+                )}
               </>
             )}
 
@@ -197,19 +201,22 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
               >
                 Live Transcription
               </button>
-              <button
-                onClick={() => {
-                  onPageChange('pricing');
-                  setIsMenuOpen(false);
-                }}
-                className={`text-left px-4 py-2 rounded-lg transition-colors ${
-                  currentPage === 'pricing'
-                    ? 'bg-brand-skyBlue/10 text-brand-skyBlue'
-                    : 'text-neutral-textSecondary hover:bg-gray-50'
-                }`}
-              >
-                Pricing
-              </button>
+              {/* Pricing link hidden in native apps (Netflix model) */}
+              {shouldShowSubscriptionUI() && (
+                <button
+                  onClick={() => {
+                    onPageChange('pricing');
+                    setIsMenuOpen(false);
+                  }}
+                  className={`text-left px-4 py-2 rounded-lg transition-colors ${
+                    currentPage === 'pricing'
+                      ? 'bg-brand-skyBlue/10 text-brand-skyBlue'
+                      : 'text-neutral-textSecondary hover:bg-gray-50'
+                  }`}
+                >
+                  Pricing
+                </button>
+              )}
 
               {/* Auth Section for Mobile */}
               <div className="border-t border-gray-200 pt-3 mt-2">

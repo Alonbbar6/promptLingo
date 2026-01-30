@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import AccountDeletionFlow from '../components/AccountDeletionFlow';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 const AccountSettingsPage: React.FC = () => {
   const { user, logout } = useAuth();
@@ -58,14 +59,17 @@ const AccountSettingsPage: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="mt-4">
-            <a
-              href="/pricing"
-              className="text-primary-skyBlue hover:text-primary-indigo font-medium"
-            >
-              View pricing plans →
-            </a>
-          </div>
+          {/* Pricing link hidden in native apps (Netflix model) */}
+          {shouldShowSubscriptionUI() && (
+            <div className="mt-4">
+              <a
+                href="/pricing"
+                className="text-primary-skyBlue hover:text-primary-indigo font-medium"
+              >
+                View pricing plans →
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Privacy & Data */}

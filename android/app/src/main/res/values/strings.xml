@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PromptLingo</string>
+    <string name="title_activity_main">PromptLingo</string>
+    <string name="package_name">ai.promptlingo.app</string>
+    <string name="custom_url_scheme">ai.promptlingo.app</string>
+</resources>
