@@ -11,7 +11,11 @@ const corsOptions = {
       'http://localhost:3001',
       'http://localhost:10000',
       'https://promptlingo.netlify.app',
-      'https://promptlingo-frontend.onrender.com'
+      'https://promptlingo-frontend.onrender.com',
+      // Capacitor mobile app origins
+      'capacitor://localhost',
+      'ionic://localhost',
+      'http://localhost',
     ];
 
     // Allow requests with no origin (mobile apps, Postman, etc.)
