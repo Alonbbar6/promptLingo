@@ -132,6 +132,11 @@ const allowedOrigins = [
   'https://promptmylingo.netlify.app', // Netlify fallback domain
   'https://promptlingomobile.netlify.app', // Mobile Netlify app
   process.env.PRODUCTION_FRONTEND_URL, // Production URL from env
+
+  // Capacitor mobile app origins (iOS/Android)
+  'capacitor://localhost',
+  'ionic://localhost',
+  'http://localhost',
 ].filter(Boolean); // Remove undefined values
 
 console.log('🌐 CORS Configuration:');
