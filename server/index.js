@@ -168,7 +168,7 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Mobile-App'],
   exposedHeaders: ['Content-Length', 'Content-Type'],
   maxAge: 86400, // 24 hours - cache preflight requests
   optionsSuccessStatus: 200
