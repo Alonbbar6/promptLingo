@@ -74,7 +74,7 @@ const validateCheckoutSession = [
   body('planType')
     .exists().withMessage('Plan type is required')
     .isString().withMessage('Plan type must be a string')
-    .isIn(['essential', 'monthly', 'yearly']).withMessage('Invalid plan type'),
+    .isIn(['pro', 'plus']).withMessage('Invalid plan type'),
   handleValidationErrors,
 ];
 
