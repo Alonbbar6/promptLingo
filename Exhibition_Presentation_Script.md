@@ -21,7 +21,7 @@ That's why we built **PromptLingo**.
 
 ## PROBLEM STATEMENT (45 seconds)
 
-Here's the reality: There are over **13 million first-generation immigrants** in the United States right now who are competent professionals—nurses, construction managers, legal assistants, educators—but their language proficiency masks their actual competence.
+Here's the reality: In Florida alone, there are **5.4 million immigrants**—and over **40% of CNAs** in our state are foreign-born. In Miami, **more than half of all registered nurses** were born outside the United States. These are skilled professionals whose expertise gets lost because their English doesn't match their knowledge.
 
 They're not looking to learn English. They already speak conversational English. What they need is to sound **professionally credible** in high-stakes situations:
 - Writing nursing essays for RN certification
@@ -66,22 +66,24 @@ Here's how it works:
 What makes PromptLingo different from every other translation tool?
 
 **Feature #1: The Competence Meter**
-This is our signature feature. After every translation, you see a visual **before-and-after comparison** scoring your text across five metrics:
+This is our signature feature. After every translation, you see a visual **before-and-after comparison** scoring your text across four key metrics:
 - Grammar correctness
 - Tone appropriateness
 - Vocabulary sophistication
 - Domain-specific terminology (e.g., medical terms)
-- Overall professional score (0-100%)
 
-It shows the user, "Your casual input scored 42%—your professional output scored 89%. **Your competence is now visible.**" That feedback is emotionally transformative. It validates what they already knew: they're intelligent; they just needed the right words.
+These combine into an overall professional score (0-100%). It shows the user, "Your casual input scored 42%—your professional output scored 89%. **Your competence is now visible.**" That feedback is emotionally transformative. It validates what they already knew: they're intelligent; they just needed the right words.
 
-**Feature #2: Continuous Recording with Speaker Identification**
-This is something Google Translate doesn't have. PromptLingo can record entire conversations with **multiple speakers** and automatically:
-- Identify different speakers
-- Color-code them (Speaker 1 is blue, Speaker 2 is green)
+**Feature #2: Multi-Speaker Recording Mode**
+This is something Google Translate doesn't have. PromptLingo supports recording entire conversations with **multiple speakers**:
+- Create speaker profiles with custom names and colors
+- Easily switch between speakers while recording
+- Color-coded transcript (Speaker 1 is blue, Speaker 2 is green)
 - Generate a timestamped transcript with speaker labels
 
 **Use case:** A doctor-patient interview where the patient speaks Spanish and needs an English transcript for medical records. PromptLingo captures both voices, translates the conversation, and exports a professional document.
+
+*Note: Automatic speaker detection is on our roadmap—currently users manually indicate who is speaking.*
 
 **Feature #3: Privacy-First Design**
 We know Sofia is translating sensitive medical information. That's why:
@@ -168,7 +170,8 @@ We offer three tiers:
 - Email support
 
 **Professional Plan: $19.99/month**
-- Everything in Student, plus priority support, team collaboration, mobile app, offline mode
+- Everything in Student, plus priority support, custom tone presets, and export to Word/PDF
+- *Coming soon: team collaboration, mobile app (iOS & Android), offline mode*
 
 **The key:** We designed pricing for our target user's budget. CNAs typically make $15/hour. Every dollar counts. That's why we positioned the student tier at $9.99—affordable enough to justify as a career investment, not a luxury.
 
@@ -185,6 +188,31 @@ Right now, brilliant people are being judged not on their competence, but on the
 When someone like Sofia submits an essay and gets an A- instead of a C+, when they communicate with a doctor and are taken seriously, when they apply for a charge nurse position and write a compelling cover letter—**their competence becomes visible**.
 
 We're not teaching English. We're not pretending language barriers don't exist. We're giving people the tool to **amplify what they already know** so the world can finally see how intelligent they truly are.
+
+---
+
+## FUTURE ROADMAP (30 seconds)
+
+We're just getting started. Here's what's coming next:
+
+**1. Customizable Prompts**
+Soon, users will be able to create their own custom translation contexts. Imagine a charge nurse creating a "Shift Handoff" prompt that formats patient updates exactly how their hospital requires—or a legal assistant building a "Client Intake" prompt for their specific firm's documentation style. Personalized AI that adapts to YOUR workflow.
+
+**2. Local Fine-Tuned Models for 100% Private Translations**
+This is huge for healthcare users. We're developing **on-device AI models** that run entirely on your phone or computer—no internet required, no data ever leaves your device. For users handling sensitive patient information, this means **true 100% privacy**. Your translations stay on your device, period.
+
+**3. Automatic Speaker Detection**
+Currently, users manually indicate who is speaking during multi-speaker recordings. We're developing **AI-powered speaker diarization** that automatically detects different voices and labels them—no manual switching required. Perfect for doctor-patient interviews and team meetings.
+
+**4. Expanding Language Support**
+We're adding more languages based on user demand:
+- **Mandarin Chinese** and **Vietnamese** (large immigrant populations in healthcare)
+- **Arabic** and **Tagalog** (high demand from our user surveys)
+- **African languages** including Swahili and Yoruba
+
+Our goal is to serve **every immigrant community** that needs professional English—not just the largest ones.
+
+**The vision:** PromptLingo becomes the universal bridge between competence and communication, available to anyone, anywhere, in any language.
 
 ---
 
@@ -227,7 +255,7 @@ A: Our medical tone is trained on healthcare documentation standards, including 
 A: No. Translation history is encrypted and stored **locally on your device**, not on our servers. It auto-deletes after 30 days. We don't track, store, or sell any user data. Privacy is a core feature, especially for healthcare users.
 
 **Q: "Can I use this offline?"**
-A: Currently, PromptLingo requires an internet connection because it relies on cloud-based AI (OpenAI GPT-4 and ElevenLabs TTS). However, our Professional Plan includes offline mode for basic translations using cached models. That's coming in Q2.
+A: Currently, PromptLingo requires an internet connection because it relies on cloud-based AI (OpenAI GPT-4 and ElevenLabs TTS). Offline mode with on-device models is on our roadmap as part of the Professional Plan—we're actively exploring this as a future feature for users who need it.
 
 **Q: "How do you make money?"**
 A: We operate on a freemium subscription model:
@@ -235,6 +263,9 @@ A: We operate on a freemium subscription model:
 - Student Plan ($9.99/month) is our core revenue driver—unlimited translations for students and early-career professionals
 - Professional Plan ($19.99/month) for working professionals with team collaboration and advanced features
 - We also plan B2B partnerships with nursing schools, hospitals, and community colleges for institutional licensing
+
+**Q: "What's on your roadmap?"**
+A: Four major features: First, customizable prompts so users can create translation contexts specific to their workplace—like a "shift handoff" template for nurses or a "client intake" format for legal assistants. Second, local fine-tuned AI models that run entirely on-device for 100% private translations—no data ever leaves your phone. Third, automatic speaker identification so the app can detect who's speaking without manual switching. Fourth, expanding to more languages including Mandarin, Vietnamese, Arabic, and Tagalog based on user demand.
 
 **Q: "What's your business model for scaling?"**
 A: We're focusing on two growth channels:

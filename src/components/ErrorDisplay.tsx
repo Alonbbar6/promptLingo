@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AlertCircle, AlertTriangle, XCircle, Crown } from 'lucide-react';
 import PricingModal from './PricingModal';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 interface ErrorDisplayProps {
   error: string | null;
@@ -148,7 +149,8 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ error, onDismiss }) 
           <h4 className={`font-semibold ${textColor}`}>{title}</h4>
           <p className={`text-sm mt-1 ${textColor}`}>{message}</p>
 
-          {showUpgrade && (
+          {/* Hide upgrade button on mobile (Apple App Store compliance) */}
+          {showUpgrade && shouldShowSubscriptionUI() && (
             <button
               onClick={() => setShowPricingModal(true)}
               className="mt-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all shadow-sm text-sm flex items-center gap-2"

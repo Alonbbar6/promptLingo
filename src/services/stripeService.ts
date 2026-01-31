@@ -7,7 +7,7 @@ import { apiClient } from './apiClient';
 import { isNativeApp } from '../utils/platform';
 
 // Website URL for external purchases (iOS App Store compliance)
-const WEBSITE_PRICING_URL = process.env.REACT_APP_WEBSITE_URL || 'https://promptlingo.com';
+const WEBSITE_PRICING_URL = process.env.REACT_APP_WEBSITE_URL || 'https://promptlingo.ai';
 
 export interface PricingPlan {
   id: string;

@@ -12,7 +12,13 @@ import { Capacitor } from '@capacitor/core';
  * Check if running in a native app (iOS or Android)
  */
 export const isNativeApp = (): boolean => {
-  return Capacitor.isNativePlatform();
+  const isNative = Capacitor.isNativePlatform();
+  console.log('[Platform] isNativeApp check:', {
+    isNative,
+    platform: Capacitor.getPlatform(),
+    capacitorAvailable: typeof Capacitor !== 'undefined'
+  });
+  return isNative;
 };
 
 /**

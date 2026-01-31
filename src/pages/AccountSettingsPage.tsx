@@ -47,10 +47,22 @@ const AccountSettingsPage: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700">Current Plan</label>
               <p className="text-gray-900">
-                {user.subscriptionTier === 'free' && 'Free (15 translations/day)'}
-                {user.subscriptionTier === 'pro' && 'Pro - $9.99/month (Unlimited)'}
-                {user.subscriptionTier === 'plus' && 'Plus - $19.99/month (Unlimited + Adult Mode)'}
-                {user.subscriptionTier === 'enterprise' && 'Enterprise (Unlimited + Unfiltered)'}
+                {shouldShowSubscriptionUI() ? (
+                  <>
+                    {user.subscriptionTier === 'free' && 'Free (15 translations/day)'}
+                    {user.subscriptionTier === 'pro' && 'Pro - $9.99/month (Unlimited)'}
+                    {user.subscriptionTier === 'plus' && 'Plus - $19.99/month (Unlimited + Adult Mode)'}
+                    {user.subscriptionTier === 'enterprise' && 'Enterprise (Unlimited + Unfiltered)'}
+                  </>
+                ) : (
+                  <>
+                    {/* Mobile: Hide pricing information (Apple App Store compliance) */}
+                    {user.subscriptionTier === 'free' && 'Free'}
+                    {user.subscriptionTier === 'pro' && 'Pro'}
+                    {user.subscriptionTier === 'plus' && 'Plus'}
+                    {user.subscriptionTier === 'enterprise' && 'Enterprise'}
+                  </>
+                )}
               </p>
             </div>
             {user.subscriptionTier !== 'free' && (

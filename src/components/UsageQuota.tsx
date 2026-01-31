@@ -9,6 +9,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Crown, TrendingUp, Calendar, Gift } from 'lucide-react';
 import PromotionCodeModal from './PromotionCodeModal';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 const UsageQuota: React.FC = () => {
   const { user } = useAuth();
@@ -102,7 +103,8 @@ const UsageQuota: React.FC = () => {
           )}
         </div>
 
-        {usage.tier === 'free' && (
+        {/* Hide promotion code button on mobile (Apple App Store compliance) */}
+        {usage.tier === 'free' && shouldShowSubscriptionUI() && (
           <button
             className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 transition-all shadow-sm flex items-center space-x-1"
             onClick={() => setShowPromoModal(true)}

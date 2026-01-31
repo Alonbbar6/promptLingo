@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, Shield, Zap, History, AlertCircle } from 'lucide-react';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 const SignInPrompt: React.FC = () => {
   const [showAuthMessage, setShowAuthMessage] = useState(false);
@@ -107,15 +108,17 @@ const SignInPrompt: React.FC = () => {
           </p>
         </div>
 
-        {/* Pro upgrade teaser */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-sm text-gray-600 mb-2">
-            Need more translations?
-          </p>
-          <p className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-            Upgrade to Pro for unlimited translations
-          </p>
-        </div>
+        {/* Pro upgrade teaser - Hidden on mobile (Apple App Store compliance) */}
+        {shouldShowSubscriptionUI() && (
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <p className="text-sm text-gray-600 mb-2">
+              Need more translations?
+            </p>
+            <p className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+              Upgrade to Pro for unlimited translations
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

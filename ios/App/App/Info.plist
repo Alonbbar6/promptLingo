@@ -47,6 +47,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>PromptLingo needs microphone access to record audio for transcription and translation.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>PromptLingo uses speech recognition to transcribe your audio.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

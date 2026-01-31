@@ -160,8 +160,14 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
 
         {/* Mobile menu */}
         {showNavigation && isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200 animate-slide-in">
-            <div className="flex flex-col gap-3">
+          <>
+          {/* Backdrop overlay */}
+          <div
+            className="md:hidden fixed inset-0 bg-black bg-opacity-30 z-40"
+            onClick={() => setIsMenuOpen(false)}
+          />
+          <div className="md:hidden absolute left-0 right-0 top-16 bg-white py-4 border-t border-gray-200 shadow-lg z-50 animate-slide-in">
+            <div className="flex flex-col gap-3 px-4">
               <button
                 onClick={() => {
                   onPageChange('translator');
@@ -241,6 +247,7 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
               </div>
             </div>
           </div>
+          </>
         )}
       </nav>
 

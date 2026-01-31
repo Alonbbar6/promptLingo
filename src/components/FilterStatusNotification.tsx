@@ -1,6 +1,7 @@
 import React from 'react';
 import { Shield, Info, AlertTriangle, XCircle } from 'lucide-react';
 import { getIssueDescription } from '../utils/contentFilter';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 interface FilterStatusNotificationProps {
   wasFiltered: boolean;
@@ -98,7 +99,8 @@ const FilterStatusNotification: React.FC<FilterStatusNotificationProps> = ({
               Detected: {issueDescription}
             </p>
           )}
-          {showUpgradePrompt && severityLevel !== 'severe' && (
+          {/* Hide upgrade prompt on mobile (Apple App Store compliance) */}
+          {showUpgradePrompt && severityLevel !== 'severe' && shouldShowSubscriptionUI() && (
             <div className="mt-3 pt-2 border-t border-current border-opacity-20">
               <button className={`text-xs ${style.textColor} hover:underline font-medium`}>
                 Upgrade to Uncensored Version for unfiltered translations →

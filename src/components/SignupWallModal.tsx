@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Check, Clock, Zap, Shield, TrendingUp } from 'lucide-react';
 import { getTimeUntilReset } from '../services/anonymousUsageService';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 interface SignupWallModalProps {
   isOpen: boolean;
@@ -110,31 +111,33 @@ const SignupWallModal: React.FC<SignupWallModalProps> = ({
             </div>
           </div>
 
-          {/* Premium Features Preview */}
-          <div className="mb-4 sm:mb-6 md:mb-8 p-3 sm:p-4 md:p-6 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg">
-            <h4 className="font-semibold text-sm sm:text-base text-purple-900 mb-2 sm:mb-3 md:mb-4 flex items-center space-x-2">
-              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
-              <span>Premium Features (Coming Soon)</span>
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
-              <div className="flex items-start space-x-2">
-                <Shield className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                <span className="text-purple-800">Unlimited translations</span>
-              </div>
-              <div className="flex items-start space-x-2">
-                <Shield className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                <span className="text-purple-800">Premium GPT-4 model</span>
-              </div>
-              <div className="flex items-start space-x-2">
-                <Shield className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                <span className="text-purple-800">Priority processing</span>
-              </div>
-              <div className="flex items-start space-x-2">
-                <Shield className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                <span className="text-purple-800">Advanced tone controls</span>
+          {/* Premium Features Preview - Hidden on mobile (Apple App Store compliance) */}
+          {shouldShowSubscriptionUI() && (
+            <div className="mb-4 sm:mb-6 md:mb-8 p-3 sm:p-4 md:p-6 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg">
+              <h4 className="font-semibold text-sm sm:text-base text-purple-900 mb-2 sm:mb-3 md:mb-4 flex items-center space-x-2">
+                <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
+                <span>Premium Features (Coming Soon)</span>
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
+                <div className="flex items-start space-x-2">
+                  <Shield className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-purple-800">Unlimited translations</span>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <Shield className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-purple-800">Premium GPT-4 model</span>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <Shield className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-purple-800">Priority processing</span>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <Shield className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-purple-800">Advanced tone controls</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* CTA Buttons */}
           <div className="space-y-2 sm:space-y-3">

@@ -386,7 +386,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 size="lg"
                 onClick={onGetStarted}
               >
-                Ready to feel confident? Start Your Free Trial Now
+                Ready to feel confident? Get Started Free
               </BrandedButton>
             </div>
           </div>
@@ -467,8 +467,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           </h3>
           <div className="space-y-4">
             <BrandedCard variant="default">
-              <p className="font-semibold text-neutral-textPrimary mb-2">Is the free trial a full version?</p>
-              <p className="text-neutral-textSecondary">Yes! You get full access to all features for 7 days, no credit card required.</p>
+              <p className="font-semibold text-neutral-textPrimary mb-2">Is the free tier really free forever?</p>
+              <p className="text-neutral-textSecondary">Yes! The free tier gives you 15 translations per month forever, no credit card required. Upgrade anytime for unlimited access.</p>
             </BrandedCard>
             <BrandedCard variant="default">
               <p className="font-semibold text-neutral-textPrimary mb-2">Can I pay with a prepaid card?</p>
@@ -591,7 +591,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               onClick={onGetStarted}
               className="text-lg px-8 py-4 bg-white text-primary-skyBlue hover:bg-neutral-backgroundLight"
             >
-              Start Your Free Trial Now
+              Get Started Free
             </BrandedButton>
             <BrandedButton 
               variant="outline" 

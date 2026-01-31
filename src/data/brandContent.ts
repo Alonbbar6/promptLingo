@@ -114,10 +114,10 @@ export const brandContent = {
 
   // Call-to-action messages (PRD-specified)
   cta: {
-    primary: "Start Your 7-Day Free Trial",
+    primary: "Start Free",
     secondary: "See the Before & After",
-    tagline: "Join thousands of ambitious professionals who replaced anxiety with authority. Start your free trial and unlock your true potential today.",
-    microcopy: "Free 7-Day Trial • $10/Month After • Cancel Anytime • Setup in 2 Minutes"
+    tagline: "Join thousands of ambitious professionals who replaced anxiety with authority. Start for free and unlock your true potential today.",
+    microcopy: "Free Forever • No Credit Card • Upgrade Anytime • Setup in 2 Minutes"
   },
 
   // Brand narrative

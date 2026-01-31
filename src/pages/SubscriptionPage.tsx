@@ -18,6 +18,7 @@ import {
 import PricingModal from '../components/PricingModal';
 import PromotionCodeModal from '../components/PromotionCodeModal';
 import { promotionService } from '../services/promotionService';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 const SubscriptionPage: React.FC = () => {
   const { user } = useAuth();
@@ -70,6 +71,24 @@ const SubscriptionPage: React.FC = () => {
       setManagingBilling(false);
     }
   };
+
+  // Mobile users: Subscription management is web-only (Apple App Store compliance)
+  if (!shouldShowSubscriptionUI()) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md mx-auto">
+          <AlertCircle className="h-12 w-12 text-blue-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Subscription Management</h2>
+          <p className="text-gray-600 mb-4">
+            To manage your subscription, please visit our website at promptlingo.ai
+          </p>
+          <p className="text-sm text-gray-500">
+            Your premium features will continue to work in the app if you have an active subscription.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     return (

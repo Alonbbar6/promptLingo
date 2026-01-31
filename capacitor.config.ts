@@ -8,6 +8,11 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: 'automatic',
     backgroundColor: '#ffffff',
+    allowsLinkPreview: false,
+  },
+  server: {
+    // Allow getUserMedia (microphone) in WKWebView
+    allowNavigation: ['*'],
   },
   android: {
     backgroundColor: '#ffffff',

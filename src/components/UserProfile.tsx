@@ -4,6 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { LogOut, User as UserIcon, Crown, Gift, Settings } from 'lucide-react';
 import PricingModal from './PricingModal';
 import PromotionCodeModal from './PromotionCodeModal';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 interface UserProfileProps {
   onNavigate?: (page: 'landing' | 'translator' | 'tts' | 'pricing' | 'subscription' | 'privacy' | 'refund-policy' | 'settings') => void;
@@ -15,6 +16,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ onNavigate }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showPricingModal, setShowPricingModal] = useState(false);
   const [showPromoModal, setShowPromoModal] = useState(false);
+
+  // Debug platform detection
+  const showSubscriptionUI = shouldShowSubscriptionUI();
+  console.log('[UserProfile] Platform check:', {
+    showSubscriptionUI,
+    platform: typeof window !== 'undefined' ? (window as any).Capacitor?.getPlatform() : 'unknown'
+  });
 
   if (!user) return null;
 
@@ -56,39 +64,44 @@ const UserProfile: React.FC<UserProfileProps> = ({ onNavigate }) => {
               <p className="text-xs text-gray-500 truncate">{user.email}</p>
             </div>
 
-            <button
-              onClick={() => {
-                setShowMenu(false);
-                setShowPricingModal(true);
-              }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center space-x-2 text-purple-600 font-medium"
-            >
-              <Crown className="w-4 h-4" />
-              <span>{t('user.upgradePlan')}</span>
-            </button>
+            {/* Hide upgrade/subscription options on mobile (Apple App Store compliance) */}
+            {showSubscriptionUI && (
+              <>
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    setShowPricingModal(true);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center space-x-2 text-purple-600 font-medium"
+                >
+                  <Crown className="w-4 h-4" />
+                  <span>{t('user.upgradePlan')}</span>
+                </button>
 
-            <button
-              onClick={() => {
-                setShowMenu(false);
-                setShowPromoModal(true);
-              }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center space-x-2 text-blue-600"
-            >
-              <Gift className="w-4 h-4" />
-              <span>{t('user.redeemCode')}</span>
-            </button>
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    setShowPromoModal(true);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center space-x-2 text-blue-600"
+                >
+                  <Gift className="w-4 h-4" />
+                  <span>{t('user.redeemCode')}</span>
+                </button>
 
-            {onNavigate && (
-              <button
-                onClick={() => {
-                  setShowMenu(false);
-                  onNavigate('subscription');
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center space-x-2 text-gray-700"
-              >
-                <Settings className="w-4 h-4" />
-                <span>Manage Subscription</span>
-              </button>
+                {onNavigate && (
+                  <button
+                    onClick={() => {
+                      setShowMenu(false);
+                      onNavigate('subscription');
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center space-x-2 text-gray-700"
+                  >
+                    <Settings className="w-4 h-4" />
+                    <span>Manage Subscription</span>
+                  </button>
+                )}
+              </>
             )}
 
             <div className="border-t border-gray-200 my-1"></div>
