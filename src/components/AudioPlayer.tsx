@@ -19,125 +19,82 @@ const AudioPlayer: React.FC = () => {
   const [usedBrowserTTS, setUsedBrowserTTS] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const hasPlayedRef = useRef(false);
   const currentAudioUrlRef = useRef<string | null>(null);
   const isProcessingRef = useRef(false);
   const requestIdCounterRef = useRef(0);
 
   // Voice selection is now handled by VoiceSelector component
 
-  // Synthesize speech when translation is available
-  useEffect(() => {
-    const synthesizeAudio = async () => {
-      if (!state.currentTranslation || !selectedVoice || state.currentTranslation.audioUrl) return;
+  // Manual synthesis - triggered by Play button only (no auto-TTS to save ElevenLabs costs)
+  const synthesizeAndPlay = async () => {
+    if (!state.currentTranslation || !selectedVoice) return;
 
-      // Request deduplication: prevent multiple simultaneous audio generations
-      if (isProcessingRef.current) {
-        console.log('⏭️ Skipping audio generation - already processing');
-        return;
-      }
+    // If audio already generated, just play it
+    if (state.currentTranslation.audioUrl) {
+      playAudio(state.currentTranslation.audioUrl);
+      return;
+    }
 
-      // Increment request ID counter for tracking
-      const requestId = ++requestIdCounterRef.current;
-      console.log(`🎵 Starting audio generation request #${requestId}`);
+    if (isProcessingRef.current) return;
+
+    const requestId = ++requestIdCounterRef.current;
+    console.log(`🎵 Starting audio generation request #${requestId}`);
+
+    try {
+      isProcessingRef.current = true;
+      setIsLoading(true);
+      setError(null);
+      setUsedBrowserTTS(false);
+
+      const t1 = performance.now();
 
       try {
-        isProcessingRef.current = true;
-        setIsLoading(true);
-        setError(null);
-        setUsedBrowserTTS(false);
+        console.log('🔊 Attempting ElevenLabs synthesis...');
+        const result = await synthesizeSpeech(
+          state.currentTranslation.translatedText,
+          selectedVoice,
+          state.targetLanguage
+        );
+        const synthTime = performance.now() - t1;
+        setSynthesisTime(synthTime);
+        console.log(`✅ ElevenLabs synthesis successful in ${(synthTime/1000).toFixed(2)}s`);
 
-        const t1 = performance.now();
-        
-        // Try ElevenLabs first
-        try {
-          console.log('🔊 Attempting ElevenLabs synthesis...');
-          const result = await synthesizeSpeech(
-            state.currentTranslation.translatedText,
-            selectedVoice,
-            state.targetLanguage
-          );
-          const synthTime = performance.now() - t1;
-          setSynthesisTime(synthTime);
+        const updatedTranslation = {
+          ...state.currentTranslation,
+          audioUrl: result.audioUrl
+        };
+        dispatch({ type: 'SET_TRANSLATION', payload: updatedTranslation });
 
-          console.log(`✅ ElevenLabs synthesis successful in ${(synthTime/1000).toFixed(2)}s`);
-
-          // Update the translation item with audio URL
-          const updatedTranslation = {
-            ...state.currentTranslation,
-            audioUrl: result.audioUrl
-          };
-
-          dispatch({ type: 'SET_TRANSLATION', payload: updatedTranslation });
-
-          // Auto-play if enabled - only play once per new audio
-          if (state.autoPlay && result.audioUrl !== currentAudioUrlRef.current) {
-            // Clean up old audio URL before creating new one
-            if (currentAudioUrlRef.current && currentAudioUrlRef.current.startsWith('blob:')) {
-              URL.revokeObjectURL(currentAudioUrlRef.current);
-              console.log('🧹 Cleaned up old audio URL');
-            }
-
-            currentAudioUrlRef.current = result.audioUrl;
-            hasPlayedRef.current = false; // Reset for new audio
-
-            // Clean up old audio first
-            if (audioRef.current) {
-              audioRef.current.pause();
-              audioRef.current.src = '';
-            }
-
-            // Create new audio instance
-            const audio = new Audio(result.audioUrl);
-            audioRef.current = audio;
-
-            // Set up event listeners
-            audio.addEventListener('canplaythrough', () => {
-              console.log('✅ Audio loaded and ready to play');
-            });
-
-            audio.addEventListener('error', (e) => {
-              console.error('❌ Audio playback error:', e);
-            });
-
-            // Play only once using audioManager
-            if (!hasPlayedRef.current) {
-              hasPlayedRef.current = true;
-              audio.load();
-              audioManager.play(audio, 'auto-play-translation')
-                .then(() => console.log('▶️ Audio playing via AudioManager'))
-                .catch(err => console.error('❌ Auto-play failed:', err));
-            }
-          }
-          
-        } catch (elevenLabsError) {
-          // ElevenLabs failed, try browser TTS
-          console.warn('⚠️ ElevenLabs failed, falling back to browser TTS:', elevenLabsError);
-          
-          const synthTime = performance.now() - t1;
-          setSynthesisTime(synthTime);
-          
-          // Use browser TTS
-          await synthesizeSpeechBrowser(
-            state.currentTranslation.translatedText,
-            state.targetLanguage
-          );
-          
-          setUsedBrowserTTS(true);
-          console.log('✅ Browser TTS synthesis successful');
+        // Clean up old audio URL
+        if (currentAudioUrlRef.current && currentAudioUrlRef.current.startsWith('blob:')) {
+          URL.revokeObjectURL(currentAudioUrlRef.current);
         }
+        currentAudioUrlRef.current = result.audioUrl;
 
-      } catch (error) {
-        console.error(`❌ Audio generation request #${requestId} failed:`, error);
-        setError(error instanceof Error ? error.message : 'Failed to generate audio. Please check your configuration.');
-      } finally {
-        isProcessingRef.current = false;
-        setIsLoading(false);
+        // Play the newly generated audio
+        playAudio(result.audioUrl);
+
+      } catch (elevenLabsError) {
+        console.warn('⚠️ ElevenLabs failed, falling back to browser TTS:', elevenLabsError);
+        const synthTime = performance.now() - t1;
+        setSynthesisTime(synthTime);
+
+        await synthesizeSpeechBrowser(
+          state.currentTranslation.translatedText,
+          state.targetLanguage
+        );
+        setUsedBrowserTTS(true);
+        console.log('✅ Browser TTS synthesis successful');
       }
-    };
 
-    synthesizeAudio();
-  }, [state.currentTranslation, selectedVoice, state.targetLanguage, state.autoPlay, dispatch]);
+    } catch (error) {
+      console.error(`❌ Audio generation request #${requestId} failed:`, error);
+      setError(error instanceof Error ? error.message : 'Failed to generate audio. Please check your configuration.');
+    } finally {
+      isProcessingRef.current = false;
+      setIsLoading(false);
+    }
+  };
 
   // Audio playback functions
   const playAudio = (audioUrl?: string) => {
@@ -166,8 +123,10 @@ const AudioPlayer: React.FC = () => {
   const handlePlayPause = () => {
     if (state.audioPlayer.isPlaying) {
       pauseAudio();
-    } else {
+    } else if (state.currentTranslation?.audioUrl) {
       playAudio();
+    } else {
+      synthesizeAndPlay();
     }
   };
 
@@ -284,7 +243,7 @@ const AudioPlayer: React.FC = () => {
             <Play className="h-5 w-5" />
           )}
           <span>
-            {state.audioPlayer.isPlaying ? 'Pause' : 'Play'}
+            {state.audioPlayer.isPlaying ? 'Pause' : state.currentTranslation?.audioUrl ? 'Play' : 'Listen'}
           </span>
         </button>
 
@@ -329,25 +288,6 @@ const AudioPlayer: React.FC = () => {
       {/* Settings Panel */}
       {showSettings && (
         <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-          {/* Auto-play Toggle */}
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-700">
-              Auto-play translations
-            </label>
-            <button
-              onClick={() => dispatch({ type: 'TOGGLE_AUTO_PLAY' })}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                state.autoPlay ? 'bg-primary-500' : 'bg-gray-300'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                  state.autoPlay ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
-
           {/* Voice Selection */}
           <VoiceSelector
             selectedVoice={selectedVoice}

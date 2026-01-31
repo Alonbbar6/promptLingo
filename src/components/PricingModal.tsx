@@ -33,7 +33,7 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleUpgrade = async (planType: 'essential' | 'monthly' | 'yearly') => {
+  const handleUpgrade = async (planType: 'pro' | 'plus') => {
     try {
       setCheckoutLoading(planType);
       await createCheckoutSession(planType);
@@ -84,9 +84,9 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {plans.filter(p => p.interval === 'month').map((plan) => {
-                const isPopular = plan.id === 'essential';
-                const isPro = plan.id.includes('pro');
+              {plans.map((plan) => {
+                const isPopular = plan.id === 'pro';
+                const isPlus = plan.id === 'plus';
 
                 return (
                 <div
@@ -94,7 +94,7 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
                   className={`rounded-lg border-2 p-6 relative ${
                     isPopular
                       ? 'border-blue-500 bg-blue-50 shadow-lg'
-                      : isPro
+                      : isPlus
                       ? 'border-purple-500 bg-purple-50'
                       : 'border-gray-200 bg-white'
                   }`}
@@ -141,20 +141,19 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
                   ) : (
                     <button
                       onClick={() => {
-                        const planType = plan.id === 'essential' ? 'essential' :
-                                        plan.interval === 'year' ? 'yearly' : 'monthly';
+                        const planType = plan.id === 'plus' ? 'plus' : 'pro';
                         handleUpgrade(planType);
                       }}
                       disabled={!!checkoutLoading}
                       className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-                        plan.id === 'essential'
+                        plan.id === 'pro'
                           ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg text-white'
-                          : plan.id === 'pro-monthly'
+                          : plan.id === 'plus'
                           ? 'bg-purple-600 hover:bg-purple-700 text-white'
                           : 'bg-purple-600 hover:bg-purple-700 text-white'
                       } disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center`}
                     >
-                      {checkoutLoading === (plan.id === 'essential' ? 'essential' : plan.interval === 'year' ? 'yearly' : 'monthly') ? (
+                      {checkoutLoading === plan.id ? (
                         <>
                           <Loader className="h-4 w-4 animate-spin mr-2" />
                           Processing...

@@ -36,10 +36,8 @@ router.post('/create-checkout-session', authenticateToken, validateCheckoutSessi
     // Determine price ID based on plan type
     let stripePriceId = priceId;
     if (!stripePriceId) {
-      if (planType === 'essential') {
-        stripePriceId = STRIPE_PRICES.ESSENTIAL_MONTHLY;
-      } else if (planType === 'yearly') {
-        stripePriceId = STRIPE_PRICES.PRO_YEARLY;
+      if (planType === 'plus') {
+        stripePriceId = STRIPE_PRICES.PLUS_MONTHLY;
       } else {
         stripePriceId = STRIPE_PRICES.PRO_MONTHLY;
       }
@@ -231,7 +229,7 @@ router.get('/pricing', async (req, res) => {
           id: 'free',
           name: 'Free',
           price: 0,
-          interval: 'day',
+          interval: 'month',
           features: [
             '15 translations per day',
             'All voice options',
@@ -240,47 +238,32 @@ router.get('/pricing', async (req, res) => {
           ],
         },
         {
-          id: 'essential',
-          name: 'Essential',
+          id: 'pro',
+          name: 'Pro',
           price: 9.99,
           interval: 'month',
-          priceId: STRIPE_PRICES.ESSENTIAL_MONTHLY,
+          priceId: STRIPE_PRICES.PRO_MONTHLY,
           popular: true,
           features: [
-            '200 translations per month',
-            'All voice options',
+            'Unlimited translations',
+            'Premium AI voices (OpenAI TTS)',
             'Translation history',
             'Priority processing',
             'Email support',
           ],
         },
         {
-          id: 'pro-monthly',
-          name: 'Professional',
+          id: 'plus',
+          name: 'Plus',
           price: 19.99,
           interval: 'month',
-          priceId: STRIPE_PRICES.PRO_MONTHLY,
+          priceId: STRIPE_PRICES.PLUS_MONTHLY,
           features: [
-            'Unlimited translations',
-            'Premium AI voices (ElevenLabs)',
-            'Advanced features',
+            'Everything in Pro',
+            'Adult mode (relaxed content filter)',
+            'Flirty & playful tones',
             'Priority support',
-            'Custom templates',
-          ],
-        },
-        {
-          id: 'pro-yearly',
-          name: 'Professional',
-          price: 199.99,
-          interval: 'year',
-          priceId: STRIPE_PRICES.PRO_YEARLY,
-          savings: '17% savings',
-          features: [
-            'Unlimited translations',
-            'Premium AI voices (ElevenLabs)',
-            'Advanced features',
-            'Priority support',
-            'Custom templates',
+            'All future premium features',
           ],
         },
       ],

@@ -124,7 +124,7 @@ const trackUsage = async (req, res, next) => {
       limit = ESSENTIAL_TIER_LIMIT;
       tierName = 'Essential';
     }
-    // Pro tier has no limit (unlimited)
+    // Pro, Plus, and Enterprise tiers have no limit (unlimited)
 
     // Check if user has exceeded their tier limit
     if (limit !== null && user.api_calls_this_month >= limit) {
@@ -243,7 +243,7 @@ const getUsage = async (req, res) => {
       period = 'day';
     } else if (user.subscription_tier === 'essential') {
       limit = ESSENTIAL_TIER_LIMIT;
-    } else if (user.subscription_tier === 'pro') {
+    } else if (user.subscription_tier === 'pro' || user.subscription_tier === 'plus' || user.subscription_tier === 'enterprise') {
       unlimited = true;
     }
 

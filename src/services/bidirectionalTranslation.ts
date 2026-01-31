@@ -6,7 +6,7 @@ export interface BidirectionalTranslationOptions {
   direction: 'to-english' | 'from-english';
   language: string; // The non-English language
   tone: string;
-  userTier?: 'free' | 'paid-uncensored';
+  userTier?: 'free' | 'adult-relaxed' | 'paid-uncensored';
   provider?: 'openai' | 'nllb';
 }
 

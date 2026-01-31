@@ -226,8 +226,10 @@ const reactivateUser = async (userId) => {
  */
 const getUsageQuota = (subscriptionTier) => {
   const quotas = {
-    'free': 15,      // 15 translations per month for free users
-    'pro': Infinity  // Unlimited for pro users
+    'free': 15,         // 15 translations per month for free users
+    'pro': Infinity,    // Unlimited for pro users
+    'plus': Infinity,   // Unlimited + adult-relaxed filter for plus users
+    'enterprise': Infinity  // Unlimited + unfiltered for enterprise
   };
   return quotas[subscriptionTier] || quotas.free;
 };
@@ -325,7 +327,7 @@ const hasRemainingQuota = async (userId) => {
  * Update user subscription tier
  */
 const updateSubscriptionTier = async (userId, tier) => {
-  const validTiers = ['free', 'pro'];
+  const validTiers = ['free', 'pro', 'plus', 'enterprise'];
   if (!validTiers.includes(tier)) {
     throw new Error(`Invalid subscription tier: ${tier}`);
   }

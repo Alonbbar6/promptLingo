@@ -344,7 +344,7 @@ export class EnhancedToneService {
     text: string, 
     tone: string, 
     targetLanguage: string = 'en',
-    userTier: 'free' | 'paid-uncensored' = 'free'
+    userTier: 'free' | 'adult-relaxed' | 'paid-uncensored' = 'free'
   ): Promise<EnhancedToneResult> {
     if (!text || text.trim().length === 0) {
       throw new Error('No text provided for tone enhancement');
@@ -503,7 +503,7 @@ export async function enhanceTextWithTone(
   text: string, 
   tone: string,
   targetLanguage: string = 'en',
-  userTier: 'free' | 'paid-uncensored' = 'free'
+  userTier: 'free' | 'adult-relaxed' | 'paid-uncensored' = 'free'
 ): Promise<EnhancedToneResult> {
   const service = getEnhancedToneService();
   return service.enhanceTextWithTone(text, tone, targetLanguage, userTier);

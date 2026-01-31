@@ -1,5 +1,7 @@
-// Text-to-Speech Service using Backend API (ElevenLabs)
+// Text-to-Speech Service using Backend API (OpenAI TTS)
 import { audioManager } from './audioManager';
+import { tokenStorage } from './tokenStorage';
+import { isNativeApp } from '../utils/platform';
 
 export interface TTSVoice {
   id: string;
@@ -26,8 +28,7 @@ interface SynthesizeResponse {
   audioUrl: string;
   characterCount: number;
   voiceId: string;
-  originalLanguage: string;
-  elevenLabsLanguage: string;
+  language: string;
   synthesisTime: number;
 }
 
@@ -107,7 +108,7 @@ export class TextToSpeechService {
   }
 
   /**
-   * Speak the given text using backend ElevenLabs API
+   * Speak the given text using backend OpenAI TTS API
    */
   async speak(text: string, options: TTSOptions = {}): Promise<void> {
     if (!text || typeof text !== 'string') {
@@ -134,15 +135,24 @@ export class TextToSpeechService {
       const apiUrl = this.getApiUrl();
       console.log('📡 API URL:', apiUrl); // Debug log
 
-      // Headers for request (auth via HttpOnly cookies)
-      const headers: HeadersInit = {
+      // Headers for request
+      const headers: Record<string, string> = {
         'Content-Type': 'application/json',
       };
+
+      // On mobile, add Bearer token since cookies don't work
+      if (isNativeApp()) {
+        headers['X-Mobile-App'] = 'true';
+        const accessToken = await tokenStorage.getAccessToken();
+        if (accessToken) {
+          headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+      }
 
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers,
-        credentials: 'include', // Send HttpOnly cookies with request
+        credentials: 'include', // Send HttpOnly cookies with request (web)
         body: JSON.stringify({
           text,
           voiceId,

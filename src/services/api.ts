@@ -2,6 +2,8 @@ import axios from 'axios';
 import { TranscriptionResponse, TranslationResponse, SynthesisResponse, Voice } from '../types';
 import { sanitizeInput } from '../utils/contentFilter';
 import { apiClient } from './apiClient';
+import { tokenStorage } from './tokenStorage';
+import { isNativeApp } from '../utils/platform';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -16,9 +18,16 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor for logging
+// Request interceptor to add auth token on mobile + logging
 api.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    if (isNativeApp()) {
+      config.headers.set('X-Mobile-App', 'true');
+      const accessToken = await tokenStorage.getAccessToken();
+      if (accessToken) {
+        config.headers.set('Authorization', `Bearer ${accessToken}`);
+      }
+    }
     console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
     return config;
   },
@@ -107,7 +116,7 @@ export const translateText = async (
   sourceLang: string,
   targetLang: string,
   tone: string,
-  userTier: 'free' | 'paid-uncensored' = 'free',
+  userTier: 'free' | 'adult-relaxed' | 'paid-uncensored' = 'free',
   provider: 'openai' | 'nllb' = 'openai'
 ): Promise<TranslationResponse> => {
   const startTime = Date.now();

@@ -42,7 +42,7 @@ export const getPricingPlans = async (): Promise<PricingPlan[]> => {
  * Create a checkout session and redirect to Stripe Checkout
  * @param planType - 'essential', 'monthly', or 'yearly'
  */
-export const createCheckoutSession = async (planType: 'essential' | 'monthly' | 'yearly'): Promise<void> => {
+export const createCheckoutSession = async (planType: 'pro' | 'plus'): Promise<void> => {
   try {
     console.log(`Creating checkout session for ${planType} plan...`);
 

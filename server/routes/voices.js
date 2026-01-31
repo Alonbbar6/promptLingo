@@ -56,7 +56,7 @@ router.get('/', (req, res) => {
   console.log('🎙️ Returning curated voice list (2 voices per language)');
   res.json({
     voices: Object.values(CURATED_VOICES),
-    source: 'elevenlabs',
+    source: 'openai',
     message: '2 voices per language: English, Spanish, and Haitian Creole',
   });
 });
@@ -83,7 +83,7 @@ router.get('/:language', (req, res) => {
   res.json({
     voices: filteredVoices,
     language,
-    source: 'elevenlabs',
+    source: 'openai',
   });
 });
 

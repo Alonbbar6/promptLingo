@@ -4,42 +4,21 @@ const { validateSynthesize } = require('../middleware/validation');
 
 const router = express.Router();
 
-/**
- * Maps language codes to ElevenLabs-supported languages
- * Haitian Creole (ht) → French (fr) since they're linguistically similar
- * and ElevenLabs doesn't directly support Haitian Creole
- */
-function getElevenLabsLanguageCode(languageCode) {
-  const languageMap = {
-    'ht': 'fr',  // Haitian Creole → French
-    'en': 'en',  // English
-    'es': 'es',  // Spanish
-    'fr': 'fr',  // French
-    'de': 'de',  // German
-    'it': 'it',  // Italian
-    'pt': 'pt',  // Portuguese
-    'pl': 'pl',  // Polish
-    'nl': 'nl',  // Dutch
-    'sv': 'sv',  // Swedish
-    'hi': 'hi',  // Hindi
-    'ja': 'ja',  // Japanese
-    'ko': 'ko',  // Korean
-    'zh': 'zh',  // Chinese
-    'ar': 'ar',  // Arabic
-  };
+// OpenAI TTS voice options
+// All voices are multilingual and auto-detect language from input text
+const OPENAI_VOICES = {
+  'male-en': 'onyx',
+  'female-en': 'nova',
+  'male-es': 'onyx',
+  'female-es': 'nova',
+  'male-ht': 'onyx',
+  'female-ht': 'nova',
+};
 
-  const mappedLanguage = languageMap[languageCode] || 'en';
-  
-  if (languageCode !== mappedLanguage) {
-    console.log(`🗣️ Language mapping: ${languageCode} → ${mappedLanguage}`);
-  }
-  
-  return mappedLanguage;
-}
+const DEFAULT_VOICE = 'nova';
 
 // Available voices configuration - 2 per language
 const VOICES = {
-  // English
   'male-en': {
     id: 'male-en',
     name: 'David',
@@ -54,7 +33,6 @@ const VOICES = {
     language: 'en',
     description: 'Female English voice - warm and articulate'
   },
-  // Spanish
   'male-es': {
     id: 'male-es',
     name: 'Carlos',
@@ -69,7 +47,6 @@ const VOICES = {
     language: 'es',
     description: 'Female Spanish voice - warm and expressive'
   },
-  // Haitian Creole
   'male-ht': {
     id: 'male-ht',
     name: 'Jean-Pierre',
@@ -86,40 +63,17 @@ const VOICES = {
   }
 };
 
-// ElevenLabs voice mapping - maps our friendly IDs to actual ElevenLabs voice IDs
-const ELEVENLABS_VOICE_IDS = {
-  // English voices
-  'male-en': 'CwhRBWXzGAHq8TQ4Fs17',  // Roger - American male, conversational
-  'female-en': 'EXAVITQu4vr4xnSDxMaL', // Sarah - American female, young
-  // Spanish voices
-  'male-es': '2EiwWnXFnvU5JabPnv8n',   // Clyde (multilingual, works for Spanish)
-  'female-es': 'cgSgspJ2msm6clMCkdW9', // Jessica (multilingual, works for Spanish)
-  // Haitian Creole voices (using French-capable voices)
-  'male-ht': '2EiwWnXFnvU5JabPnv8n',   // Clyde - works with French/Haitian Creole
-  'female-ht': 'EXAVITQu4vr4xnSDxMaL'  // Sarah - works with French/Haitian Creole
-};
-
-// Default fallback voice if mapping fails
-const DEFAULT_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL'; // Sarah - reliable American female voice
-
 router.post('/', validateSynthesize, async (req, res) => {
   const startTime = Date.now();
-  console.log('🔊 [SYNTHESIZE] Request received');
-  
-  // Extract variables outside try block so they're accessible in catch
+  console.log('🔊 [SYNTHESIZE] Request received (OpenAI TTS)');
+
   const { text, voiceId, language } = req.body;
-  
+
   try {
-    
-    // Map Haitian Creole to French for ElevenLabs compatibility
-    const elevenLabsLanguage = getElevenLabsLanguageCode(language);
-    
     console.log(`   - Text length: ${text?.length} characters`);
     console.log(`   - Voice ID: ${voiceId}`);
-    console.log(`   - Original language: ${language}`);
-    console.log(`   - ElevenLabs language: ${elevenLabsLanguage}`);
+    console.log(`   - Language: ${language}`);
 
-    // Validate required fields
     if (!text || !voiceId) {
       console.error('❌ [SYNTHESIZE] Missing required fields');
       return res.status(400).json({
@@ -128,96 +82,56 @@ router.post('/', validateSynthesize, async (req, res) => {
       });
     }
 
-    // Validate API key
-    const apiKey = process.env.ELEVENLABS_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      const duration = Date.now() - startTime;
-      console.error(`❌ [SYNTHESIZE] ElevenLabs API key not configured after ${duration}ms`);
+      console.error('❌ [SYNTHESIZE] OpenAI API key not configured');
       return res.status(500).json({
-        error: 'ElevenLabs API key not configured',
-        message: 'Please configure ELEVENLABS_API_KEY in environment variables'
+        error: 'OpenAI API key not configured',
+        message: 'Please configure OPENAI_API_KEY in environment variables'
       });
     }
-    
-    // Log API key status (without exposing the actual key)
-    console.log(`   - API Key status: ${apiKey ? '✓ Present' : '✗ Missing'}`);
-    console.log(`   - API Key length: ${apiKey ? apiKey.length : 0} characters`);
-    console.log(`   - API Key preview: ${apiKey ? apiKey.substring(0, 8) + '...' : 'N/A'}`);
-    console.log(`   - Has whitespace: ${apiKey && /\s/.test(apiKey) ? '⚠️  YES (this could cause issues!)' : 'No'}`);
 
-    // Map the voiceId to actual ElevenLabs voice ID
-    // If voiceId is already a valid ElevenLabs ID (21+ chars), use it directly
-    // Otherwise, look it up in our mapping
-    let elevenLabsVoiceId;
-    
-    if (voiceId && voiceId.length > 20) {
-      // Looks like a real ElevenLabs voice ID (they're typically 20+ characters)
-      elevenLabsVoiceId = voiceId;
-      console.log(`   - Using provided ElevenLabs voice ID: ${voiceId}`);
-    } else if (ELEVENLABS_VOICE_IDS[voiceId]) {
-      // Map from our friendly name to ElevenLabs ID
-      elevenLabsVoiceId = ELEVENLABS_VOICE_IDS[voiceId];
-      console.log(`   - Mapped voice '${voiceId}' → '${elevenLabsVoiceId}'`);
-    } else {
-      // Fallback to default voice
-      elevenLabsVoiceId = DEFAULT_VOICE_ID;
-      console.warn(`   ⚠️ Unknown voice '${voiceId}', using default: ${DEFAULT_VOICE_ID}`);
-    }
+    // Map voiceId to OpenAI voice name
+    const openaiVoice = OPENAI_VOICES[voiceId] || DEFAULT_VOICE;
+    console.log(`   - OpenAI voice: ${openaiVoice}`);
 
-    console.log('  → Calling ElevenLabs API...');
-    const elevenLabsStart = Date.now();
-
-    // Call ElevenLabs API with language mapping
-    const requestBody = {
-      text: text,
-      model_id: 'eleven_multilingual_v2',
-      voice_settings: {
-        stability: 0.5,
-        similarity_boost: 0.75,
-        style: 0.0,
-        use_speaker_boost: true
-      }
-    };
-
-    // Add language code for better pronunciation if it's not English
-    if (elevenLabsLanguage !== 'en') {
-      requestBody.language_code = elevenLabsLanguage;
-      console.log(`   - Added language_code: ${elevenLabsLanguage}`);
-    }
+    console.log('  → Calling OpenAI TTS API (tts-1-hd)...');
+    const ttsStart = Date.now();
 
     const response = await axios.post(
-      `https://api.elevenlabs.io/v1/text-to-speech/${elevenLabsVoiceId}`,
-      requestBody,
+      'https://api.openai.com/v1/audio/speech',
+      {
+        model: 'tts-1-hd',
+        input: text,
+        voice: openaiVoice,
+        response_format: 'mp3',
+      },
       {
         headers: {
-          'Accept': 'audio/mpeg',
+          'Authorization': `Bearer ${apiKey.trim()}`,
           'Content-Type': 'application/json',
-          'xi-api-key': apiKey.trim() // Trim whitespace from API key
         },
         responseType: 'arraybuffer',
-        timeout: 30000 // 30 second timeout
+        timeout: 30000,
       }
     );
 
-    const elevenLabsDuration = Date.now() - elevenLabsStart;
-    console.log(`  ← ElevenLabs API responded in ${elevenLabsDuration}ms`);
+    const ttsDuration = Date.now() - ttsStart;
+    console.log(`  ← OpenAI TTS responded in ${ttsDuration}ms`);
 
-    // Convert audio buffer to base64 for transmission
     const audioBuffer = Buffer.from(response.data);
     const audioBase64 = audioBuffer.toString('base64');
     const audioUrl = `data:audio/mpeg;base64,${audioBase64}`;
 
     const totalDuration = Date.now() - startTime;
     console.log(`✅ [SYNTHESIZE] Completed in ${totalDuration}ms`);
-    console.log(`   - ElevenLabs API: ${elevenLabsDuration}ms`);
     console.log(`   - Audio size: ${audioBuffer.length} bytes`);
 
     res.json({
       audioUrl,
       characterCount: text.length,
       voiceId,
-      originalLanguage: language,
-      elevenLabsLanguage: elevenLabsLanguage,
+      language,
       synthesisTime: totalDuration
     });
 
@@ -227,38 +141,29 @@ router.post('/', validateSynthesize, async (req, res) => {
 
     if (error.response) {
       const { status, data } = error.response;
-      console.error(`   - API Error ${status}:`, data);
-      
-      // Provide specific error messages based on error type
-      let errorMessage = data.detail || 'Failed to synthesize speech';
-      let helpText = '';
-      
-      if (typeof data === 'string' && data.includes('not supported')) {
-        errorMessage = `Language issue: ${errorMessage}. Note: Haitian Creole uses French voice models.`;
-      } else if (data === 'invalid_uid' || (typeof data === 'object' && data.detail?.includes('invalid_uid'))) {
-        errorMessage = 'Invalid voice ID provided';
-        helpText = 'Run "node server/utils/listVoices.js" to get valid voice IDs';
-      } else if (status === 401) {
-        errorMessage = 'Invalid API key';
-        helpText = 'Check your ELEVENLABS_API_KEY environment variable';
-      } else if (status === 429) {
-        errorMessage = 'Rate limit exceeded';
-        helpText = 'Too many requests. Please wait a moment and try again.';
+      let errorData = data;
+      if (Buffer.isBuffer(data)) {
+        try { errorData = JSON.parse(data.toString()); } catch(e) { errorData = data.toString(); }
       }
-      
+      console.error(`   - API Error ${status}:`, errorData);
+
+      let errorMessage = errorData?.error?.message || 'Failed to synthesize speech';
+
+      if (status === 401) {
+        errorMessage = 'Invalid OpenAI API key';
+      } else if (status === 429) {
+        errorMessage = 'Rate limit exceeded. Please wait a moment and try again.';
+      }
+
       return res.status(status).json({
         error: 'Synthesis failed',
         message: errorMessage,
-        help: helpText,
-        originalLanguage: language,
-        mappedLanguage: getElevenLabsLanguageCode(language),
-        voiceId: voiceId,
-        details: data
+        voiceId,
+        details: errorData
       });
     }
 
     if (error.code === 'ECONNABORTED') {
-      console.error('   - Request timeout');
       return res.status(408).json({
         error: 'Request timeout',
         message: 'Synthesis request timed out'

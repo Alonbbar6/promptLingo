@@ -9,7 +9,7 @@ export interface EnhancedTranslationOptions {
   tone: string;
   enhanceFormality?: boolean;
   preserveOriginal?: boolean;
-  userTier?: 'free' | 'paid-uncensored';
+  userTier?: 'free' | 'adult-relaxed' | 'paid-uncensored';
 }
 
 export interface EnhancedTranslationResult extends TranslationResponse {
@@ -431,7 +431,7 @@ export async function translateWithFormality(
   sourceLang: string, 
   targetLang: string, 
   tone: string = 'business',
-  userTier: 'free' | 'paid-uncensored' = 'free'
+  userTier: 'free' | 'adult-relaxed' | 'paid-uncensored' = 'free'
 ): Promise<EnhancedTranslationResult> {
   const service = getEnhancedTranslationService();
   return service.translateWithEnhancement({

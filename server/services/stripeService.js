@@ -23,9 +23,8 @@ if (process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_SECRET_KEY.includes('YO
 
 // Stripe Price IDs (these will be created in Stripe Dashboard)
 const STRIPE_PRICES = {
-  ESSENTIAL_MONTHLY: process.env.STRIPE_PRICE_ID_ESSENTIAL_MONTHLY || 'price_essential_monthly',
   PRO_MONTHLY: process.env.STRIPE_PRICE_ID_PRO_MONTHLY || 'price_pro_monthly',
-  PRO_YEARLY: process.env.STRIPE_PRICE_ID_PRO_YEARLY || 'price_pro_yearly',
+  PLUS_MONTHLY: process.env.STRIPE_PRICE_ID_PLUS_MONTHLY || 'price_plus_monthly',
 };
 
 /**
@@ -184,10 +183,10 @@ async function handleSubscriptionCreated(subscription) {
 
     // Determine tier based on price ID
     let tier = 'free';
-    if (priceId === STRIPE_PRICES.ESSENTIAL_MONTHLY) {
-      tier = 'essential';
-    } else if (priceId === STRIPE_PRICES.PRO_MONTHLY || priceId === STRIPE_PRICES.PRO_YEARLY) {
+    if (priceId === STRIPE_PRICES.PRO_MONTHLY) {
       tier = 'pro';
+    } else if (priceId === STRIPE_PRICES.PLUS_MONTHLY) {
+      tier = 'plus';
     }
 
     await query(

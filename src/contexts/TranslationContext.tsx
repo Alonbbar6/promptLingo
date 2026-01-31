@@ -108,7 +108,7 @@ const initialState: AppState = {
   },
   isTranslating: false,
   translationHistory: [],
-  autoPlay: true,
+  autoPlay: false,
   showHistory: false,
 };
 

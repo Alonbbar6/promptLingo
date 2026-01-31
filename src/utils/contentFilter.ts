@@ -408,8 +408,8 @@ const detectSeverityLevel = (text: string, detectedIssues: string[]): 'none' | '
  * Main content sanitization function
  * Combines profanity filtering, slang normalization, and aggressive language filtering
  */
-export const sanitizeInput = (text: string, userTier: 'free' | 'paid-uncensored' = 'free'): ContentFilterResult => {
-  // If user has uncensored version, skip filtering
+export const sanitizeInput = (text: string, userTier: 'free' | 'adult-relaxed' | 'paid-uncensored' = 'free'): ContentFilterResult => {
+  // If user has uncensored version (enterprise), skip all filtering
   if (userTier === 'paid-uncensored') {
     return {
       isAppropriate: true,
@@ -421,6 +421,42 @@ export const sanitizeInput = (text: string, userTier: 'free' | 'paid-uncensored'
     };
   }
 
+  // Adult-relaxed mode (Plus tier): allow profanity, sexual/flirty content
+  // Only block violence, hate speech, and content involving minors
+  if (userTier === 'adult-relaxed') {
+    const lowerText = text.toLowerCase();
+    const blockedPatterns = [
+      'kill yourself', 'kys', 'murder', 'nazi', 'hitler',
+      'terrorist', 'bomb', 'explosion', 'hate', 'racist',
+      'child', 'minor', 'underage', 'kid', 'kids',
+      'rape', 'assault', 'violence', 'violent'
+    ];
+
+    const detectedBlocked = blockedPatterns.filter(p => lowerText.includes(p));
+
+    if (detectedBlocked.length > 0) {
+      return {
+        isAppropriate: false,
+        filteredText: text,
+        detectedIssues: detectedBlocked.map(p => `blocked: ${p}`),
+        severityLevel: 'severe',
+        shouldBlock: true,
+        wasFiltered: false
+      };
+    }
+
+    // Everything else passes through unfiltered for adult-relaxed
+    return {
+      isAppropriate: true,
+      filteredText: text,
+      detectedIssues: [],
+      severityLevel: 'none',
+      shouldBlock: false,
+      wasFiltered: false
+    };
+  }
+
+  // Free tier: full filtering
   let processedText = text;
   const allDetectedIssues: string[] = [];
   let wasFiltered = false;

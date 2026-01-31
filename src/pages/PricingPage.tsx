@@ -35,7 +35,7 @@ interface PricingTier {
 
 const pricingTiers: PricingTier[] = [
   {
-    name: 'Free Trial',
+    name: 'Free',
     price: 0,
     period: 'month',
     description: 'Test PromptLingo risk-free',
@@ -46,62 +46,58 @@ const pricingTiers: PricingTier[] = [
       { text: 'All 5 tone styles (Casual, Business, Formal, Medical, Informal)', included: true },
       { text: 'Voice & text input', included: true },
       { text: 'Haitian Creole + Spanish support', included: true },
-      { text: 'Translation history (last 50)', included: true },
+      { text: 'Translation history', included: true },
       { text: 'Unlimited translations', included: false },
-      { text: 'Priority support', included: false },
-      { text: 'Advanced AI (GPT-4)', included: false },
+      { text: 'Adult mode', included: false },
     ],
-    cta: 'Start Free Trial',
+    cta: 'Start Free',
     testimonial: {
       quote: 'I tried the free version and couldn\'t believe how perfect the medical tone was. Signed up immediately.',
       author: 'Maria G., Medical Assistant Student'
     }
   },
   {
-    name: 'Student',
+    name: 'Pro',
     price: 9.99,
     period: 'month',
-    description: 'For nursing students & CNAs pursuing certification',
+    description: 'Unlimited translations for students & professionals',
     emotionalBenefit: 'Stop wasting 2+ hours per assignment fighting with English',
     popular: true,
-    badge: 'Most Popular for Students',
+    badge: 'Most Popular',
     features: [
       { text: 'Unlimited professional translations', included: true },
-      { text: 'All 5 tone styles (Perfect for nursing essays)', included: true },
+      { text: 'All 5 tone styles', included: true },
       { text: 'Voice & text input', included: true },
       { text: 'Haitian Creole + Spanish support', included: true },
-      { text: 'Translation history (encrypted locally)', included: true },
-      { text: 'Advanced AI (GPT-4 for better quality)', included: true },
+      { text: 'Translation history', included: true },
+      { text: 'Premium AI voices (OpenAI TTS)', included: true },
       { text: 'Email support (24-hour response)', included: true },
-      { text: 'Text-to-speech (hear your professional voice)', included: true },
+      { text: 'Priority processing', included: true },
     ],
-    cta: 'Start Sounding Professional',
+    cta: 'Go Pro',
     testimonial: {
       quote: 'Worth every penny. I got an A- on my essay and saved 3 hours. That\'s time I spent with my kids, not Google Translate.',
       author: 'Sofia R., CNA pursuing RN'
     }
   },
   {
-    name: 'Professional',
+    name: 'Plus',
     price: 19.99,
     period: 'month',
-    description: 'For working nurses & healthcare professionals',
-    emotionalBenefit: 'Communicate with the authority your expertise deserves',
-    badge: 'For Working Professionals',
+    description: 'Everything in Pro + adult mode for personal conversations',
+    emotionalBenefit: 'Express yourself freely without filters getting in the way',
+    badge: 'For Adults',
     features: [
-      { text: 'Everything in Student, plus:', included: true },
+      { text: 'Everything in Pro, plus:', included: true },
+      { text: 'Adult mode (relaxed content filter)', included: true },
+      { text: 'Flirty & playful tone options', included: true },
       { text: 'Priority support (Same-day response)', included: true },
-      { text: 'Advanced medical terminology database', included: true },
-      { text: 'Team collaboration (share with colleagues)', included: true },
-      { text: 'Custom tone presets (save your common use cases)', included: true },
-      { text: 'Export to Word/PDF', included: true },
-      { text: 'Mobile app (iOS & Android)', included: true },
-      { text: 'Offline mode (translate without internet)', included: true },
+      { text: 'All future premium features', included: true },
     ],
-    cta: 'Upgrade to Professional',
+    cta: 'Upgrade to Plus',
     testimonial: {
-      quote: 'My charge nurse complimented my patient notes. I\'ve never felt so confident at work.',
-      author: 'Carmen R., RN'
+      quote: 'Finally I can text in a fun, natural way without the app censoring everything.',
+      author: 'Jean P.'
     }
   },
 ];
@@ -131,12 +127,7 @@ const PricingPage: React.FC = () => {
       setLoading(tier.name);
 
       // Determine plan type for backend
-      let planType = 'pro-monthly';
-      if (tier.name === 'Student') {
-        planType = 'essential';
-      } else if (tier.period === 'year') {
-        planType = 'yearly';
-      }
+      const planType = tier.name === 'Plus' ? 'plus' : 'pro';
 
       // Create Stripe checkout session
       const response = await api.post('/api/stripe/create-checkout-session', {

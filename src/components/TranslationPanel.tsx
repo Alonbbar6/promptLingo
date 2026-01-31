@@ -57,7 +57,9 @@ const TranslationPanel: React.FC = () => {
     detectedIssues: [],
     severityLevel: 'none'
   });
-  const [userTier] = useState<'free' | 'paid-uncensored'>('free'); // For now, all users are free tier
+  const userTier: 'free' | 'adult-relaxed' | 'paid-uncensored' =
+    user?.subscriptionTier === 'enterprise' ? 'paid-uncensored' :
+    user?.subscriptionTier === 'plus' ? 'adult-relaxed' : 'free';
   const isProcessingRef = useRef(false);
   const requestIdCounterRef = useRef(0);
   const lastProcessedBlobRef = useRef<Blob | null>(null);
@@ -479,21 +481,14 @@ const TranslationPanel: React.FC = () => {
               <h3 className="font-medium text-blue-900">
                 Original Speech ({state.currentTranslation.sourceLanguage.toUpperCase()})
               </h3>
-              <div className="flex items-center space-x-2">
-                <EnhancedTextToSpeechPanel
-                  initialText={state.currentTranslation.originalText}
-                  initialLanguage={state.currentTranslation.sourceLanguage}
-                  compact={true}
-                />
-                <button
-                  onClick={handleCopyOriginal}
-                  className="flex items-center space-x-1 px-2 py-1 text-blue-600 hover:text-blue-800 text-sm"
-                  title="Copy to clipboard"
-                >
-                  <Copy className="h-4 w-4" />
-                  <span>Copy</span>
-                </button>
-              </div>
+              <button
+                onClick={handleCopyOriginal}
+                className="flex items-center space-x-1 px-2 py-1 text-blue-600 hover:text-blue-800 text-sm"
+                title="Copy to clipboard"
+              >
+                <Copy className="h-4 w-4" />
+                <span>Copy</span>
+              </button>
             </div>
             <p className="text-blue-800">{state.currentTranslation.originalText}</p>
             
