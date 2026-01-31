@@ -111,3 +111,22 @@ export const cancelSubscription = async (): Promise<void> => {
     throw new Error(error.response?.data?.message || 'Failed to cancel subscription');
   }
 };
+
+/**
+ * Upgrade existing subscription to a new plan with proration
+ * @param planType - 'pro' or 'plus'
+ */
+export const upgradeSubscription = async (planType: 'pro' | 'plus'): Promise<void> => {
+  try {
+    console.log(`Upgrading subscription to ${planType} plan with proration...`);
+
+    const response = await apiClient.post('/api/stripe/upgrade-subscription', {
+      planType,
+    });
+
+    console.log('Subscription upgraded successfully:', response.data);
+  } catch (error: any) {
+    console.error('Failed to upgrade subscription:', error);
+    throw new Error(error.response?.data?.message || 'Failed to upgrade subscription');
+  }
+};

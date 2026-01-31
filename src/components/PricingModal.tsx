@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Check, Crown, Loader } from 'lucide-react';
-import { getPricingPlans, createCheckoutSession, PricingPlan } from '../services/stripeService';
+import { getPricingPlans, createCheckoutSession, getSubscriptionStatus, upgradeSubscription, PricingPlan, SubscriptionStatus } from '../services/stripeService';
 
 interface PricingModalProps {
   isOpen: boolean;
@@ -12,10 +12,13 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currentSubscription, setCurrentSubscription] = useState<SubscriptionStatus | null>(null);
+  const [upgradeSuccess, setUpgradeSuccess] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       loadPricing();
+      loadSubscriptionStatus();
     }
   }, [isOpen]);
 
@@ -33,14 +36,48 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const loadSubscriptionStatus = async () => {
+    try {
+      const status = await getSubscriptionStatus();
+      setCurrentSubscription(status);
+    } catch (err: any) {
+      // User might not be logged in or have no subscription - that's ok
+      console.log('Could not load subscription status:', err);
+      setCurrentSubscription(null);
+    }
+  };
+
   const handleUpgrade = async (planType: 'pro' | 'plus') => {
     try {
       setCheckoutLoading(planType);
-      await createCheckoutSession(planType);
-      // User will be redirected to Stripe Checkout
+      setError(null);
+      setUpgradeSuccess(false);
+
+      // Check if user has an active subscription (not free tier)
+      const hasActiveSubscription = currentSubscription &&
+        currentSubscription.subscription_tier !== 'free' &&
+        currentSubscription.subscription_status === 'active' &&
+        currentSubscription.stripe_subscription_id;
+
+      if (hasActiveSubscription) {
+        // User has existing subscription - use upgrade with proration
+        await upgradeSubscription(planType);
+        setUpgradeSuccess(true);
+        // Refresh subscription status
+        await loadSubscriptionStatus();
+        // Show success message briefly then close
+        setTimeout(() => {
+          onClose();
+          window.location.reload(); // Refresh to update UI with new tier
+        }, 2000);
+      } else {
+        // No subscription - create new checkout session
+        await createCheckoutSession(planType);
+        // User will be redirected to Stripe Checkout
+      }
     } catch (err: any) {
-      console.error('Checkout error:', err);
-      setError(err.message || 'Failed to start checkout');
+      console.error('Upgrade/Checkout error:', err);
+      setError(err.message || 'Failed to process upgrade');
       setCheckoutLoading(null);
     }
   };
@@ -67,7 +104,19 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
 
         {/* Content */}
         <div className="px-4 sm:px-6 py-6 sm:py-8">
-          {loading ? (
+          {upgradeSuccess ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <Check className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Upgrade Successful!</h3>
+              <p className="text-gray-600 text-center">
+                Your subscription has been upgraded with prorated billing.
+                <br />
+                Refreshing your account...
+              </p>
+            </div>
+          ) : loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader className="h-8 w-8 animate-spin text-purple-600" />
               <span className="ml-3 text-gray-600">Loading pricing...</span>
@@ -131,41 +180,65 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
                     ))}
                   </ul>
 
-                  {plan.id === 'free' ? (
-                    <button
-                      disabled
-                      className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
-                    >
-                      Current Plan
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        const planType = plan.id === 'plus' ? 'plus' : 'pro';
-                        handleUpgrade(planType);
-                      }}
-                      disabled={!!checkoutLoading}
-                      className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-                        plan.id === 'pro'
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg text-white'
-                          : plan.id === 'plus'
-                          ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                          : 'bg-purple-600 hover:bg-purple-700 text-white'
-                      } disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center`}
-                    >
-                      {checkoutLoading === plan.id ? (
-                        <>
-                          <Loader className="h-4 w-4 animate-spin mr-2" />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          <Crown className="h-4 w-4 mr-2" />
-                          Upgrade to {plan.name}
-                        </>
-                      )}
-                    </button>
-                  )}
+                  {(() => {
+                    const isCurrentPlan = currentSubscription?.subscription_tier === plan.id;
+                    const hasActiveSubscription = currentSubscription &&
+                      currentSubscription.subscription_tier !== 'free' &&
+                      currentSubscription.subscription_status === 'active';
+                    const isFreePlan = plan.id === 'free';
+                    const isCurrentFree = !currentSubscription || currentSubscription.subscription_tier === 'free';
+
+                    if (isCurrentPlan) {
+                      return (
+                        <button
+                          disabled
+                          className="w-full py-2 px-4 rounded-lg bg-green-100 text-green-700 cursor-not-allowed font-medium"
+                        >
+                          Current Plan
+                        </button>
+                      );
+                    }
+
+                    if (isFreePlan) {
+                      return (
+                        <button
+                          disabled
+                          className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                        >
+                          {isCurrentFree ? 'Current Plan' : 'Free Tier'}
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <button
+                        onClick={() => {
+                          const planType = plan.id === 'plus' ? 'plus' : 'pro';
+                          handleUpgrade(planType);
+                        }}
+                        disabled={!!checkoutLoading}
+                        className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+                          plan.id === 'pro'
+                            ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg text-white'
+                            : plan.id === 'plus'
+                            ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                            : 'bg-purple-600 hover:bg-purple-700 text-white'
+                        } disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center`}
+                      >
+                        {checkoutLoading === plan.id ? (
+                          <>
+                            <Loader className="h-4 w-4 animate-spin mr-2" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <Crown className="h-4 w-4 mr-2" />
+                            {hasActiveSubscription ? `Upgrade to ${plan.name} (Prorated)` : `Upgrade to ${plan.name}`}
+                          </>
+                        )}
+                      </button>
+                    );
+                  })()}
                 </div>
               )})}
             </div>

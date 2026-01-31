@@ -320,6 +320,74 @@ async function getSubscriptionStatus(userId) {
 }
 
 /**
+ * Upgrade an existing subscription to a new plan with proration
+ * @param {string} userId - User ID
+ * @param {string} newPriceId - New Stripe price ID
+ * @returns {Promise<object>} Updated subscription
+ */
+async function upgradeSubscription(userId, newPriceId) {
+  try {
+    ensureStripeInitialized();
+    console.log(`⬆️ Upgrading subscription for user: ${userId} to price: ${newPriceId}`);
+
+    // Get current subscription
+    const result = await query(
+      'SELECT stripe_subscription_id, stripe_price_id FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (!result.rows[0]?.stripe_subscription_id) {
+      throw new Error('No active subscription found');
+    }
+
+    const subscriptionId = result.rows[0].stripe_subscription_id;
+    const currentPriceId = result.rows[0].stripe_price_id;
+
+    // Don't upgrade if already on the same plan
+    if (currentPriceId === newPriceId) {
+      throw new Error('Already subscribed to this plan');
+    }
+
+    // Get the subscription to find the item ID
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const itemId = subscription.items.data[0].id;
+
+    // Update subscription with proration
+    const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
+      items: [{
+        id: itemId,
+        price: newPriceId,
+      }],
+      proration_behavior: 'create_prorations', // Prorate the change
+    });
+
+    // Determine new tier
+    let newTier = 'free';
+    if (newPriceId === STRIPE_PRICES.PRO_MONTHLY) {
+      newTier = 'pro';
+    } else if (newPriceId === STRIPE_PRICES.PLUS_MONTHLY) {
+      newTier = 'plus';
+    }
+
+    // Update database
+    await query(
+      `UPDATE users SET
+        subscription_tier = $1,
+        stripe_price_id = $2,
+        subscription_status = $3
+      WHERE id = $4`,
+      [newTier, newPriceId, updatedSubscription.status, userId]
+    );
+
+    console.log(`✅ Upgraded user ${userId} to ${newTier} tier with proration`);
+    return updatedSubscription;
+  } catch (error) {
+    console.error('❌ Error upgrading subscription:', error);
+    throw error;
+  }
+}
+
+/**
  * Cancel a subscription at the end of the billing period
  * @param {string} userId - User ID
  * @returns {Promise<object>} Updated subscription
@@ -370,5 +438,6 @@ module.exports = {
   handleSubscriptionUpdated,
   handleSubscriptionDeleted,
   getSubscriptionStatus,
+  upgradeSubscription,
   cancelSubscription,
 };

@@ -15,6 +15,7 @@ const {
   handleSubscriptionUpdated,
   handleSubscriptionDeleted,
   getSubscriptionStatus,
+  upgradeSubscription,
   cancelSubscription,
 } = require('../services/stripeService');
 
@@ -111,6 +112,50 @@ router.get('/subscription-status', authenticateToken, async (req, res) => {
     console.error('❌ Error getting subscription status:', error);
     res.status(500).json({
       error: 'Failed to get subscription status',
+      message: error.message,
+    });
+  }
+});
+
+/**
+ * Upgrade subscription to a new plan with proration
+ * POST /api/stripe/upgrade-subscription
+ */
+router.post('/upgrade-subscription', authenticateToken, async (req, res) => {
+  try {
+    const { planType } = req.body;
+    const userId = req.user.id;
+
+    console.log(`⬆️ Upgrading subscription for user ${userId} to ${planType}`);
+
+    // Determine price ID based on plan type
+    let newPriceId;
+    if (planType === 'plus') {
+      newPriceId = STRIPE_PRICES.PLUS_MONTHLY;
+    } else if (planType === 'pro') {
+      newPriceId = STRIPE_PRICES.PRO_MONTHLY;
+    } else {
+      return res.status(400).json({
+        error: 'Invalid plan type',
+        message: 'Plan type must be "pro" or "plus"',
+      });
+    }
+
+    const subscription = await upgradeSubscription(userId, newPriceId);
+
+    res.json({
+      success: true,
+      message: `Successfully upgraded to ${planType} plan with proration`,
+      subscription: {
+        id: subscription.id,
+        status: subscription.status,
+        current_period_end: subscription.current_period_end,
+      },
+    });
+  } catch (error) {
+    console.error('❌ Error upgrading subscription:', error);
+    res.status(500).json({
+      error: 'Failed to upgrade subscription',
       message: error.message,
     });
   }
