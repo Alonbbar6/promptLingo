@@ -17,6 +17,8 @@ import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
+import SubscriptionSuccessPage from './pages/SubscriptionSuccessPage';
+import SubscriptionCanceledPage from './pages/SubscriptionCanceledPage';
 import OnboardingTutorial from './components/OnboardingTutorial';
 import CookieConsentBanner from './components/CookieConsentBanner';
 import MainContent from './components/MainContent';
@@ -186,6 +188,10 @@ function AppWithLanding() {
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/verify-email" element={<VerifyEmailPage />} />
+
+                {/* Subscription Routes */}
+                <Route path="/subscription/success" element={<SubscriptionSuccessPage />} />
+                <Route path="/subscription/canceled" element={<SubscriptionCanceledPage />} />
 
                 {/* Main App Routes */}
                 <Route path="/*" element={<AppContent />} />
