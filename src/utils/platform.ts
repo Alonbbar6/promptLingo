@@ -12,12 +12,20 @@ import { Capacitor } from '@capacitor/core';
  * Check if running in a native app (iOS or Android)
  */
 export const isNativeApp = (): boolean => {
-  const isNative = Capacitor.isNativePlatform();
+  // Use Capacitor's platform detection as the source of truth
+  // getPlatform() returns 'web', 'ios', or 'android'
+  const platform = Capacitor.getPlatform();
+  const isNative = platform === 'ios' || platform === 'android';
+  
   console.log('[Platform] isNativeApp check:', {
     isNative,
-    platform: Capacitor.getPlatform(),
-    capacitorAvailable: typeof Capacitor !== 'undefined'
+    platform,
+    capacitorAvailable: typeof Capacitor !== 'undefined',
+    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown'
   });
+  
+  // Platform is 'web' when running in a browser
+  // Platform is 'ios' or 'android' when running in native app
   return isNative;
 };
 
