@@ -225,12 +225,17 @@ const login = async (req, res) => {
     expiresAt.setDate(expiresAt.getDate() + 7);
     await sessionService.createSession(user.id, accessToken, refreshToken, expiresAt);
 
-    // Set HTTP-only cookies
+    // Set HTTP-only cookies (for web)
     setAuthCookies(res, accessToken, refreshToken, req);
 
     console.log(`✅ User logged in: ${user.email}`);
 
-    return successResponse(res, {
+    // Check if this is a mobile app request (Capacitor)
+    const isMobileApp = req.headers['x-mobile-app'] === 'true' ||
+      req.headers['user-agent']?.includes('capacitor') ||
+      req.headers.origin?.startsWith('capacitor://');
+
+    const responseData = {
       user: {
         id: user.id,
         email: user.email,
@@ -239,7 +244,18 @@ const login = async (req, res) => {
         subscriptionTier: user.subscription_tier,
       },
       expiresIn: 900, // 15 minutes
-    }, 'Login successful', 200);
+    };
+
+    // For mobile apps, include tokens in response body (they can't use HttpOnly cookies reliably)
+    if (isMobileApp) {
+      responseData.tokens = {
+        accessToken,
+        refreshToken,
+      };
+      console.log('📱 [AUTH] Mobile app detected - tokens included in response body');
+    }
+
+    return successResponse(res, responseData, 'Login successful', 200);
 
   } catch (error) {
     console.error('Login error:', error);
@@ -302,10 +318,17 @@ const verifyToken = async (req, res) => {
 
 /**
  * Refresh access token using refresh token
+ * Accepts refresh token from cookie (web) or request body (mobile)
  */
 const refreshAccessToken = async (req, res) => {
   try {
-    const refreshToken = req.cookies?.refreshToken;
+    // Check if this is a mobile app request
+    const isMobileApp = req.headers['x-mobile-app'] === 'true' ||
+      req.headers['user-agent']?.includes('capacitor') ||
+      req.headers.origin?.startsWith('capacitor://');
+
+    // Get refresh token from cookie (web) or body (mobile)
+    const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
     if (!refreshToken) {
       return unauthorizedResponse(res, 'Refresh token not found');
@@ -344,14 +367,25 @@ const refreshAccessToken = async (req, res) => {
     expiresAt.setDate(expiresAt.getDate() + 7);
     await sessionService.createSession(user.id, newAccessToken, newRefreshToken, expiresAt);
 
-    // Set new cookies
+    // Set new cookies (for web)
     setAuthCookies(res, newAccessToken, newRefreshToken, req);
 
     console.log(`✅ Token refreshed for user: ${user.email}`);
 
-    return successResponse(res, {
+    const responseData = {
       expiresIn: 900, // 15 minutes
-    }, 'Token refreshed', 200);
+    };
+
+    // For mobile apps, include new tokens in response body
+    if (isMobileApp) {
+      responseData.tokens = {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      };
+      console.log('📱 [AUTH] Mobile app - new tokens included in response body');
+    }
+
+    return successResponse(res, responseData, 'Token refreshed', 200);
 
   } catch (error) {
     console.error('Token refresh error:', error);
