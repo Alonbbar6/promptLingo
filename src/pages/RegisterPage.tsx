@@ -8,9 +8,11 @@ const RegisterPage: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {/* Logo/Brand */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-4">
-              <span className="text-3xl">🌍</span>
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="PromptLingo Logo" 
+              className="w-16 h-16 mx-auto mb-4 rounded-2xl"
+            />
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
             <p className="text-gray-600">
               Join PromptLingo and start translating

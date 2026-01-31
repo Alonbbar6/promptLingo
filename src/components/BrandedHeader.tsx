@@ -38,9 +38,11 @@ export const BrandedHeader: React.FC<BrandedHeaderProps> = ({
               onClick={() => onPageChange('landing')}
               className="flex items-center gap-2 group"
             >
-              <div className="w-10 h-10 rounded-lg bg-gradient-brand flex items-center justify-center text-white font-bold text-xl">
-                P
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="PromptLingo Logo" 
+                className="w-10 h-10 rounded-lg"
+              />
               <span className="text-xl font-bold text-neutral-textPrimary font-serif group-hover:text-brand-skyBlue transition-colors">
                 {brandDesignSystem.brand.name}
               </span>
