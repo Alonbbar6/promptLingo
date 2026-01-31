@@ -55,14 +55,23 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setStoredUser(response.user);
             console.log('✅ Session valid, user restored');
           } else {
-            // Token invalid, clear user
+            // Token explicitly invalid, clear user
             console.log('⚠️ Session invalid, clearing user');
             clearStoredUser();
           }
-        } catch (error) {
-          // Token verification failed (no cookie or expired)
-          console.log('ℹ️ No valid session found:', error);
-          clearStoredUser();
+        } catch (error: any) {
+          // Token verification failed - could be network issue, cross-site navigation, etc.
+          console.log('ℹ️ Token verification failed:', error?.message || error);
+
+          // If we have a stored user, keep them logged in optimistically
+          // The API client interceptor will handle actual 401s on subsequent requests
+          if (storedUser) {
+            console.log('🔄 Keeping stored user (optimistic), will verify on next API call');
+            setUser(storedUser);
+          } else {
+            // No stored user, nothing to preserve
+            clearStoredUser();
+          }
         }
       } catch (error) {
         console.error('❌ Auth initialization error:', error);
