@@ -4,6 +4,10 @@
  */
 
 import { apiClient } from './apiClient';
+import { isNativeApp } from '../utils/platform';
+
+// Website URL for external purchases (iOS App Store compliance)
+const WEBSITE_PRICING_URL = process.env.REACT_APP_WEBSITE_URL || 'https://promptlingo.com';
 
 export interface PricingPlan {
   id: string;
@@ -40,12 +44,23 @@ export const getPricingPlans = async (): Promise<PricingPlan[]> => {
 
 /**
  * Create a checkout session and redirect to Stripe Checkout
- * @param planType - 'essential', 'monthly', or 'yearly'
+ * For native apps (iOS/Android), redirects to website for App Store compliance
+ * @param planType - 'pro' or 'plus'
  */
 export const createCheckoutSession = async (planType: 'pro' | 'plus'): Promise<void> => {
   try {
     console.log(`Creating checkout session for ${planType} plan...`);
 
+    // On native apps, redirect to website for purchases (Apple App Store compliance)
+    if (isNativeApp()) {
+      console.log('Native app detected - redirecting to website for purchase');
+      const pricingUrl = `${WEBSITE_PRICING_URL}/pricing?plan=${planType}`;
+      // Open in system browser (outside the app)
+      window.open(pricingUrl, '_system');
+      return;
+    }
+
+    // On web, use Stripe checkout directly
     const response = await apiClient.post('/api/stripe/create-checkout-session', {
       planType,
     });
@@ -114,11 +129,20 @@ export const cancelSubscription = async (): Promise<void> => {
 
 /**
  * Upgrade existing subscription to a new plan with proration
+ * For native apps, redirects to website for App Store compliance
  * @param planType - 'pro' or 'plus'
  */
 export const upgradeSubscription = async (planType: 'pro' | 'plus'): Promise<void> => {
   try {
     console.log(`Upgrading subscription to ${planType} plan with proration...`);
+
+    // On native apps, redirect to website for subscription management
+    if (isNativeApp()) {
+      console.log('Native app detected - redirecting to website for upgrade');
+      const manageUrl = `${WEBSITE_PRICING_URL}/account/subscription?upgrade=${planType}`;
+      window.open(manageUrl, '_system');
+      return;
+    }
 
     const response = await apiClient.post('/api/stripe/upgrade-subscription', {
       planType,

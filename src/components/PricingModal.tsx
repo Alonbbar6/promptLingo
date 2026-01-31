@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Check, Crown, Loader } from 'lucide-react';
+import { X, Check, Crown, Loader, ExternalLink } from 'lucide-react';
 import { getPricingPlans, createCheckoutSession, getSubscriptionStatus, upgradeSubscription, PricingPlan, SubscriptionStatus } from '../services/stripeService';
+import { isNativeApp } from '../utils/platform';
 
 interface PricingModalProps {
   isOpen: boolean;
@@ -228,12 +229,18 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
                         {checkoutLoading === plan.id ? (
                           <>
                             <Loader className="h-4 w-4 animate-spin mr-2" />
-                            Processing...
+                            {isNativeApp() ? 'Opening website...' : 'Processing...'}
                           </>
                         ) : (
                           <>
-                            <Crown className="h-4 w-4 mr-2" />
-                            {hasActiveSubscription ? `Upgrade to ${plan.name} (Prorated)` : `Upgrade to ${plan.name}`}
+                            {isNativeApp() ? (
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                            ) : (
+                              <Crown className="h-4 w-4 mr-2" />
+                            )}
+                            {hasActiveSubscription
+                              ? `Upgrade to ${plan.name}${isNativeApp() ? '' : ' (Prorated)'}`
+                              : `${isNativeApp() ? 'Subscribe on Website' : `Upgrade to ${plan.name}`}`}
                           </>
                         )}
                       </button>
@@ -247,7 +254,9 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
           {/* Additional info */}
           <div className="mt-8 pt-6 border-t border-gray-200 text-center">
             <p className="text-sm text-gray-500">
-              All payments are securely processed by Stripe. Cancel anytime.
+              {isNativeApp()
+                ? 'You will be redirected to our website to complete your purchase securely.'
+                : 'All payments are securely processed by Stripe. Cancel anytime.'}
             </p>
           </div>
         </div>
