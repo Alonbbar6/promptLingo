@@ -42,3 +42,6 @@ lerna-debug.log*
 
 # Debug
 debug.log
+
+# Stripe backup files (contain sensitive data)
+server/scripts/stripe-backup-*.json
