@@ -21,10 +21,11 @@ if (process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_SECRET_KEY.includes('YO
   console.warn('   Set a valid Stripe key in your environment variables to enable payments');
 }
 
-// Stripe Price IDs (these will be created in Stripe Dashboard)
+// Stripe Price IDs (mapped to existing env vars)
+// Pro ($9.99) uses ESSENTIAL env var, Plus ($19.99) uses PRO env var
 const STRIPE_PRICES = {
-  PRO_MONTHLY: process.env.STRIPE_PRICE_ID_PRO_MONTHLY || 'price_pro_monthly',
-  PLUS_MONTHLY: process.env.STRIPE_PRICE_ID_PLUS_MONTHLY || 'price_plus_monthly',
+  PRO_MONTHLY: process.env.STRIPE_PRICE_ID_ESSENTIAL_MONTHLY || 'price_pro_monthly',
+  PLUS_MONTHLY: process.env.STRIPE_PRICE_ID_PRO_MONTHLY || 'price_plus_monthly',
 };
 
 /**
