@@ -11,6 +11,7 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import { shouldShowSubscriptionUI } from './utils/platform';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import RefundPolicyPage from './pages/RefundPolicyPage';
+import SupportPage from './pages/SupportPage';
 import AccountSettingsPage from './pages/AccountSettingsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -192,6 +193,9 @@ function AppWithLanding() {
                 {/* Subscription Routes */}
                 <Route path="/subscription/success" element={<SubscriptionSuccessPage />} />
                 <Route path="/subscription/canceled" element={<SubscriptionCanceledPage />} />
+
+                {/* Support Route */}
+                <Route path="/support" element={<SupportPage />} />
 
                 {/* Main App Routes */}
                 <Route path="/*" element={<AppContent />} />

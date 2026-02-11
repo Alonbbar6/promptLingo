@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRight, Heart, Shield, Award, MessageCircle, Star, Check, X } from 'lucide-react';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 /**
  * SofiaLandingPage - Emotional Journey Landing Page
@@ -407,21 +408,43 @@ const SofiaLandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
 
           {/* Final CTA */}
           <div className="text-center">
-            <button
-              onClick={onGetStarted}
-              className="bg-gradient-brand text-white px-12 py-5 rounded-lg font-bold text-xl hover:opacity-90 transition-all duration-200 shadow-2xl hover:shadow-3xl inline-flex items-center group"
-            >
-              Start Your Free Trial (No Credit Card)
-              <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
-            </button>
+            {shouldShowSubscriptionUI() ? (
+              <>
+                <button
+                  onClick={onGetStarted}
+                  className="bg-gradient-brand text-white px-12 py-5 rounded-lg font-bold text-xl hover:opacity-90 transition-all duration-200 shadow-2xl hover:shadow-3xl inline-flex items-center group"
+                >
+                  Start Your Free Trial (No Credit Card)
+                  <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                </button>
 
-            <p className="mt-6 text-neutral-textSecondary">
-              ✅ 10 free professional translations to test
-              <br />
-              ✅ Upgrade to $9.99/month for unlimited (cancel anytime)
-              <br />
-              ✅ Join 5,000+ nursing students who got their confidence back
-            </p>
+                <p className="mt-6 text-neutral-textSecondary">
+                  ✅ 10 free professional translations to test
+                  <br />
+                  ✅ Upgrade to $9.99/month for unlimited (cancel anytime)
+                  <br />
+                  ✅ Join 5,000+ nursing students who got their confidence back
+                </p>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={onGetStarted}
+                  className="bg-gradient-brand text-white px-12 py-5 rounded-lg font-bold text-xl hover:opacity-90 transition-all duration-200 shadow-2xl hover:shadow-3xl inline-flex items-center group"
+                >
+                  Get Started Free
+                  <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                <p className="mt-6 text-neutral-textSecondary">
+                  ✅ 15 free professional translations per day
+                  <br />
+                  ✅ No credit card required
+                  <br />
+                  ✅ Join 5,000+ nursing students who got their confidence back
+                </p>
+              </>
+            )}
           </div>
         </div>
       </section>

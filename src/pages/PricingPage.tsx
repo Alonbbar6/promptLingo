@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Check, X, ArrowRight, Shield, Clock, Heart } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
+import { shouldShowSubscriptionUI } from '../utils/platform';
 
 /**
  * PricingPage - Sofia-focused pricing
@@ -105,6 +106,26 @@ const pricingTiers: PricingTier[] = [
 const PricingPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
+
+  // Hide pricing page on mobile apps - payments are web-only (Apple App Store compliance)
+  if (!shouldShowSubscriptionUI()) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md mx-auto">
+          <div className="bg-blue-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+            <Shield className="h-8 w-8 text-blue-600" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Subscription Management</h2>
+          <p className="text-gray-600 mb-4">
+            To manage your subscription or upgrade your plan, please visit our website at promptlingo.ai
+          </p>
+          <p className="text-sm text-gray-500">
+            Your current plan and features will continue to work in the app.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSelectPlan = async (tier: PricingTier) => {
     // Free tier - no payment needed
